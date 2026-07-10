@@ -1,3 +1,4 @@
+import "./config/env.js";
 import app from "./app";
 import { logger } from "./lib/logger";
 

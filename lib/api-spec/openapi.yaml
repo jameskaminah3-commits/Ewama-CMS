@@ -3,20 +3,38 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: EWAMA Properties Ltd API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: properties
+    description: Property listings
+  - name: articles
+    description: Blog articles
+  - name: enquiries
+    description: Customer enquiries
+  - name: siteVisits
+    description: Site visit bookings
+  - name: media
+    description: Media library
+  - name: settings
+    description: Website settings
+  - name: homepage
+    description: Homepage content
+  - name: auth
+    description: Admin authentication
+  - name: dashboard
+    description: Dashboard statistics
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +42,791 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # ─── AUTH ───────────────────────────────────────────────
+  /auth/login:
+    post:
+      operationId: adminLogin
+      tags: [auth]
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+
+  /auth/logout:
+    post:
+      operationId: adminLogout
+      tags: [auth]
+      summary: Admin logout
+      responses:
+        "200":
+          description: Logged out
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current admin user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUser"
+        "401":
+          description: Not authenticated
+
+  # ─── DASHBOARD ──────────────────────────────────────────
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Dashboard summary statistics
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /dashboard/activity:
+    get:
+      operationId: getRecentActivity
+      tags: [dashboard]
+      summary: Recent activity feed
+      responses:
+        "200":
+          description: Recent activity items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityItem"
+
+  # ─── PROPERTIES ─────────────────────────────────────────
+  /properties:
+    get:
+      operationId: listProperties
+      tags: [properties]
+      summary: List all properties
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [available, coming_soon, sold_out, archived]
+        - in: query
+          name: county
+          schema:
+            type: string
+        - in: query
+          name: featured
+          schema:
+            type: boolean
+        - in: query
+          name: minPrice
+          schema:
+            type: number
+        - in: query
+          name: maxPrice
+          schema:
+            type: number
+        - in: query
+          name: plotSize
+          schema:
+            type: string
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 12
+      responses:
+        "200":
+          description: List of properties
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PropertyListResponse"
+
+    post:
+      operationId: createProperty
+      tags: [properties]
+      summary: Create a new property
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PropertyInput"
+      responses:
+        "201":
+          description: Created property
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Property"
+
+  /properties/{id}:
+    get:
+      operationId: getProperty
+      tags: [properties]
+      summary: Get a property by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Property
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Property"
+        "404":
+          description: Not found
+
+    patch:
+      operationId: updateProperty
+      tags: [properties]
+      summary: Update a property
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PropertyUpdate"
+      responses:
+        "200":
+          description: Updated property
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Property"
+
+    delete:
+      operationId: deleteProperty
+      tags: [properties]
+      summary: Delete a property
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /properties/slug/{slug}:
+    get:
+      operationId: getPropertyBySlug
+      tags: [properties]
+      summary: Get a property by slug (public)
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Property
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Property"
+        "404":
+          description: Not found
+
+  /properties/{id}/duplicate:
+    post:
+      operationId: duplicateProperty
+      tags: [properties]
+      summary: Duplicate a property
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "201":
+          description: Duplicated property
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Property"
+
+  /properties/{id}/publish:
+    post:
+      operationId: publishProperty
+      tags: [properties]
+      summary: Publish a property
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Published
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Property"
+
+  /properties/{id}/archive:
+    post:
+      operationId: archiveProperty
+      tags: [properties]
+      summary: Archive a property
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Archived
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Property"
+
+  /properties/featured:
+    get:
+      operationId: getFeaturedProperties
+      tags: [properties]
+      summary: Get featured properties for homepage
+      responses:
+        "200":
+          description: Featured properties
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Property"
+
+  # ─── ARTICLES ────────────────────────────────────────────
+  /articles:
+    get:
+      operationId: listArticles
+      tags: [articles]
+      summary: List articles
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [draft, published]
+        - in: query
+          name: category
+          schema:
+            type: string
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Articles list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArticleListResponse"
+
+    post:
+      operationId: createArticle
+      tags: [articles]
+      summary: Create an article
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ArticleInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Article"
+
+  /articles/{id}:
+    get:
+      operationId: getArticle
+      tags: [articles]
+      summary: Get an article
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Article"
+
+    patch:
+      operationId: updateArticle
+      tags: [articles]
+      summary: Update an article
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ArticleUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Article"
+
+    delete:
+      operationId: deleteArticle
+      tags: [articles]
+      summary: Delete an article
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /articles/{id}/publish:
+    post:
+      operationId: publishArticle
+      tags: [articles]
+      summary: Publish an article
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Published
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Article"
+
+  # ─── ENQUIRIES ───────────────────────────────────────────
+  /enquiries:
+    get:
+      operationId: listEnquiries
+      tags: [enquiries]
+      summary: List customer enquiries
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [unread, read, contacted, closed]
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Enquiries list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnquiryListResponse"
+
+    post:
+      operationId: createEnquiry
+      tags: [enquiries]
+      summary: Submit an enquiry (public)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EnquiryInput"
+      responses:
+        "201":
+          description: Submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Enquiry"
+
+  /enquiries/{id}:
+    get:
+      operationId: getEnquiry
+      tags: [enquiries]
+      summary: Get an enquiry
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Enquiry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Enquiry"
+
+    patch:
+      operationId: updateEnquiry
+      tags: [enquiries]
+      summary: Update enquiry status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EnquiryUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Enquiry"
+
+  /enquiries/export:
+    get:
+      operationId: exportEnquiries
+      tags: [enquiries]
+      summary: Export enquiries as CSV
+      responses:
+        "200":
+          description: CSV export data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  csv:
+                    type: string
+                required: [csv]
+
+  # ─── SITE VISITS ─────────────────────────────────────────
+  /site-visits:
+    get:
+      operationId: listSiteVisits
+      tags: [siteVisits]
+      summary: List site visit bookings
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [pending, approved, rejected, rescheduled, completed]
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Site visits list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteVisitListResponse"
+
+    post:
+      operationId: createSiteVisit
+      tags: [siteVisits]
+      summary: Book a site visit (public)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SiteVisitInput"
+      responses:
+        "201":
+          description: Booked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteVisit"
+
+  /site-visits/{id}:
+    get:
+      operationId: getSiteVisit
+      tags: [siteVisits]
+      summary: Get a site visit
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Site visit
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteVisit"
+
+    patch:
+      operationId: updateSiteVisit
+      tags: [siteVisits]
+      summary: Update site visit status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SiteVisitUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteVisit"
+
+  # ─── MEDIA ───────────────────────────────────────────────
+  /media:
+    get:
+      operationId: listMedia
+      tags: [media]
+      summary: List media files
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 24
+      responses:
+        "200":
+          description: Media list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaListResponse"
+
+    post:
+      operationId: uploadMedia
+      tags: [media]
+      summary: Upload a media file
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MediaInput"
+      responses:
+        "201":
+          description: Uploaded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaFile"
+
+  /media/{id}:
+    delete:
+      operationId: deleteMedia
+      tags: [media]
+      summary: Delete a media file
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ─── SETTINGS ────────────────────────────────────────────
+  /settings:
+    get:
+      operationId: getSettings
+      tags: [settings]
+      summary: Get website settings
+      responses:
+        "200":
+          description: Settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteSettings"
+
+    patch:
+      operationId: updateSettings
+      tags: [settings]
+      summary: Update website settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SiteSettingsUpdate"
+      responses:
+        "200":
+          description: Updated settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteSettings"
+
+  # ─── HOMEPAGE CONTENT ────────────────────────────────────
+  /homepage:
+    get:
+      operationId: getHomepageContent
+      tags: [homepage]
+      summary: Get homepage editable content
+      responses:
+        "200":
+          description: Homepage content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HomepageContent"
+
+    patch:
+      operationId: updateHomepageContent
+      tags: [homepage]
+      summary: Update homepage content
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HomepageContentUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HomepageContent"
+
+  # ─── NEWSLETTER ──────────────────────────────────────────
+  /newsletter/subscribe:
+    post:
+      operationId: subscribeNewsletter
+      tags: [enquiries]
+      summary: Subscribe to newsletter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewsletterInput"
+      responses:
+        "201":
+          description: Subscribed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                required: [success]
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +834,745 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    # ─── AUTH ──────────────────────────────────────────────
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+
+        password:
+          type: string
+
+    AuthResponse:
+      type: object
+      required: [user, token]
+      properties:
+        user:
+          $ref: "#/components/schemas/AdminUser"
+        token:
+          type: string
+
+    AdminUser:
+      type: object
+      required: [id, email, name, role]
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        avatarUrl:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+
+    # ─── DASHBOARD ─────────────────────────────────────────
+    DashboardStats:
+      type: object
+      required: [totalProperties, publishedArticles, unreadEnquiries, pendingSiteVisits]
+      properties:
+        totalProperties:
+          type: integer
+        publishedArticles:
+          type: integer
+        unreadEnquiries:
+          type: integer
+        pendingSiteVisits:
+          type: integer
+        featuredProperties:
+          type: integer
+        availableProperties:
+          type: integer
+
+    ActivityItem:
+      type: object
+      required: [id, type, description, createdAt]
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum: [property, article, enquiry, site_visit, media]
+        description:
+          type: string
+        entityId:
+          type: ["integer", "null"]
+        entityTitle:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+
+    # ─── PROPERTY ──────────────────────────────────────────
+    Property:
+      type: object
+      required: [id, name, slug, county, location, status, cashPrice, installmentPrice, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        county:
+          type: string
+        location:
+          type: string
+        googleMapsLink:
+          type: ["string", "null"]
+        coordinates:
+          type: ["string", "null"]
+        heroImage:
+          type: ["string", "null"]
+        gallery:
+          type: array
+          items:
+            type: string
+        shortDescription:
+          type: ["string", "null"]
+        fullDescription:
+          type: ["string", "null"]
+        plotSize:
+          type: ["string", "null"]
+        cashPrice:
+          type: number
+        installmentPrice:
+          type: number
+        titleDeedFee:
+          type: ["number", "null"]
+        availablePhases:
+          type: array
+          items:
+            type: string
+        amenities:
+          type: array
+          items:
+            type: string
+        investmentHighlights:
+          type: array
+          items:
+            type: string
+        nearbyLandmarks:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [draft, available, coming_soon, sold_out, archived]
+        featured:
+          type: boolean
+        seoTitle:
+          type: ["string", "null"]
+        seoDescription:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    PropertyInput:
+      type: object
+      required: [name, county, location, cashPrice, installmentPrice]
+      properties:
+        name:
+          type: string
+          minLength: 2
+        slug:
+          type: ["string", "null"]
+        county:
+          type: string
+        location:
+          type: string
+        googleMapsLink:
+          type: ["string", "null"]
+        coordinates:
+          type: ["string", "null"]
+        heroImage:
+          type: ["string", "null"]
+        gallery:
+          type: array
+          items:
+            type: string
+        shortDescription:
+          type: ["string", "null"]
+        fullDescription:
+          type: ["string", "null"]
+        plotSize:
+          type: ["string", "null"]
+        cashPrice:
+          type: number
+          minimum: 0
+        installmentPrice:
+          type: number
+          minimum: 0
+        titleDeedFee:
+          type: ["number", "null"]
+        availablePhases:
+          type: array
+          items:
+            type: string
+        amenities:
+          type: array
+          items:
+            type: string
+        investmentHighlights:
+          type: array
+          items:
+            type: string
+        nearbyLandmarks:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [draft, available, coming_soon, sold_out]
+          default: draft
+        featured:
+          type: boolean
+          default: false
+        seoTitle:
+          type: ["string", "null"]
+        seoDescription:
+          type: ["string", "null"]
+
+    PropertyUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: ["string", "null"]
+        county:
+          type: string
+        location:
+          type: string
+        googleMapsLink:
+          type: ["string", "null"]
+        coordinates:
+          type: ["string", "null"]
+        heroImage:
+          type: ["string", "null"]
+        gallery:
+          type: array
+          items:
+            type: string
+        shortDescription:
+          type: ["string", "null"]
+        fullDescription:
+          type: ["string", "null"]
+        plotSize:
+          type: ["string", "null"]
+        cashPrice:
+          type: number
+        installmentPrice:
+          type: number
+        titleDeedFee:
+          type: ["number", "null"]
+        availablePhases:
+          type: array
+          items:
+            type: string
+        amenities:
+          type: array
+          items:
+            type: string
+        investmentHighlights:
+          type: array
+          items:
+            type: string
+        nearbyLandmarks:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [draft, available, coming_soon, sold_out, archived]
+        featured:
+          type: boolean
+        seoTitle:
+          type: ["string", "null"]
+        seoDescription:
+          type: ["string", "null"]
+
+    PropertyListResponse:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Property"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    # ─── ARTICLE ───────────────────────────────────────────
+    Article:
+      type: object
+      required: [id, title, slug, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        slug:
+          type: string
+        excerpt:
+          type: ["string", "null"]
+        content:
+          type: ["string", "null"]
+        featuredImage:
+          type: ["string", "null"]
+        category:
+          type: ["string", "null"]
+        author:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [draft, published]
+        readingTime:
+          type: ["integer", "null"]
+        seoTitle:
+          type: ["string", "null"]
+        seoDescription:
+          type: ["string", "null"]
+        publishedAt:
+          type: ["string", "null"]
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ArticleInput:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+          minLength: 2
+        slug:
+          type: ["string", "null"]
+        excerpt:
+          type: ["string", "null"]
+        content:
+          type: ["string", "null"]
+        featuredImage:
+          type: ["string", "null"]
+        category:
+          type: ["string", "null"]
+        author:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [draft, published]
+          default: draft
+        seoTitle:
+          type: ["string", "null"]
+        seoDescription:
+          type: ["string", "null"]
+
+    ArticleUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        slug:
+          type: ["string", "null"]
+        excerpt:
+          type: ["string", "null"]
+        content:
+          type: ["string", "null"]
+        featuredImage:
+          type: ["string", "null"]
+        category:
+          type: ["string", "null"]
+        author:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [draft, published]
+        seoTitle:
+          type: ["string", "null"]
+        seoDescription:
+          type: ["string", "null"]
+
+    ArticleListResponse:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Article"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    # ─── ENQUIRY ───────────────────────────────────────────
+    Enquiry:
+      type: object
+      required: [id, name, email, phone, message, status, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: ["string", "null"]
+        propertyId:
+          type: ["integer", "null"]
+        propertyName:
+          type: ["string", "null"]
+        message:
+          type: string
+        status:
+          type: string
+          enum: [unread, read, contacted, closed]
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+
+    EnquiryInput:
+      type: object
+      required: [name, email, message]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+
+        phone:
+          type: ["string", "null"]
+        propertyId:
+          type: ["integer", "null"]
+        message:
+          type: string
+
+    EnquiryUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [unread, read, contacted, closed]
+        notes:
+          type: ["string", "null"]
+
+    EnquiryListResponse:
+      type: object
+      required: [data, total, page, limit, unreadCount]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Enquiry"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+        unreadCount:
+          type: integer
+
+    # ─── SITE VISIT ────────────────────────────────────────
+    SiteVisit:
+      type: object
+      required: [id, name, email, phone, preferredDate, status, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        propertyId:
+          type: ["integer", "null"]
+        propertyName:
+          type: ["string", "null"]
+        preferredDate:
+          type: string
+          format: date
+        preferredTime:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [pending, approved, rejected, rescheduled, completed]
+        adminNotes:
+          type: ["string", "null"]
+        rescheduledDate:
+          type: ["string", "null"]
+          format: date
+        createdAt:
+          type: string
+          format: date-time
+
+    SiteVisitInput:
+      type: object
+      required: [name, email, phone, preferredDate]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+
+        phone:
+          type: string
+        propertyId:
+          type: ["integer", "null"]
+        preferredDate:
+          type: string
+          format: date
+        preferredTime:
+          type: ["string", "null"]
+
+    SiteVisitUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [pending, approved, rejected, rescheduled, completed]
+        adminNotes:
+          type: ["string", "null"]
+        rescheduledDate:
+          type: ["string", "null"]
+          format: date
+
+    SiteVisitListResponse:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/SiteVisit"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    # ─── MEDIA ─────────────────────────────────────────────
+    MediaFile:
+      type: object
+      required: [id, fileName, url, mimeType, size, createdAt]
+      properties:
+        id:
+          type: integer
+        fileName:
+          type: string
+        url:
+          type: string
+        thumbnailUrl:
+          type: ["string", "null"]
+        mimeType:
+          type: string
+        size:
+          type: integer
+        altText:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+
+    MediaInput:
+      type: object
+      required: [fileName, url, mimeType, size]
+      properties:
+        fileName:
+          type: string
+        url:
+          type: string
+        thumbnailUrl:
+          type: ["string", "null"]
+        mimeType:
+          type: string
+        size:
+          type: integer
+        altText:
+          type: ["string", "null"]
+
+    MediaListResponse:
+      type: object
+      required: [data, total, page, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaFile"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    # ─── SETTINGS ──────────────────────────────────────────
+    SiteSettings:
+      type: object
+      required: [id]
+      properties:
+        id:
+          type: integer
+        companyName:
+          type: ["string", "null"]
+        slogan:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        whatsapp:
+          type: ["string", "null"]
+        officeAddress:
+          type: ["string", "null"]
+        businessHours:
+          type: ["string", "null"]
+        facebook:
+          type: ["string", "null"]
+        instagram:
+          type: ["string", "null"]
+        linkedin:
+          type: ["string", "null"]
+        logoUrl:
+          type: ["string", "null"]
+        faviconUrl:
+          type: ["string", "null"]
+        footerText:
+          type: ["string", "null"]
+        updatedAt:
+          type: string
+          format: date-time
+
+    SiteSettingsUpdate:
+      type: object
+      properties:
+        companyName:
+          type: ["string", "null"]
+        slogan:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        whatsapp:
+          type: ["string", "null"]
+        officeAddress:
+          type: ["string", "null"]
+        businessHours:
+          type: ["string", "null"]
+        facebook:
+          type: ["string", "null"]
+        instagram:
+          type: ["string", "null"]
+        linkedin:
+          type: ["string", "null"]
+        logoUrl:
+          type: ["string", "null"]
+        faviconUrl:
+          type: ["string", "null"]
+        footerText:
+          type: ["string", "null"]
+
+    # ─── HOMEPAGE ──────────────────────────────────────────
+    HomepageContent:
+      type: object
+      required: [id]
+      properties:
+        id:
+          type: integer
+        heroHeading:
+          type: ["string", "null"]
+        heroSubheading:
+          type: ["string", "null"]
+        heroButtonText:
+          type: ["string", "null"]
+        heroButtonLink:
+          type: ["string", "null"]
+        heroImage:
+          type: ["string", "null"]
+        mission:
+          type: ["string", "null"]
+        vision:
+          type: ["string", "null"]
+        statsYearsInBusiness:
+          type: ["integer", "null"]
+        statsPropertiesSold:
+          type: ["integer", "null"]
+        statsHappyClients:
+          type: ["integer", "null"]
+        statsCountiesCovered:
+          type: ["integer", "null"]
+        communityImpact:
+          type: ["string", "null"]
+        footerCta:
+          type: ["string", "null"]
+        updatedAt:
+          type: string
+          format: date-time
+
+    HomepageContentUpdate:
+      type: object
+      properties:
+        heroHeading:
+          type: ["string", "null"]
+        heroSubheading:
+          type: ["string", "null"]
+        heroButtonText:
+          type: ["string", "null"]
+        heroButtonLink:
+          type: ["string", "null"]
+        heroImage:
+          type: ["string", "null"]
+        mission:
+          type: ["string", "null"]
+        vision:
+          type: ["string", "null"]
+        statsYearsInBusiness:
+          type: ["integer", "null"]
+        statsPropertiesSold:
+          type: ["integer", "null"]
+        statsHappyClients:
+          type: ["integer", "null"]
+        statsCountiesCovered:
+          type: ["integer", "null"]
+        communityImpact:
+          type: ["string", "null"]
+        footerCta:
+          type: ["string", "null"]
+
+    # ─── NEWSLETTER ────────────────────────────────────────
+    NewsletterInput:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+
+        name:
+          type: ["string", "null"]

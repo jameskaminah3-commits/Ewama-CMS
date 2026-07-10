@@ -1,0 +1,689 @@
+EWAMA Properties Ltd Website & CMS
+
+You are a senior full-stack software engineer and UI/UX designer.
+
+Build a production-ready website and lightweight Content Management System (CMS) for EWAMA Properties Ltd, a Kenyan real estate company.
+
+The system must be modern, secure, scalable, and extremely easy to use by staff with little or no technical knowledge.
+
+This is NOT just a website.
+
+It is a complete business website with its own custom administration portal.
+
+Brand
+
+Company Name
+
+EWAMA Properties Ltd
+
+Slogan
+
+Foundation of Trust
+
+The website should communicate:
+
+Trust
+Professionalism
+Simplicity
+Transparency
+Long-term investment
+Community
+
+Avoid flashy real estate designs.
+
+Make it elegant, clean and timeless.
+
+Branding
+
+Use the attached EWAMA marketing poster as inspiration for the visual identity.
+
+Specifically use:
+
+the company logo
+the gold colour
+the green colour
+the overall branding style
+
+Do NOT simply copy the poster layout.
+
+Instead create a premium corporate website using those colours.
+
+The overall design should be modern, minimal and highly professional.
+
+The website should feel closer to a bank or investment company than a typical "plots for sale" website.
+
+Colour Palette
+
+Primary Gold
+
+#D89B16
+
+Primary Green
+
+#1F4A3B
+
+Charcoal
+
+#2F2F2F
+
+Background
+
+#FAFAF8
+
+White
+
+#FFFFFF
+
+Use white generously.
+
+Gold should be used as an accent.
+
+Typography
+
+Use
+
+Poppins
+
+for headings.
+
+Use
+
+Inter
+
+for body text.
+
+Typography should feel spacious and premium.
+
+Tech Stack
+
+Frontend
+
+React
+
+TypeScript
+
+Vite
+
+Tailwind CSS
+
+shadcn/ui
+
+React Router
+
+TanStack Query
+
+React Hook Form
+
+Zod
+
+Backend
+
+Node.js
+
+Express.js
+
+TypeScript
+
+Supabase JavaScript SDK
+
+Do NOT build a backend inside Replit's database.
+
+The backend must be completely independent.
+
+The project will later be deployed on Railway.
+
+Database
+
+Use Supabase PostgreSQL.
+
+However...
+
+The frontend MUST NEVER communicate directly with Supabase.
+
+Instead create this architecture:
+
+Frontend
+
+↓
+
+Express API
+
+↓
+
+Service Layer
+
+↓
+
+Supabase
+
+Every database interaction must pass through the backend.
+
+Folder Structure
+
+/src
+
+/components
+
+/pages
+
+/layouts
+
+/hooks
+
+/lib
+
+/services
+
+/api
+
+/context
+
+/types
+
+/assets
+
+/server
+
+/routes
+
+/controllers
+
+/services
+
+/middleware
+
+/utils
+
+/config
+
+This should be a clean enterprise architecture.
+
+Authentication
+
+Only administrators can log in.
+
+No public registration.
+
+Authentication should use Supabase Auth.
+
+The frontend only communicates with Express.
+
+Never expose Supabase keys.
+
+CMS Philosophy
+
+This CMS should feel like software built specifically for EWAMA.
+
+The administrator should never know:
+
+Supabase
+PostgreSQL
+SQL
+Buckets
+Storage
+APIs
+
+The admin should only see business functions.
+
+Dashboard
+
+Keep it extremely simple.
+
+Sidebar
+
+Dashboard
+
+Properties
+
+Articles
+
+Enquiries
+
+Site Visits
+
+Media
+
+Website
+
+Settings
+
+Users
+
+Logout
+
+Nothing else.
+
+No technical menus.
+
+Dashboard Home
+
+Show simple cards.
+
+Properties
+
+Published Articles
+
+Unread Enquiries
+
+Pending Site Visits
+
+Total Visitors (optional)
+
+Latest Activities
+
+Properties Module
+
+This is the heart of the system.
+
+The administrator should be able to:
+
+Create Property
+
+Edit Property
+
+Delete Property
+
+Archive Property
+
+Duplicate Property
+
+Feature Property
+
+without touching code.
+
+Property fields
+
+Project Name
+
+Slug (auto-generated)
+
+County
+
+Location
+
+Google Maps Link
+
+Coordinates
+
+Hero Image
+
+Gallery
+
+Short Description
+
+Full Description
+
+Plot Size
+
+Cash Price
+
+Installment Price
+
+Title Deed Fee
+
+Available Phases
+
+Amenities
+
+Investment Highlights
+
+Nearby Landmarks
+
+Status
+
+Available
+
+Coming Soon
+
+Sold Out
+
+Featured
+
+SEO Title
+
+SEO Description
+
+Save Draft
+
+Publish
+
+Everything should be edited using simple forms.
+
+Property Listing
+
+Automatically generated from the database.
+
+Search
+
+Filters
+
+County
+
+Price
+
+Plot Size
+
+Status
+
+Featured
+
+Cards should update automatically.
+
+No hardcoded content.
+
+Property Page
+
+Hero
+
+Gallery
+
+Overview
+
+Pricing
+
+Features
+
+Amenities
+
+Map
+
+Buying Process
+
+FAQ
+
+Enquiry Form
+
+Related Properties
+
+Homepage Editor
+
+The administrator should edit homepage sections without code.
+
+Hero Heading
+
+Hero Subheading
+
+Hero Button
+
+Hero Image
+
+Featured Projects
+
+Mission
+
+Vision
+
+Statistics
+
+Community Impact
+
+Footer CTA
+
+Save
+
+Done.
+
+About Page Editor
+
+Simple rich text editor.
+
+History
+
+Mission
+
+Vision
+
+Values
+
+CSR
+
+Articles
+
+Create
+
+Edit
+
+Delete
+
+Draft
+
+Publish
+
+Featured Image
+
+Category
+
+Author
+
+SEO
+
+Reading Time
+
+Rich Text Editor
+
+Simple like Microsoft Word.
+
+Media Library
+
+Looks like Google Photos.
+
+Upload
+
+Search
+
+Delete
+
+Preview
+
+Nothing complicated.
+
+Customer Enquiries
+
+Looks like Gmail.
+
+Unread
+
+Read
+
+Contacted
+
+Closed
+
+Search
+
+Filter
+
+Export CSV
+
+Site Visits
+
+Simple calendar.
+
+Approve
+
+Reject
+
+Reschedule
+
+Notes
+
+Website Settings
+
+Phone
+
+Email
+
+WhatsApp
+
+Office Address
+
+Business Hours
+
+Facebook
+
+Instagram
+
+LinkedIn
+
+Logo
+
+Favicon
+
+Footer
+
+Homepage Banner
+
+Everything editable.
+
+Forms
+
+Contact Form
+
+Property Enquiry
+
+Book Site Visit
+
+Newsletter
+
+All forms save to Supabase through Express.
+
+Optionally send email using Resend.
+
+Image Uploads
+
+Images should upload directly to Supabase Storage through the backend.
+
+Automatically compress images.
+
+Automatically create thumbnails.
+
+Lazy load.
+
+SEO
+
+Every page supports
+
+Meta Title
+
+Meta Description
+
+Open Graph
+
+Schema.org
+
+Canonical URL
+
+Automatic sitemap.xml
+
+Automatic robots.txt
+
+Accessibility
+
+Keyboard navigation
+
+WCAG-friendly contrast
+
+Accessible forms
+
+Semantic HTML
+
+Performance
+
+Target Lighthouse score above 90.
+
+Responsive on
+
+Desktop
+
+Tablet
+
+Mobile
+
+Optimize images.
+
+Code split pages.
+
+Lazy load components.
+
+Security
+
+Validate every form.
+
+Rate limit forms.
+
+Protect admin routes.
+
+Sanitize all inputs.
+
+Never expose secrets.
+
+Deployment
+
+The project must be deployable outside Replit.
+
+The backend should run independently.
+
+The frontend should use environment variables.
+
+Everything should be Railway-compatible.
+
+No Replit-specific dependencies.
+
+Future Scalability
+
+Design the CMS so new modules can easily be added later:
+
+Testimonials
+
+Downloads
+
+Staff Profiles
+
+Careers
+
+Projects
+
+Partners
+
+Videos
+
+Customer Reviews
+
+Payments
+
+CRM
+
+without changing the architecture.
+
+User Experience
+
+The administrator should feel like they are using Microsoft Word.
+
+Large buttons.
+
+Simple forms.
+
+Clear labels.
+
+Minimal options.
+
+No technical language.
+
+The system should require almost no training.
+
+If someone knows how to use Facebook or Microsoft Word, they should be able to manage the entire website confidently.
+
+Final Deliverable
+
+Produce a polished, production-ready application with:
+
+Responsive frontend
+Custom CMS
+Express API backend
+Supabase integration through a service layer
+Railway-ready deployment
+Clean, maintainable TypeScript code
+Modular architecture
+Excellent documentation (README with setup instructions)
+
+Do not generate placeholder-heavy pages. Build reusable components, clean architecture, and a maintainable codebase that can serve as the long-term digital platform for EWAMA Properties Ltd.

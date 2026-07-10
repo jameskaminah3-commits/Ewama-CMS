@@ -1,0 +1,1 @@
+- [EWAMA Project](ewama-project.md) — Full-stack website + CMS for EWAMA Properties Ltd; brand colors, admin credentials, and key architecture decisions.

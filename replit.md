@@ -1,45 +1,84 @@
-# [Project name]
+# EWAMA Properties Ltd — Website & CMS
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A production-ready website and lightweight CMS for EWAMA Properties Ltd, a Kenyan real estate company. Tagline: "Foundation of Trust."
+
+## What This Is
+
+- **Public Website**: Responsive property listing site with homepage, property pages, blog, contact, site visit booking
+- **Admin CMS**: Full content management portal — properties, articles, enquiries, site visits, media, settings
+- **Express API**: All data flows through a typed Express backend; the frontend never touches the database directly
+
+## Admin Login
+
+- URL: `/admin/login`
+- Email: `admin@ewamaproperties.co.ke`
+- Password: `ewama2024!`
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/api-server run dev` — run the API server (port 8080, proxied at /api)
+- `pnpm --filter @workspace/ewama-website run dev` — run the frontend (port 22943, proxied at /)
 - `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
+- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
 
 ## Stack
 
-- pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- **Frontend**: React 18, Vite, TypeScript, Tailwind CSS, shadcn/ui, wouter (router), TanStack Query, react-hook-form
+- **Backend**: Express 5, Node.js, TypeScript, Drizzle ORM
+- **Database**: PostgreSQL (Replit built-in; Supabase-compatible — just change DATABASE_URL)
+- **Auth**: JWT-based admin auth (bcryptjs + jsonwebtoken)
+- **API codegen**: Orval (from OpenAPI spec in lib/api-spec/openapi.yaml)
 
-## Where things live
+## Brand
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- Primary Gold: #D89B16
+- Primary Green: #1F4A3B
+- Charcoal: #2F2F2F
+- Background: #FAFAF8
+- Fonts: Poppins (headings), Inter (body)
 
-## Architecture decisions
+## Where Things Live
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- `lib/api-spec/openapi.yaml` — source of truth for all API contracts
+- `lib/db/src/schema/` — Drizzle DB schema (properties, articles, enquiries, siteVisits, media, settings, adminUsers, activity)
+- `artifacts/api-server/src/routes/` — Express route handlers
+- `artifacts/ewama-website/src/` — React frontend + CMS
 
-## Product
+## Architecture Decisions
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Frontend → Express API → Drizzle → PostgreSQL. Frontend never touches DB directly.
+- JWT tokens stored in localStorage; passed as Bearer token in Authorization header.
+- Admin routes protected by `requireAuth` middleware (JWT verification).
+- Public routes (property listing, enquiry submission, site visit booking) are unauthenticated.
+- All JSON array fields (gallery, amenities, etc.) stored as JSONB in PostgreSQL.
+- Prices stored as numeric strings in DB, converted to floats in API responses.
 
-## User preferences
+## Property Catalog (Seed Data)
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+| Property | Cash | Installment |
+|---|---|---|
+| Naivasha | Ksh 600,000 | Ksh 650,000 |
+| Matuu | Ksh 400,000 | Ksh 450,000 |
+| Sagana Ph 1 | Ksh 850,000 | Ksh 895,000 |
+| Sagana Ph 2 | Ksh 900,000 | Ksh 950,000 |
+| Mananja Ph 2 | Ksh 450,000 | Ksh 480,000 |
+| Mananja Ph 3 | Ksh 300,000 | Ksh 330,000 |
+| Gilgil | Ksh 500,000 | Ksh 550,000 |
+| Joska | Ksh 750,000 | Ksh 800,000 |
+| Imbirikani 50x100 | Ksh 180,000 | Ksh 200,000 |
+| Imbirikani 100x100 | Ksh 330,000 | Ksh 350,000 |
+| Imbirikani 1 Acre | Ksh 950,000 | Ksh 1,000,000 |
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- After OpenAPI spec changes, always run `pnpm --filter @workspace/api-spec run codegen` before building
+- `req.params` access in Express 5 + TypeScript requires `req.params.id as string` cast to avoid `string | string[]` type error
+- JWT_SECRET env var should be set in production — defaults to a dev value if not set
+- Properties use numeric strings for prices in Drizzle schema; always parse with `parseFloat()` in route handlers
 
-## Pointers
+## User Preferences
 
-- See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+- Prices shown as "Ksh. 600,000" format (not KES)
+- Admin UI should use plain English — no technical jargon visible to staff
+- No emojis in UI
