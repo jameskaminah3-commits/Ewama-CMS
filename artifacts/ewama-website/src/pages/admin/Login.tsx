@@ -4,7 +4,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2 } from 'lucide-react';
-import { useAdminLogin } from '@workspace/api-client-react';
+import { useAdminLogin, getGetMeQueryKey } from '@workspace/api-client-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,7 @@ const loginSchema = z.object({
 export default function AdminLogin() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const loginMutation = useAdminLogin();
 
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -30,11 +32,14 @@ export default function AdminLogin() {
 
   const onSubmit = (data: z.infer<typeof loginSchema>) => {
     loginMutation.mutate({ data }, {
-      onSuccess: (res) => {
+      onSuccess: async (res) => {
         localStorage.setItem('admin_token', res.token);
         toast({ title: 'Login successful' });
-        // Give time for state to update
-        setTimeout(() => setLocation('/admin'), 100);
+        // The auth provider caches the earlier "not logged in" answer;
+        // refetch it with the new token before entering the admin area,
+        // otherwise ProtectedRoute bounces straight back to the login page.
+        await queryClient.refetchQueries({ queryKey: getGetMeQueryKey() });
+        setLocation('/admin');
       },
       onError: () => {
         toast({ 
