@@ -61,17 +61,18 @@ export default function Contact() {
   return (
     <PublicLayout>
       <Seo
-        title="Contact Us"
-        description="Get in touch with EWAMA Properties Ltd — call, email, WhatsApp, or visit our Nairobi office to speak with a property advisor."
+        title="Customer Care Centre"
+        description="Let's start the conversation — call, email, WhatsApp, or visit EWAMA Properties. Honest guidance and clear answers, no pressure and no jargon."
       />
       <div className="bg-primary pt-16 pb-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] opacity-5 mix-blend-overlay bg-cover bg-center" />
         <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
+          <p className="text-secondary font-semibold tracking-widest uppercase text-sm mb-4">Customer Care Centre</p>
           <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">
-            Contact Us
+            Let's Start the Conversation
           </h1>
           <p className="text-white/80 text-lg max-w-2xl mx-auto font-light">
-            Have questions about a property or our investment process? Our team of real estate advisors is here to help.
+            Every great investment begins with a simple conversation. No pressure, no complicated jargon — just clear answers to help you make informed decisions.
           </p>
         </div>
       </div>
@@ -81,17 +82,20 @@ export default function Contact() {
           
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 h-full">
-              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-8">Get in Touch</h2>
-              
+              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-8">Talk to Us</h2>
+
               <div className="space-y-8">
                 <div className="flex gap-4">
                   <div className="w-12 h-12 bg-primary/5 rounded-full flex items-center justify-center text-primary shrink-0">
                     <MapPin className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-1">Office Address</h3>
+                    <h3 className="font-bold text-gray-900 mb-1">Visit Us</h3>
                     <p className="text-gray-600 leading-relaxed">
-                      {settings?.officeAddress || 'Westlands, Nairobi, Kenya'}
+                      {settings?.officeAddress || 'Nairobi, Kenya'}
+                    </p>
+                    <p className="text-gray-500 text-sm mt-1">
+                      Planning to stop by? Contact us in advance so we can give you the attention you deserve.
                     </p>
                   </div>
                 </div>
@@ -102,8 +106,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-bold text-gray-900 mb-1">Phone Number</h3>
-                    <a href={`tel:${settings?.phone || '0720769999'}`} className="text-gray-600 hover:text-primary transition-colors block mb-1">
-                      {settings?.phone || '0720 769 999'}
+                    <a href={`tel:${settings?.phone || '+254720769999'}`} className="text-gray-600 hover:text-primary transition-colors block mb-1">
+                      {settings?.phone || '+254 720 769 999'}
                     </a>
                   </div>
                 </div>
@@ -114,8 +118,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-bold text-gray-900 mb-1">Email Address</h3>
-                    <a href={`mailto:${settings?.email || 'info@ewamaproperties.co.ke'}`} className="text-gray-600 hover:text-primary transition-colors">
-                      {settings?.email || 'info@ewamaproperties.co.ke'}
+                    <a href={`mailto:${settings?.email || 'ewamapropertiesltd@gmail.com'}`} className="text-gray-600 hover:text-primary transition-colors">
+                      {settings?.email || 'ewamapropertiesltd@gmail.com'}
                     </a>
                   </div>
                 </div>
@@ -151,7 +155,10 @@ export default function Contact() {
 
           <div className="lg:col-span-3">
             <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
-              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-6">Send a Message</h2>
+              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-2">Send Us a Message</h2>
+              <p className="text-gray-500 mb-6 text-sm">
+                To help us respond efficiently, include your preferred project or location and your question or request. We'll get back to you as soon as possible.
+              </p>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

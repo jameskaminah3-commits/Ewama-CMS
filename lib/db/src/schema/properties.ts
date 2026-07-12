@@ -30,6 +30,8 @@ export const propertiesTable = pgTable("properties", {
   amenities: jsonb("amenities").$type<string[]>().default([]),
   investmentHighlights: jsonb("investment_highlights").$type<string[]>().default([]),
   nearbyLandmarks: jsonb("nearby_landmarks").$type<string[]>().default([]),
+  faqs: jsonb("faqs").$type<{ question: string; answer: string }[]>().default([]),
+  phasePricing: jsonb("phase_pricing").$type<{ phase: string; cashPrice: number; installmentPrice: number }[]>().default([]),
   status: propertyStatusEnum("status").default("draft").notNull(),
   featured: boolean("featured").default(false).notNull(),
   seoTitle: text("seo_title"),

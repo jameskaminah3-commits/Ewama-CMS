@@ -122,6 +122,15 @@ export const ListPropertiesResponse = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -166,6 +175,15 @@ export const CreatePropertyBody = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out']).default(createPropertyBodyStatusDefault),
   "featured": zod.boolean().default(createPropertyBodyFeaturedDefault),
   "seoTitle": zod.string().nullish(),
@@ -192,6 +210,15 @@ export const CreatePropertyResponse = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -228,6 +255,15 @@ export const GetPropertyResponse = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -263,6 +299,15 @@ export const UpdatePropertyBody = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']).optional(),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -289,6 +334,15 @@ export const UpdatePropertyResponse = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -335,6 +389,15 @@ export const GetPropertyBySlugResponse = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -371,6 +434,15 @@ export const DuplicatePropertyResponse = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -407,6 +479,15 @@ export const PublishPropertyResponse = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -443,6 +524,15 @@ export const ArchivePropertyResponse = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -475,6 +565,15 @@ export const GetFeaturedPropertiesResponseItem = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),

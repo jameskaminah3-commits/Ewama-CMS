@@ -105,7 +105,9 @@ export function Footer() {
               <li><Link href="/"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Home</span></Link></li>
               <li><Link href="/properties"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Properties</span></Link></li>
               <li><Link href="/about"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">About Us</span></Link></li>
+              <li><Link href="/communities"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Our Impact</span></Link></li>
               <li><Link href="/articles"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Insights</span></Link></li>
+              <li><Link href="/faq"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">FAQ</span></Link></li>
               <li><Link href="/contact"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Contact</span></Link></li>
             </ul>
           </div>
@@ -130,14 +132,14 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-3 text-sm text-white/80">
                 <Phone className="w-5 h-5 text-secondary shrink-0" />
-                <a href={`tel:${settings?.phone || '0720769999'}`} className="hover:text-white transition-colors">
-                  {settings?.phone || '0720 769 999'}
+                <a href={`tel:${settings?.phone || '+254720769999'}`} className="hover:text-white transition-colors">
+                  {settings?.phone || '+254 720 769 999'}
                 </a>
               </li>
               <li className="flex items-center gap-3 text-sm text-white/80">
                 <Mail className="w-5 h-5 text-secondary shrink-0" />
-                <a href={`mailto:${settings?.email || 'info@ewamaproperties.co.ke'}`} className="hover:text-white transition-colors">
-                  {settings?.email || 'info@ewamaproperties.co.ke'}
+                <a href={`mailto:${settings?.email || 'ewamapropertiesltd@gmail.com'}`} className="hover:text-white transition-colors">
+                  {settings?.email || 'ewamapropertiesltd@gmail.com'}
                 </a>
               </li>
             </ul>

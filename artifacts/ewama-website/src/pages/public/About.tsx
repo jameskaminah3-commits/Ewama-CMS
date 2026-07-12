@@ -1,8 +1,19 @@
 import { PublicLayout } from '@/components/layout/PublicLayout';
 import { Seo } from '@/components/Seo';
 import { useGetHomepageContent } from '@workspace/api-client-react';
-import { Target, Eye, Shield, Users } from 'lucide-react';
+import { Target, Eye, Shield, Users, Home as HomeIcon, CalendarCheck, LineChart, Headphones, Wallet, Lightbulb, ArrowRight } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { Link } from 'wouter';
+
+const SERVICES = [
+  { icon: HomeIcon, title: 'Property Sales', description: 'Access carefully selected properties suited to residential, commercial, and investment purposes.' },
+  { icon: CalendarCheck, title: 'Site Visits', description: 'Experience properties firsthand through organised site visits designed to help you make informed decisions.' },
+  { icon: LineChart, title: 'Investment Advisory', description: 'Receive professional guidance on selecting property opportunities aligned with your financial objectives.' },
+  { icon: Headphones, title: 'Customer Support', description: 'Our team remains available throughout your property ownership journey, ensuring a seamless experience.' },
+  { icon: Wallet, title: 'Flexible Payment Arrangements', description: 'We work with clients to explore payment options that make property ownership more achievable.' },
+  { icon: Lightbulb, title: 'Property Consultation', description: 'Gain insights into property trends, growth areas, and investment opportunities from experienced professionals.' },
+];
 
 export default function About() {
   const { data: content, isLoading } = useGetHomepageContent();
@@ -22,8 +33,8 @@ export default function About() {
           <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">
             About EWAMA Properties
           </h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto font-light tracking-wide uppercase text-sm">
-            Foundation of Trust
+          <p className="text-white/85 text-xl max-w-2xl mx-auto font-light">
+            Building Trust. Creating Wealth. Transforming Communities.
           </p>
         </div>
       </div>
@@ -33,16 +44,37 @@ export default function About() {
           
           {/* History */}
           <div className="prose prose-lg max-w-none text-gray-600 mb-20">
-            <h2 className="text-3xl font-heading font-bold text-primary mb-6">Our Story</h2>
+            <h2 className="text-3xl font-heading font-bold text-primary mb-6">Who We Are</h2>
             <p className="lead">
-              EWAMA Properties Ltd was established with a singular vision: to bring banking-level professionalism, transparency, and trust to the Kenyan real estate sector.
+              EWAMA Properties Ltd is a trusted real estate company dedicated to providing secure, transparent, and sustainable property investment opportunities. Our goal is to make property ownership a reality for every aspiring homeowner and investor while fostering thriving communities across Kenya.
             </p>
             <p>
-              For years, land buyers both locally and in the diaspora have faced uncertainty when investing in Kenyan real estate. Fake title deeds, hidden fees, and unfulfilled promises have plagued the industry. EWAMA was founded to be the antidote to this chaos.
+              Guided by our belief that every property purchase is a step toward a better future, we focus on delivering value through honesty, professionalism, and customer-centered service.
             </p>
             <p>
-              We operate differently. We don't just sell land; we provide investment-grade real estate assets. Before any property reaches our portfolio, it undergoes rigorous legal, financial, and topographical due diligence. When you buy from EWAMA, you are buying peace of mind.
+              We understand that purchasing property is one of life's most significant investments. That's why we walk with our clients every step of the journey, ensuring they have the information, support, and confidence they need to make informed decisions.
             </p>
+          </div>
+
+          {/* Services */}
+          <div className="mb-20">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-heading font-bold text-primary mb-4">Comprehensive Real Estate Solutions</h2>
+              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                We provide more than property listings. We offer guidance, support, and solutions that simplify your investment journey.
+              </p>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {SERVICES.map((service) => (
+                <div key={service.title} className="bg-white border border-gray-100 rounded-2xl p-7 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="w-12 h-12 bg-primary/5 text-primary rounded-xl flex items-center justify-center mb-5">
+                    <service.icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-lg font-heading font-bold text-gray-900 mb-2">{service.title}</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">{service.description}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Mission & Vision */}
@@ -103,14 +135,19 @@ export default function About() {
 
           {/* CSR */}
           <div className="bg-gray-50 p-10 rounded-2xl border border-gray-100 text-center">
-            <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">Community Impact</h2>
+            <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">Building More Than Properties</h2>
             {isLoading ? (
               <Skeleton className="h-20 w-3/4 mx-auto" />
             ) : (
-              <p className="text-gray-600 leading-relaxed max-w-2xl mx-auto">
-                {content?.communityImpact || "At EWAMA, we believe in growing with our communities. We actively participate in local development initiatives, from tree planting drives in our properties to supporting local education infrastructure."}
+              <p className="text-gray-600 leading-relaxed max-w-2xl mx-auto mb-8">
+                {content?.communityImpact || "Through our community-focused initiatives and commitment to social responsibility, we have helped settle more than ten families. Because true success is measured by the difference we make in people's lives."}
               </p>
             )}
+            <Link href="/communities">
+              <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white gap-2">
+                Read Our Impact Story <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
           </div>
 
         </div>

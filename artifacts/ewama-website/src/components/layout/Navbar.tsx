@@ -21,7 +21,9 @@ export function Navbar() {
     { label: 'Home', href: '/' },
     { label: 'Properties', href: '/properties' },
     { label: 'About Us', href: '/about' },
+    { label: 'Our Impact', href: '/communities' },
     { label: 'Insights', href: '/articles' },
+    { label: 'FAQ', href: '/faq' },
     { label: 'Contact', href: '/contact' },
   ];
 
@@ -50,7 +52,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center gap-8">
           <div className="flex gap-6">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href}>
@@ -67,9 +69,9 @@ export function Navbar() {
           <div className="flex items-center gap-4 border-l pl-4 border-gray-200">
             <div className="flex flex-col items-end">
               <span className="text-xs text-gray-500">Call us today</span>
-              <a href="tel:0720769999" className="text-sm font-semibold text-primary flex items-center gap-1 hover:text-secondary transition-colors">
+              <a href="tel:+254720769999" className="text-sm font-semibold text-primary flex items-center gap-1 hover:text-secondary transition-colors">
                 <Phone className="w-3 h-3" />
-                0720 769 999
+                +254 720 769 999
               </a>
             </div>
             <Link href="/book-site-visit">
@@ -81,8 +83,8 @@ export function Navbar() {
         </nav>
 
         {/* Mobile Nav Toggle */}
-        <button 
-          className="md:hidden text-primary p-2"
+        <button
+          className="lg:hidden text-primary p-2"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -91,7 +93,7 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-100 shadow-lg py-4 px-6 flex flex-col gap-4">
+        <div className="lg:hidden absolute top-full left-0 w-full bg-white border-b border-gray-100 shadow-lg py-4 px-6 flex flex-col gap-4">
           {navLinks.map((link) => (
             <Link key={link.href} href={link.href} onClick={() => setIsMobileMenuOpen(false)}>
               <span className={cn(
@@ -103,9 +105,9 @@ export function Navbar() {
             </Link>
           ))}
           <div className="pt-4 flex flex-col gap-4">
-            <a href="tel:0720769999" className="flex items-center justify-center gap-2 p-3 bg-gray-50 rounded-md text-primary font-medium">
+            <a href="tel:+254720769999" className="flex items-center justify-center gap-2 p-3 bg-gray-50 rounded-md text-primary font-medium">
               <Phone className="w-4 h-4" />
-              0720 769 999
+              +254 720 769 999
             </a>
             <Link href="/book-site-visit" onClick={() => setIsMobileMenuOpen(false)}>
               <Button className="w-full bg-secondary text-white hover:bg-secondary/90 h-12">

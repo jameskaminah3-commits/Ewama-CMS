@@ -990,6 +990,14 @@ components:
           type: array
           items:
             type: string
+        faqs:
+          type: array
+          items:
+            $ref: "#/components/schemas/PropertyFaq"
+        phasePricing:
+          type: array
+          items:
+            $ref: "#/components/schemas/PhasePrice"
         status:
           type: string
           enum: [draft, available, coming_soon, sold_out, archived]
@@ -1005,6 +1013,26 @@ components:
         updatedAt:
           type: string
           format: date-time
+
+    PropertyFaq:
+      type: object
+      required: [question, answer]
+      properties:
+        question:
+          type: string
+        answer:
+          type: string
+
+    PhasePrice:
+      type: object
+      required: [phase, cashPrice, installmentPrice]
+      properties:
+        phase:
+          type: string
+        cashPrice:
+          type: number
+        installmentPrice:
+          type: number
 
     PropertyInput:
       type: object
@@ -1059,6 +1087,14 @@ components:
           type: array
           items:
             type: string
+        faqs:
+          type: array
+          items:
+            $ref: "#/components/schemas/PropertyFaq"
+        phasePricing:
+          type: array
+          items:
+            $ref: "#/components/schemas/PhasePrice"
         status:
           type: string
           enum: [draft, available, coming_soon, sold_out]
@@ -1120,6 +1156,14 @@ components:
           type: array
           items:
             type: string
+        faqs:
+          type: array
+          items:
+            $ref: "#/components/schemas/PropertyFaq"
+        phasePricing:
+          type: array
+          items:
+            $ref: "#/components/schemas/PhasePrice"
         status:
           type: string
           enum: [draft, available, coming_soon, sold_out, archived]

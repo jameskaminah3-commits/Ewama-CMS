@@ -68,8 +68,8 @@ export default function TermsOfService() {
           <h2 className="text-2xl font-heading font-bold text-primary">8. Contact</h2>
           <p>
             Questions about these terms? Contact us at{' '}
-            <a href="mailto:info@ewamaproperties.co.ke" className="text-secondary">info@ewamaproperties.co.ke</a>{' '}
-            or call <a href="tel:0720769999" className="text-secondary">0720 769 999</a>.
+            <a href="mailto:ewamapropertiesltd@gmail.com" className="text-secondary">ewamapropertiesltd@gmail.com</a>{' '}
+            or call <a href="tel:+254720769999" className="text-secondary">+254 720 769 999</a>.
           </p>
         </div>
       </div>

@@ -11,7 +11,7 @@ function toWaLink(raw: string): string {
 /** Floating WhatsApp chat button shown on every public page. */
 export function WhatsAppButton() {
   const { data: settings } = useGetSettings();
-  const target = settings?.whatsapp || settings?.phone || '0720769999';
+  const target = settings?.whatsapp || settings?.phone || '+254720769999';
 
   return (
     <a

@@ -71,6 +71,17 @@ export const PropertyStatus = {
   archived: 'archived',
 } as const;
 
+export interface PropertyFaq {
+  question: string;
+  answer: string;
+}
+
+export interface PhasePrice {
+  phase: string;
+  cashPrice: number;
+  installmentPrice: number;
+}
+
 export interface Property {
   id: number;
   name: string;
@@ -98,6 +109,8 @@ export interface Property {
   amenities?: string[];
   investmentHighlights?: string[];
   nearbyLandmarks?: string[];
+  faqs?: PropertyFaq[];
+  phasePricing?: PhasePrice[];
   status: PropertyStatus;
   featured?: boolean;
   /** @nullable */
@@ -148,6 +161,8 @@ export interface PropertyInput {
   amenities?: string[];
   investmentHighlights?: string[];
   nearbyLandmarks?: string[];
+  faqs?: PropertyFaq[];
+  phasePricing?: PhasePrice[];
   status?: PropertyInputStatus;
   featured?: boolean;
   /** @nullable */
@@ -194,6 +209,8 @@ export interface PropertyUpdate {
   amenities?: string[];
   investmentHighlights?: string[];
   nearbyLandmarks?: string[];
+  faqs?: PropertyFaq[];
+  phasePricing?: PhasePrice[];
   status?: PropertyUpdateStatus;
   featured?: boolean;
   /** @nullable */

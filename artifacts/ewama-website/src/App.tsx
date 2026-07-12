@@ -16,6 +16,8 @@ import Contact from '@/pages/public/Contact';
 import BookSiteVisit from '@/pages/public/BookSiteVisit';
 import PrivacyPolicy from '@/pages/public/PrivacyPolicy';
 import TermsOfService from '@/pages/public/TermsOfService';
+import Faq from '@/pages/public/Faq';
+import Communities from '@/pages/public/Communities';
 
 // Admin Pages
 import AdminLogin from '@/pages/admin/Login';
@@ -45,6 +47,8 @@ function Router() {
       <Route path="/book-site-visit" component={BookSiteVisit} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/terms-of-service" component={TermsOfService} />
+      <Route path="/faq" component={Faq} />
+      <Route path="/communities" component={Communities} />
 
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin" component={AdminDashboard} />

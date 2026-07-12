@@ -111,7 +111,7 @@ export default function AdminSettings() {
                     <FormItem>
                       <FormLabel>Public Email Address</FormLabel>
                       <FormControl>
-                        <Input placeholder="info@ewamaproperties.co.ke" {...field} value={field.value || ''} />
+                        <Input placeholder="ewamapropertiesltd@gmail.com" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -124,7 +124,7 @@ export default function AdminSettings() {
                     <FormItem>
                       <FormLabel>Primary Phone Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="0720 769 999" {...field} value={field.value || ''} />
+                        <Input placeholder="+254 720 769 999" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

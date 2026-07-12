@@ -3,11 +3,11 @@ import { PublicLayout } from '@/components/layout/PublicLayout';
 import { Seo } from '@/components/Seo';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
-import { MapPin, Shield, TrendingUp, Handshake, ChevronRight, ArrowRight, FileCheck2, CalendarCheck, BadgeCheck } from 'lucide-react';
+import { MapPin, Shield, TrendingUp, Handshake, ChevronRight, ArrowRight, FileCheck2, CalendarCheck, BadgeCheck, Users, Coins } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
 
-const ADVANTAGE_ICONS = [Shield, TrendingUp, Handshake];
+const ADVANTAGE_ICONS = [Shield, FileCheck2, Coins, Users, MapPin, TrendingUp];
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -21,16 +21,20 @@ export default function Home() {
   const { data: properties, isLoading: propsLoading } = useListProperties({ featured: true, limit: 3 });
 
   const advantages = content?.advantages?.length ? content.advantages : [
-    { title: 'Secure & Verified', description: 'Every property we sell has undergone rigorous due diligence. We guarantee genuine, ready title deeds.' },
-    { title: 'Investment Grade', description: 'We select land in high-growth corridors positioned for maximum appreciation and development potential.' },
-    { title: 'Transparent Process', description: 'No hidden fees, no rushed decisions. We walk you through every step of the buying process with clarity.' },
+    { title: 'Verified & Secure Properties', description: 'We prioritise due diligence to ensure that every property we offer meets legal and ownership requirements, giving our clients confidence and peace of mind.' },
+    { title: 'Transparent Processes', description: 'From inquiry to ownership, we maintain open communication and clear documentation, ensuring a smooth and trustworthy experience.' },
+    { title: 'Flexible Investment Opportunities', description: "Whether you're a first-time buyer, homeowner, or seasoned investor, we offer property options designed to suit diverse needs and budgets." },
+    { title: 'Customer-Centered Service', description: 'Our clients are at the heart of everything we do. We listen, guide, and support every customer with professionalism and care.' },
+    { title: 'Strategic Locations', description: 'We identify properties in promising growth areas with strong potential for appreciation and future development.' },
+    { title: 'Long-Term Value', description: 'Our focus extends beyond transactions. We help clients secure investments that contribute to financial growth and generational wealth.' },
   ];
 
   const processSteps = content?.processSteps?.length ? content.processSteps : [
-    { title: 'Explore & Enquire', description: 'Browse our vetted properties online or speak to an advisor about your investment goals.' },
-    { title: 'Visit the Site', description: 'Book a free guided site visit and see the land, beacons, and surrounding developments for yourself.' },
-    { title: 'Secure Your Plot', description: 'Pay a deposit or the full amount to official EWAMA accounts and sign your sale agreement.' },
-    { title: 'Receive Your Title', description: 'We process and hand over your genuine title deed — your ownership, fully documented.' },
+    { title: 'Explore Opportunities', description: 'Browse our available properties and identify options that align with your goals.' },
+    { title: 'Speak With Our Advisors', description: 'Consult with our team to gain detailed information and professional guidance.' },
+    { title: 'Visit the Property', description: 'Participate in a site visit to evaluate the property and its surroundings.' },
+    { title: 'Secure Your Investment', description: 'Complete the purchase process through clear and transparent documentation.' },
+    { title: 'Begin Building Your Future', description: 'Take ownership of your property and start turning your dreams into reality.' },
   ];
 
   const testimonials = content?.testimonials?.length ? content.testimonials : [];
@@ -205,15 +209,15 @@ export default function Home() {
             <p className="text-lg text-white/70">Four straightforward steps — no surprises, no pressure, full documentation.</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
             {processSteps.map((step, idx) => (
               <motion.div
                 key={idx}
                 {...fadeUp}
                 transition={{ duration: 0.6, delay: idx * 0.1 }}
-                className="relative bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm"
+                className="relative bg-white/5 border border-white/10 rounded-2xl p-7 backdrop-blur-sm"
               >
-                <div className="text-secondary font-heading font-bold text-5xl mb-6 opacity-90">
+                <div className="text-secondary font-heading font-bold text-4xl mb-5 opacity-90">
                   {String(idx + 1).padStart(2, '0')}
                 </div>
                 <h3 className="text-xl font-heading font-bold text-white mb-3">{step.title}</h3>

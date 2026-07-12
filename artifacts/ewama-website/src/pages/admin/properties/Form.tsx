@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useParams } from 'wouter';
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AdminLayout } from '@/components/admin/AdminLayout';
@@ -33,6 +33,15 @@ const propertySchema = z.object({
   googleMapsLink: z.string().optional().nullable(),
   amenities: z.array(z.string()).default([]),
   investmentHighlights: z.array(z.string()).default([]),
+  faqs: z.array(z.object({
+    question: z.string().min(1, 'Question is required'),
+    answer: z.string().min(1, 'Answer is required'),
+  })).default([]),
+  phasePricing: z.array(z.object({
+    phase: z.string().min(1, 'Phase name is required'),
+    cashPrice: z.coerce.number().min(0),
+    installmentPrice: z.coerce.number().min(0),
+  })).default([]),
 });
 
 export default function AdminPropertyForm() {
@@ -71,8 +80,13 @@ export default function AdminPropertyForm() {
       googleMapsLink: '',
       amenities: [],
       investmentHighlights: [],
+      faqs: [],
+      phasePricing: [],
     },
   });
+
+  const faqArray = useFieldArray({ control: form.control, name: 'faqs' });
+  const phaseArray = useFieldArray({ control: form.control, name: 'phasePricing' });
 
   useEffect(() => {
     if (property && isEdit) {
@@ -92,6 +106,8 @@ export default function AdminPropertyForm() {
         googleMapsLink: property.googleMapsLink || '',
         amenities: property.amenities || [],
         investmentHighlights: property.investmentHighlights || [],
+        faqs: property.faqs || [],
+        phasePricing: property.phasePricing || [],
       });
     }
   }, [property, isEdit, form]);
@@ -398,6 +414,111 @@ export default function AdminPropertyForm() {
                     </ul>
                   </div>
 
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-sm border-gray-100">
+                <CardHeader>
+                  <CardTitle>Phase Pricing (optional)</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-gray-500 -mt-2">
+                    For projects sold in phases with different prices. When phases are added, they replace the single cash/installment price display on the property page.
+                  </p>
+                  {phaseArray.fields.map((item, index) => (
+                    <div key={item.id} className="border border-gray-200 rounded-lg p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-semibold text-gray-500">Phase {index + 1}</p>
+                        <Button type="button" size="sm" variant="ghost" className="h-8 w-8 p-0 text-red-500 hover:text-red-700" onClick={() => phaseArray.remove(index)}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <FormField
+                        control={form.control}
+                        name={`phasePricing.${index}.phase`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Phase Name</FormLabel>
+                            <FormControl><Input placeholder="e.g. Phase IV" {...field} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name={`phasePricing.${index}.cashPrice`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Cash Price (Ksh)</FormLabel>
+                              <FormControl><Input type="number" {...field} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name={`phasePricing.${index}.installmentPrice`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Installment Price (Ksh)</FormLabel>
+                              <FormControl><Input type="number" {...field} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  <Button type="button" variant="outline" className="gap-2" onClick={() => phaseArray.append({ phase: '', cashPrice: 0, installmentPrice: 0 })}>
+                    <Plus className="w-4 h-4" /> Add Phase
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-sm border-gray-100">
+                <CardHeader>
+                  <CardTitle>Project FAQs (optional)</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-gray-500 -mt-2">
+                    Questions specific to this project, shown on its page — e.g. "Are the plots beaconed?"
+                  </p>
+                  {faqArray.fields.map((item, index) => (
+                    <div key={item.id} className="border border-gray-200 rounded-lg p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-semibold text-gray-500">Question {index + 1}</p>
+                        <Button type="button" size="sm" variant="ghost" className="h-8 w-8 p-0 text-red-500 hover:text-red-700" onClick={() => faqArray.remove(index)}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <FormField
+                        control={form.control}
+                        name={`faqs.${index}.question`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Question</FormLabel>
+                            <FormControl><Input placeholder="Are the plots beaconed?" {...field} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`faqs.${index}.answer`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Answer</FormLabel>
+                            <FormControl><Textarea className="resize-none" placeholder="Yes. Every plot is professionally beaconed..." {...field} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  ))}
+                  <Button type="button" variant="outline" className="gap-2" onClick={() => faqArray.append({ question: '', answer: '' })}>
+                    <Plus className="w-4 h-4" /> Add Question
+                  </Button>
                 </CardContent>
               </Card>
 
