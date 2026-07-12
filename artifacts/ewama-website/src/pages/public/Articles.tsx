@@ -1,4 +1,5 @@
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { Seo } from '@/components/Seo';
 import { useListArticles } from '@workspace/api-client-react';
 import { Link } from 'wouter';
 import { formatDate } from '@/lib/utils';
@@ -11,6 +12,10 @@ export default function Articles() {
 
   return (
     <PublicLayout>
+      <Seo
+        title="Real Estate Insights"
+        description="Expert advice, market trends, and guides for investing in Kenyan real estate — from the EWAMA Properties team."
+      />
       <div className="bg-primary pt-16 pb-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] opacity-5 mix-blend-overlay bg-cover bg-center" />
         <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">

@@ -56,7 +56,8 @@ import type {
   SiteVisitInput,
   SiteVisitListResponse,
   SiteVisitUpdate,
-  SubscribeNewsletter201
+  SubscribeNewsletter201,
+  UploadMediaFileBody
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -2562,6 +2563,82 @@ export const useUploadMedia = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getUploadMediaMutationOptions(options));
+    }
+
+export const getUploadMediaFileUrl = () => {
+
+
+
+
+  return `/api/media/upload`
+}
+
+/**
+ * @summary Upload a media file (multipart) to storage
+ */
+export const uploadMediaFile = async (uploadMediaFileBody: UploadMediaFileBody, options?: RequestInit): Promise<MediaFile> => {
+    const formData = new FormData();
+formData.append(`file`, uploadMediaFileBody.file);
+if(uploadMediaFileBody.altText !== undefined) {
+ formData.append(`altText`, uploadMediaFileBody.altText);
+ }
+
+  return customFetch<MediaFile>(getUploadMediaFileUrl(),
+  {
+    ...options,
+    method: 'POST'
+    ,
+    body: formData
+  }
+);}
+
+
+
+
+
+export const getUploadMediaFileMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof uploadMediaFile>>, TError,{data: BodyType<UploadMediaFileBody>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof uploadMediaFile>>, TError,{data: BodyType<UploadMediaFileBody>}, TContext> => {
+
+const mutationKey = ['uploadMediaFile'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof uploadMediaFile>>, {data: BodyType<UploadMediaFileBody>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  uploadMediaFile(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UploadMediaFileMutationResult = NonNullable<Awaited<ReturnType<typeof uploadMediaFile>>>
+    export type UploadMediaFileMutationBody = BodyType<UploadMediaFileBody>
+    export type UploadMediaFileMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Upload a media file (multipart) to storage
+ */
+export const useUploadMediaFile = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof uploadMediaFile>>, TError,{data: BodyType<UploadMediaFileBody>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof uploadMediaFile>>,
+        TError,
+        {data: BodyType<UploadMediaFileBody>},
+        TContext
+      > => {
+      return useMutation(getUploadMediaFileMutationOptions(options));
     }
 
 export const getDeleteMediaUrl = (id: number,) => {

@@ -1,4 +1,5 @@
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { Seo } from '@/components/Seo';
 import { useListArticles } from '@workspace/api-client-react'; // Orval doesn't have useGetArticleBySlug yet, we'll fetch list and filter
 import { useParams, Link } from 'wouter';
 import { formatDate } from '@/lib/utils';
@@ -32,6 +33,12 @@ export default function ArticleDetail() {
         </div>
       ) : article ? (
         <article className="pb-24">
+          <Seo
+            title={article.title}
+            description={article.excerpt || undefined}
+            image={article.featuredImage}
+            type="article"
+          />
           <div className="bg-gray-50 py-12 border-b border-gray-100">
             <div className="container mx-auto px-4 md:px-6 max-w-4xl">
               <Link href="/articles">

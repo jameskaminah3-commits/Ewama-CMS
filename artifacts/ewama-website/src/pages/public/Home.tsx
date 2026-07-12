@@ -1,5 +1,6 @@
 import { useGetHomepageContent, useGetSettings, useListProperties, useGetDashboardStats } from '@workspace/api-client-react';
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { Seo } from '@/components/Seo';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
 import { MapPin, Shield, TrendingUp, Handshake, ChevronRight } from 'lucide-react';
@@ -14,6 +15,10 @@ export default function Home() {
 
   return (
     <PublicLayout>
+      <Seo
+        description="EWAMA Properties Ltd — Foundation of Trust. Investment-grade land in Kenya with ready title deeds, transparent pricing, and flexible payment plans."
+        image={content?.heroImage || undefined}
+      />
       {/* Hero Section */}
       <section className="relative h-[85vh] min-h-[600px] flex items-center">
         <div className="absolute inset-0 z-0">
@@ -199,6 +204,45 @@ export default function Home() {
               <h3 className="text-xl font-heading font-bold text-gray-900 mb-4">Transparent Process</h3>
               <p className="text-gray-600">No hidden fees, no rushed decisions. We walk you through every step of the buying process with clarity.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      {/* PLACEHOLDER CONTENT: replace these sample quotes with real, permissioned client testimonials before launch. */}
+      <section className="py-24 bg-background">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary mb-6">What Our Clients Say</h2>
+            <p className="text-lg text-gray-600">Real stories from investors who built their future with EWAMA.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                quote: 'The title deed was ready exactly as promised. From site visit to transfer, everything was clear and professional. I never felt rushed or pressured.',
+                name: 'Client, Naivasha project',
+                role: 'Plot owner since 2023',
+              },
+              {
+                quote: 'Buying land from abroad felt risky until I worked with EWAMA. They handled everything transparently and kept me updated at every step.',
+                name: 'Diaspora investor, UK',
+                role: 'Sagana Phase 1',
+              },
+              {
+                quote: 'The installment plan made ownership possible for my family. No hidden charges — the price we agreed is the price we paid.',
+                name: 'Client, Matuu project',
+                role: 'Plot owner since 2024',
+              },
+            ].map((t, idx) => (
+              <div key={idx} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 flex flex-col">
+                <div className="text-secondary font-heading text-6xl leading-none mb-4 select-none" aria-hidden="true">&ldquo;</div>
+                <p className="text-gray-700 leading-relaxed flex-1">{t.quote}</p>
+                <div className="mt-6 pt-6 border-t border-gray-100">
+                  <p className="font-heading font-semibold text-gray-900">{t.name}</p>
+                  <p className="text-sm text-gray-500">{t.role}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

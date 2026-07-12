@@ -1,4 +1,5 @@
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { Seo } from '@/components/Seo';
 import { useGetSettings } from '@workspace/api-client-react';
 import { MapPin, Phone, Mail, Clock, MessageSquare } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -59,6 +60,10 @@ export default function Contact() {
 
   return (
     <PublicLayout>
+      <Seo
+        title="Contact Us"
+        description="Get in touch with EWAMA Properties Ltd — call, email, WhatsApp, or visit our Nairobi office to speak with a property advisor."
+      />
       <div className="bg-primary pt-16 pb-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] opacity-5 mix-blend-overlay bg-cover bg-center" />
         <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
@@ -218,6 +223,17 @@ export default function Contact() {
               </Form>
             </div>
           </div>
+        </div>
+
+        <div className="mt-8 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+          <iframe
+            title="EWAMA Properties office location"
+            src={`https://maps.google.com/maps?q=${encodeURIComponent(settings?.officeAddress || 'Westlands, Nairobi, Kenya')}&z=15&output=embed`}
+            className="w-full h-[400px] border-0"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
+          />
         </div>
       </div>
     </PublicLayout>

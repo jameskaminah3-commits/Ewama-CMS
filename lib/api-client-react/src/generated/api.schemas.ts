@@ -678,6 +678,11 @@ page?: number;
 limit?: number;
 };
 
+export type UploadMediaFileBody = {
+  file: Blob;
+  altText?: string;
+};
+
 export type SubscribeNewsletter201 = {
   success: boolean;
 };

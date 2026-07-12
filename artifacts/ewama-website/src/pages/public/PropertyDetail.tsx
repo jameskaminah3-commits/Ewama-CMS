@@ -1,7 +1,10 @@
 import { useGetPropertyBySlug, useCreateEnquiry } from '@workspace/api-client-react';
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { Seo } from '@/components/Seo';
+import { ImageLightbox } from '@/components/ImageLightbox';
+import { useState } from 'react';
 import { useParams, Link } from 'wouter';
-import { MapPin, Check, FileText, ChevronRight, Phone, Calendar, ArrowLeft, Loader2 } from 'lucide-react';
+import { MapPin, Check, FileText, ChevronRight, Phone, Calendar, ArrowLeft, Loader2, Expand } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
@@ -26,6 +29,7 @@ export default function PropertyDetail() {
   const { slug } = useParams();
   const { data: property, isLoading, error } = useGetPropertyBySlug(slug || '');
   const { toast } = useToast();
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   
   const createEnquiry = useCreateEnquiry();
 
@@ -92,8 +96,16 @@ export default function PropertyDetail() {
 
   if (!property) return null;
 
+  const heroImage = property.heroImage || "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80";
+  const allImages = [heroImage, ...(property.gallery || []).filter(img => img !== heroImage)];
+
   return (
     <PublicLayout>
+      <Seo
+        title={`${property.name} — ${property.location}, ${property.county}`}
+        description={property.shortDescription || `Land for sale in ${property.location}, ${property.county}. Cash price from ${formatCurrency(property.cashPrice)}.`}
+        image={property.heroImage}
+      />
       <div className="bg-gray-50 py-4 border-b border-gray-100">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex items-center text-sm text-gray-500">
@@ -113,9 +125,12 @@ export default function PropertyDetail() {
           
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <div className="rounded-2xl overflow-hidden bg-gray-100 h-[400px] md:h-[600px] mb-8 relative">
-              <img 
-                src={property.heroImage || "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80"} 
+            <div
+              className="group/hero rounded-2xl overflow-hidden bg-gray-100 h-[400px] md:h-[600px] mb-8 relative cursor-zoom-in"
+              onClick={() => setLightboxIndex(0)}
+            >
+              <img
+                src={heroImage}
                 alt={property.name}
                 className="w-full h-full object-cover"
               />
@@ -124,17 +139,33 @@ export default function PropertyDetail() {
                   {property.status === 'available' ? 'Available' : property.status.replace('_', ' ')}
                 </div>
               </div>
+              <div className="absolute bottom-4 right-4 flex items-center gap-2 bg-black/50 text-white text-sm px-3 py-2 rounded-md backdrop-blur-sm opacity-0 group-hover/hero:opacity-100 transition-opacity">
+                <Expand className="w-4 h-4" />
+                View photos{allImages.length > 1 ? ` (${allImages.length})` : ''}
+              </div>
             </div>
 
-            {property.gallery && property.gallery.length > 0 && (
+            {allImages.length > 1 && (
               <div className="flex gap-4 mb-8 overflow-x-auto pb-4 snap-x">
-                {property.gallery.map((img, idx) => (
-                  <div key={idx} className="w-32 h-24 rounded-lg overflow-hidden shrink-0 snap-start bg-gray-100 cursor-pointer">
-                    <img src={img} alt={`Gallery ${idx+1}`} className="w-full h-full object-cover hover:opacity-80 transition-opacity" />
-                  </div>
+                {allImages.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setLightboxIndex(idx)}
+                    className="w-32 h-24 rounded-lg overflow-hidden shrink-0 snap-start bg-gray-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-secondary"
+                    aria-label={`View photo ${idx + 1}`}
+                  >
+                    <img src={img} alt={`${property.name} photo ${idx+1}`} loading="lazy" className="w-full h-full object-cover hover:opacity-80 transition-opacity" />
+                  </button>
                 ))}
               </div>
             )}
+
+            <ImageLightbox
+              images={allImages}
+              alt={property.name}
+              openIndex={lightboxIndex}
+              onOpenChange={setLightboxIndex}
+            />
 
             <div className="mb-12">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6">

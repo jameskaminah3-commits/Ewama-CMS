@@ -14,6 +14,8 @@ import Articles from '@/pages/public/Articles';
 import ArticleDetail from '@/pages/public/ArticleDetail';
 import Contact from '@/pages/public/Contact';
 import BookSiteVisit from '@/pages/public/BookSiteVisit';
+import PrivacyPolicy from '@/pages/public/PrivacyPolicy';
+import TermsOfService from '@/pages/public/TermsOfService';
 
 // Admin Pages
 import AdminLogin from '@/pages/admin/Login';
@@ -41,6 +43,8 @@ function Router() {
       <Route path="/articles/:slug" component={ArticleDetail} />
       <Route path="/contact" component={Contact} />
       <Route path="/book-site-visit" component={BookSiteVisit} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
+      <Route path="/terms-of-service" component={TermsOfService} />
 
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin" component={AdminDashboard} />

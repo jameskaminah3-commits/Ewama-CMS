@@ -58,3 +58,4 @@ export * from './siteVisitStatus';
 export * from './siteVisitUpdate';
 export * from './siteVisitUpdateStatus';
 export * from './subscribeNewsletter201';
+export * from './uploadMediaFileBody';

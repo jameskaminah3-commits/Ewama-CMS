@@ -1,6 +1,59 @@
+import { useState } from 'react';
 import { Link } from 'wouter';
-import { Facebook, Instagram, Linkedin, MapPin, Phone, Mail } from 'lucide-react';
-import { useGetSettings } from '@workspace/api-client-react';
+import { Facebook, Instagram, Linkedin, MapPin, Phone, Mail, Send, Loader2, CheckCircle2 } from 'lucide-react';
+import { useGetSettings, useSubscribeNewsletter } from '@workspace/api-client-react';
+
+function NewsletterForm() {
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
+  const subscribe = useSubscribeNewsletter();
+
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    subscribe.mutate({ data: { email } }, {
+      onSuccess: () => {
+        setSubscribed(true);
+        setEmail('');
+      },
+    });
+  };
+
+  if (subscribed) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-secondary bg-white/5 rounded-lg px-4 py-3">
+        <CheckCircle2 className="w-4 h-4 shrink-0" />
+        <span className="text-white/90">You're subscribed. Watch your inbox for new opportunities.</span>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="space-y-3">
+      <div className="flex rounded-lg overflow-hidden border border-white/15 bg-white/5 focus-within:border-secondary transition-colors">
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Your email address"
+          className="flex-1 min-w-0 bg-transparent px-4 py-3 text-sm text-white placeholder:text-white/40 focus:outline-none"
+        />
+        <button
+          type="submit"
+          disabled={subscribe.isPending}
+          aria-label="Subscribe to newsletter"
+          className="bg-secondary hover:bg-secondary/90 text-white px-4 flex items-center justify-center transition-colors disabled:opacity-60"
+        >
+          {subscribe.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+        </button>
+      </div>
+      {subscribe.isError && (
+        <p className="text-xs text-red-300">Subscription failed. Please try again.</p>
+      )}
+    </form>
+  );
+}
 
 export function Footer() {
   const { data: settings } = useGetSettings();
@@ -92,11 +145,23 @@ export function Footer() {
 
         </div>
 
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 border-b border-white/10 pb-10 mb-8">
+          <div className="max-w-md">
+            <h3 className="font-heading font-semibold text-lg text-white mb-2">Stay Ahead of the Market</h3>
+            <p className="text-white/70 text-sm">
+              Get new property launches, price updates, and investment insights delivered to your inbox.
+            </p>
+          </div>
+          <div className="w-full lg:w-96">
+            <NewsletterForm />
+          </div>
+        </div>
+
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-white/50">
           <p>&copy; {new Date().getFullYear()} EWAMA Properties Ltd. All rights reserved.</p>
           <div className="flex gap-4">
-            <span className="hover:text-white cursor-pointer transition-colors">Privacy Policy</span>
-            <span className="hover:text-white cursor-pointer transition-colors">Terms of Service</span>
+            <Link href="/privacy-policy"><span className="hover:text-white cursor-pointer transition-colors">Privacy Policy</span></Link>
+            <Link href="/terms-of-service"><span className="hover:text-white cursor-pointer transition-colors">Terms of Service</span></Link>
           </div>
         </div>
       </div>
