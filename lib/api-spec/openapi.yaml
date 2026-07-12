@@ -724,6 +724,32 @@ paths:
               schema:
                 $ref: "#/components/schemas/MediaFile"
 
+  /media/upload:
+    post:
+      operationId: uploadMediaFile
+      tags: [media]
+      summary: Upload a media file (multipart) to storage
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                altText:
+                  type: string
+      responses:
+        "201":
+          description: Uploaded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaFile"
+
   /media/{id}:
     delete:
       operationId: deleteMedia

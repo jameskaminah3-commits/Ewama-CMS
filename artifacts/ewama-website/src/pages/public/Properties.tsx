@@ -1,34 +1,53 @@
 import { useState, useMemo } from 'react';
 import { useListProperties } from '@workspace/api-client-react';
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { Seo } from '@/components/Seo';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
-import { MapPin, Search, ChevronRight, SlidersHorizontal } from 'lucide-react';
+import { MapPin, Search, ChevronRight, ChevronLeft, SlidersHorizontal } from 'lucide-react';
+
+const PAGE_SIZE = 12;
 
 export default function Properties() {
   const [searchTerm, setSearchTerm] = useState('');
   const [countyFilter, setCountyFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [page, setPage] = useState(1);
 
   const { data: propertiesData, isLoading } = useListProperties({
     search: searchTerm || undefined,
     county: countyFilter !== 'all' ? countyFilter : undefined,
     status: statusFilter !== 'all' ? statusFilter as any : undefined,
+    page,
+    limit: PAGE_SIZE,
   });
 
   const properties = propertiesData?.data || [];
+  const totalPages = Math.max(1, Math.ceil((propertiesData?.total || 0) / PAGE_SIZE));
+
+  const goToPage = (p: number) => {
+    setPage(p);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
   
-  // Extract unique counties for the filter dropdown
+  // Derive the county dropdown from an unfiltered listing so options don't
+  // collapse when a search/county/status filter narrows the current page.
+  const { data: allForCounties } = useListProperties({ limit: 50 });
   const counties = useMemo(() => {
-    if (!propertiesData?.data) return [];
-    const uniqueCounties = new Set(propertiesData.data.map(p => p.county));
+    if (!allForCounties?.data) return [];
+    const uniqueCounties = new Set(allForCounties.data.map(p => p.county).filter(Boolean));
     return Array.from(uniqueCounties).sort();
-  }, [propertiesData?.data]);
+  }, [allForCounties?.data]);
 
   return (
     <PublicLayout>
+      <Seo
+        title="Available Properties"
+        description="Browse investment-grade land for sale across Kenya — vetted plots with ready title deeds, flexible cash and installment payment plans."
+      />
       <div className="bg-primary pt-16 pb-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] opacity-5 mix-blend-overlay bg-cover bg-center" />
         <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
@@ -49,11 +68,11 @@ export default function Properties() {
               placeholder="Search by location, landmark or feature..." 
               className="pl-10 h-12 bg-gray-50 border-transparent focus-visible:bg-white"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
             />
           </div>
           <div className="w-full md:w-48">
-            <Select value={countyFilter} onValueChange={setCountyFilter}>
+            <Select value={countyFilter} onValueChange={(v) => { setCountyFilter(v); setPage(1); }}>
               <SelectTrigger className="h-12 bg-gray-50 border-transparent">
                 <SelectValue placeholder="All Counties" />
               </SelectTrigger>
@@ -66,7 +85,7 @@ export default function Properties() {
             </Select>
           </div>
           <div className="w-full md:w-48">
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
               <SelectTrigger className="h-12 bg-gray-50 border-transparent">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
@@ -161,6 +180,53 @@ export default function Properties() {
               ))
             )}
           </div>
+
+          {!isLoading && totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-12">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-10 w-10"
+                disabled={page <= 1}
+                onClick={() => goToPage(page - 1)}
+                aria-label="Previous page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                .reduce<(number | 'gap')[]>((acc, p, idx, arr) => {
+                  if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push('gap');
+                  acc.push(p);
+                  return acc;
+                }, [])
+                .map((p, idx) =>
+                  p === 'gap' ? (
+                    <span key={`gap-${idx}`} className="px-1 text-gray-400">…</span>
+                  ) : (
+                    <Button
+                      key={p}
+                      variant={p === page ? 'default' : 'outline'}
+                      className={p === page ? 'h-10 w-10 bg-primary text-white' : 'h-10 w-10'}
+                      size="icon"
+                      onClick={() => goToPage(p)}
+                    >
+                      {p}
+                    </Button>
+                  )
+                )}
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-10 w-10"
+                disabled={page >= totalPages}
+                onClick={() => goToPage(page + 1)}
+                aria-label="Next page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </PublicLayout>

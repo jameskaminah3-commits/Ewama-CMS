@@ -1,4 +1,5 @@
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { Seo } from '@/components/Seo';
 import { useGetHomepageContent } from '@workspace/api-client-react';
 import { Target, Eye, Shield, Users } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -8,6 +9,10 @@ export default function About() {
 
   return (
     <PublicLayout>
+      <Seo
+        title="About Us"
+        description="Learn about EWAMA Properties Ltd — a Kenyan real estate company bringing banking-level professionalism, transparency, and trust to land investment."
+      />
       <div className="bg-primary pt-16 pb-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1524813686514-a57563d77965?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] opacity-5 mix-blend-overlay bg-cover bg-center" />
         <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">

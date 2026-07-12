@@ -1,4 +1,5 @@
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { Seo } from '@/components/Seo';
 import { useCreateSiteVisit, useListProperties } from '@workspace/api-client-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -64,6 +65,10 @@ export default function BookSiteVisit() {
 
   return (
     <PublicLayout>
+      <Seo
+        title="Book a Site Visit"
+        description="Schedule a free guided site visit to any EWAMA Properties project. Pick a property, date, and time — our team will confirm your booking."
+      />
       <div className="bg-gray-50 min-h-screen py-16">
         <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-3xl mx-auto">

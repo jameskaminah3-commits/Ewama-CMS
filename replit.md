@@ -4,20 +4,20 @@ A production-ready website and lightweight CMS for EWAMA Properties Ltd, a Kenya
 
 ## What This Is
 
-- **Public Website**: Responsive property listing site with homepage, property pages, blog, contact, site visit booking
+- **Public Website**: Responsive property listing site with homepage, property pages, blog, contact, site visit booking, legal pages, newsletter signup
 - **Admin CMS**: Full content management portal — properties, articles, enquiries, site visits, media, settings
 - **Express API**: All data flows through a typed Express backend; the frontend never touches the database directly
 
 ## Admin Login
 
 - URL: `/admin/login`
-- Email: `admin@ewamaproperties.co.ke`
-- Password: `ewama2024!`
+- Admin users are created manually in Supabase Auth (there is no public registration).
+- Access can be restricted with the `ADMIN_EMAIL_ALLOWLIST` env var (comma-separated emails).
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 8080, proxied at /api)
-- `pnpm --filter @workspace/ewama-website run dev` — run the frontend (port 22943, proxied at /)
+- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/ewama-website run dev` — run the frontend (port 5173, proxies /api to the API)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
@@ -25,9 +25,10 @@ A production-ready website and lightweight CMS for EWAMA Properties Ltd, a Kenya
 ## Stack
 
 - **Frontend**: React 18, Vite, TypeScript, Tailwind CSS, shadcn/ui, wouter (router), TanStack Query, react-hook-form
-- **Backend**: Express 5, Node.js, TypeScript, Drizzle ORM
-- **Database**: PostgreSQL (Replit built-in; Supabase-compatible — just change DATABASE_URL)
-- **Auth**: JWT-based admin auth (bcryptjs + jsonwebtoken)
+- **Backend**: Express 5, Node.js, TypeScript, Drizzle ORM, multer (media uploads)
+- **Database**: Supabase PostgreSQL (connection via `DATABASE_URL`)
+- **Auth**: Supabase Auth — the API logs admins in via `signInWithPassword` and returns the Supabase access token; the frontend sends it as a Bearer token
+- **Storage**: Supabase Storage — media uploads go to the `media` bucket (override with `SUPABASE_MEDIA_BUCKET`)
 - **API codegen**: Orval (from OpenAPI spec in lib/api-spec/openapi.yaml)
 
 ## Brand
@@ -47,10 +48,12 @@ A production-ready website and lightweight CMS for EWAMA Properties Ltd, a Kenya
 
 ## Architecture Decisions
 
-- Frontend → Express API → Drizzle → PostgreSQL. Frontend never touches DB directly.
-- JWT tokens stored in localStorage; passed as Bearer token in Authorization header.
-- Admin routes protected by `requireAuth` middleware (JWT verification).
-- Public routes (property listing, enquiry submission, site visit booking) are unauthenticated.
+- Frontend → Express API → Drizzle → Supabase PostgreSQL. Frontend never touches DB directly.
+- Supabase credentials (service role key) live only in the backend.
+- Supabase access token stored in localStorage; passed as Bearer token in Authorization header.
+- Admin routes protected by `requireAuth` middleware (Supabase token verification + admin profile check).
+- Public routes (property listing, enquiry submission, site visit booking, newsletter) are unauthenticated.
+- Media uploads: `POST /api/media/upload` (multipart) → Supabase Storage → public URL stored in `media` table. 10 MB limit; images and PDFs only.
 - All JSON array fields (gallery, amenities, etc.) stored as JSONB in PostgreSQL.
 - Prices stored as numeric strings in DB, converted to floats in API responses.
 
@@ -74,8 +77,9 @@ A production-ready website and lightweight CMS for EWAMA Properties Ltd, a Kenya
 
 - After OpenAPI spec changes, always run `pnpm --filter @workspace/api-spec run codegen` before building
 - `req.params` access in Express 5 + TypeScript requires `req.params.id as string` cast to avoid `string | string[]` type error
-- JWT_SECRET env var should be set in production — defaults to a dev value if not set
 - Properties use numeric strings for prices in Drizzle schema; always parse with `parseFloat()` in route handlers
+- The homepage testimonials section contains placeholder quotes — replace with real, permissioned client testimonials before launch
+- `lib/api-zod` needs `"lib": ["dom", "es2022"]` in its tsconfig because the generated multipart upload types reference `Blob`/`File`
 
 ## User Preferences
 

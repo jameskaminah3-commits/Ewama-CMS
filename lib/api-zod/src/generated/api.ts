@@ -943,6 +943,26 @@ export const UploadMediaResponse = zod.object({
 
 
 /**
+ * @summary Upload a media file (multipart) to storage
+ */
+export const UploadMediaFileBody = zod.object({
+  "file": zod.instanceof(File),
+  "altText": zod.string().optional()
+})
+
+export const UploadMediaFileResponse = zod.object({
+  "id": zod.number(),
+  "fileName": zod.string(),
+  "url": zod.string(),
+  "thumbnailUrl": zod.string().nullish(),
+  "mimeType": zod.string(),
+  "size": zod.number(),
+  "altText": zod.string().nullish(),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
  * @summary Delete a media file
  */
 export const DeleteMediaParams = zod.object({
