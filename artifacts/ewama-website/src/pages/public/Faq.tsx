@@ -1,11 +1,13 @@
+import { useMemo } from 'react';
 import { PublicLayout } from '@/components/layout/PublicLayout';
 import { Seo } from '@/components/Seo';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
 import { Phone, Mail } from 'lucide-react';
+import { useListProperties } from '@workspace/api-client-react';
 
-const FAQ_SECTIONS: { section: string; items: { q: string; a: string }[] }[] = [
+const buildFaqSections = (locationAnswer: string): { section: string; items: { q: string; a: string }[] }[] => [
   {
     section: 'General Questions',
     items: [
@@ -15,7 +17,7 @@ const FAQ_SECTIONS: { section: string; items: { q: string; a: string }[] }[] = [
       },
       {
         q: 'Where are your projects located?',
-        a: 'Our developments are located in carefully selected growth areas, including Sagana, Mananja, Joska, Matuu, Kimana–Imbirikani, Naivasha, and other strategic locations with strong investment potential.',
+        a: locationAnswer,
       },
       {
         q: 'How do I know the property is genuine?',
@@ -107,6 +109,19 @@ const FAQ_SECTIONS: { section: string; items: { q: string; a: string }[] }[] = [
 ];
 
 export default function Faq() {
+  // Build the locations answer from live listings so it never goes stale
+  // as projects are added or retired in the admin.
+  const { data: propertiesData } = useListProperties({ status: 'available', limit: 50 });
+  const faqSections = useMemo(() => {
+    const locations = Array.from(
+      new Set((propertiesData?.data || []).map(p => p.location).filter(Boolean))
+    );
+    const locationAnswer = locations.length > 0
+      ? `Our developments are located in carefully selected growth areas, currently including ${locations.join(', ')} — strategic locations with strong investment potential. See our Properties page for the up-to-date list of projects.`
+      : 'Our developments are located in carefully selected growth areas across Kenya, chosen for their strong investment potential. See our Properties page for the current list of projects.';
+    return buildFaqSections(locationAnswer);
+  }, [propertiesData?.data]);
+
   return (
     <PublicLayout>
       <Seo
@@ -126,7 +141,7 @@ export default function Faq() {
 
       <div className="container mx-auto px-4 md:px-6 py-16">
         <div className="max-w-3xl mx-auto space-y-10">
-          {FAQ_SECTIONS.map((group) => (
+          {faqSections.map((group) => (
             <div key={group.section}>
               <h2 className="text-xl font-heading font-bold text-primary mb-4">{group.section}</h2>
               <Accordion type="single" collapsible className="bg-white rounded-xl border border-gray-100 shadow-sm px-6">
