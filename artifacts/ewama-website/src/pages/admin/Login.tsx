@@ -55,9 +55,11 @@ export default function AdminLogin() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg border border-gray-100 p-8">
         <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-primary flex items-center justify-center rounded-md mx-auto mb-4">
-            <span className="text-secondary font-heading font-bold text-2xl">E</span>
-          </div>
+          <img
+            src="/logo.png"
+            alt="EWAMA Properties Ltd"
+            className="h-16 w-auto mx-auto mb-4"
+          />
           <h1 className="font-heading font-semibold text-2xl text-gray-900">Admin Portal</h1>
           <p className="text-gray-500 text-sm mt-1">Sign in to manage EWAMA Properties</p>
         </div>

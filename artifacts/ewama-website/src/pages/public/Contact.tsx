@@ -92,7 +92,7 @@ export default function Contact() {
                   <div>
                     <h3 className="font-bold text-gray-900 mb-1">Visit Us</h3>
                     <p className="text-gray-600 leading-relaxed">
-                      {settings?.officeAddress || 'Nairobi, Kenya'}
+                      {settings?.officeAddress || 'Professional House, 4th Floor, Kiambu Town (opposite Kiambu Level 5 Hospital)'}
                     </p>
                     <p className="text-gray-500 text-sm mt-1">
                       Planning to stop by? Contact us in advance so we can give you the attention you deserve.
@@ -235,7 +235,7 @@ export default function Contact() {
         <div className="mt-8 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
           <iframe
             title="EWAMA Properties office location"
-            src={`https://maps.google.com/maps?q=${encodeURIComponent(settings?.officeAddress || 'Westlands, Nairobi, Kenya')}&z=15&output=embed`}
+            src={`https://maps.google.com/maps?q=${encodeURIComponent(settings?.officeAddress || 'Professional House, Kiambu Town, Kenya')}&z=16&output=embed`}
             className="w-full h-[400px] border-0"
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"

@@ -14,8 +14,26 @@ dotenv.config({ path: path.resolve(process.cwd(), "../.env") });
 dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
 async function main() {
-  const { db, pool, propertiesTable, articlesTable } = await import("@workspace/db");
+  const { db, pool, propertiesTable, articlesTable, siteSettingsTable } = await import("@workspace/db");
   const { eq } = await import("drizzle-orm");
+
+  // ─── Real contact details (fills gaps only; admin edits are preserved) ───
+  const [settings] = await db.select().from(siteSettingsTable);
+  if (settings) {
+    const settingsUpdates: Partial<typeof siteSettingsTable.$inferInsert> = {};
+    if (!settings.facebook) {
+      settingsUpdates.facebook = "https://www.facebook.com/p/Ewama-Properties-Ltd-100094290617746/";
+    }
+    if (!settings.officeAddress || settings.officeAddress === "Nairobi, Kenya") {
+      settingsUpdates.officeAddress = "Professional House, 4th Floor, Kiambu Town (opposite Kiambu Level 5 Hospital)";
+    }
+    if (Object.keys(settingsUpdates).length > 0) {
+      await db.update(siteSettingsTable).set({ ...settingsUpdates, updatedAt: new Date() }).where(eq(siteSettingsTable.id, settings.id));
+      console.log(`~ updated settings: ${Object.keys(settingsUpdates).join(", ")}`);
+    } else {
+      console.log("- settings already filled in; left untouched");
+    }
+  }
 
   type PropertySeed = Omit<typeof propertiesTable.$inferInsert, "id" | "createdAt" | "updatedAt">;
 

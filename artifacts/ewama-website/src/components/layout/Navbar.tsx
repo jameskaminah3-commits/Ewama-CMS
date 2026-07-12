@@ -36,18 +36,12 @@ export function Navbar() {
     )}>
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
         <Link href="/">
-          <div className="flex items-center gap-3 cursor-pointer">
-            <div className="w-10 h-10 bg-primary flex items-center justify-center rounded-sm">
-              <span className="text-secondary font-heading font-bold text-xl">E</span>
-            </div>
-            <div>
-              <h1 className="font-heading font-bold text-lg tracking-tight text-primary leading-tight">
-                EWAMA
-              </h1>
-              <p className="text-[10px] uppercase tracking-widest text-gray-500 leading-tight">
-                Properties Ltd
-              </p>
-            </div>
+          <div className="flex items-center cursor-pointer">
+            <img
+              src="/logo.png"
+              alt="EWAMA Properties Ltd — Foundation of Trust"
+              className="h-12 md:h-14 w-auto"
+            />
           </div>
         </Link>
 

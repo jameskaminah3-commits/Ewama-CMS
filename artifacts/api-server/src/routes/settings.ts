@@ -14,8 +14,9 @@ async function ensureSettings() {
       phone: "+254 720 769 999",
       email: "ewamapropertiesltd@gmail.com",
       whatsapp: "+254720769999",
-      officeAddress: "Nairobi, Kenya",
+      officeAddress: "Professional House, 4th Floor, Kiambu Town (opposite Kiambu Level 5 Hospital)",
       businessHours: "Mon–Fri: 8:00 AM – 5:00 PM · Sat: 9:00 AM – 1:00 PM · Sun & Public Holidays: By appointment",
+      facebook: "https://www.facebook.com/p/Ewama-Properties-Ltd-100094290617746/",
     }).returning();
     return row!;
   }
