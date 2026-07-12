@@ -24,8 +24,12 @@ async function main() {
     if (!settings.facebook) {
       settingsUpdates.facebook = "https://www.facebook.com/p/Ewama-Properties-Ltd-100094290617746/";
     }
-    if (!settings.officeAddress || settings.officeAddress === "Nairobi, Kenya") {
-      settingsUpdates.officeAddress = "Professional House, 4th Floor, Kiambu Town (opposite Kiambu Level 5 Hospital)";
+    const replaceableAddresses = [
+      "Nairobi, Kenya",
+      "Professional House, 4th Floor, Kiambu Town (opposite Kiambu Level 5 Hospital)",
+    ];
+    if (!settings.officeAddress || replaceableAddresses.includes(settings.officeAddress)) {
+      settingsUpdates.officeAddress = "Professional House, 4th Floor, Kiambu Road, Kiambu Town — RRW6+G44 (opposite Kiambu Level 5 Hospital)";
     }
     if (Object.keys(settingsUpdates).length > 0) {
       await db.update(siteSettingsTable).set({ ...settingsUpdates, updatedAt: new Date() }).where(eq(siteSettingsTable.id, settings.id));
