@@ -141,7 +141,7 @@ export default function AdminMedia() {
             {data?.data?.map((file) => (
               <div key={file.id} className="group relative aspect-square rounded-xl border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center">
                 {file.mimeType?.startsWith('image/') ? (
-                  <img src={file.url} alt={file.altText || file.fileName} loading="lazy" className="w-full h-full object-cover" />
+                  <img src={file.thumbnailUrl || file.url} alt={file.altText || file.fileName} loading="lazy" className="w-full h-full object-cover" />
                 ) : (
                   <File className="w-12 h-12 text-gray-300" />
                 )}
