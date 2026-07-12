@@ -1529,6 +1529,10 @@ components:
           type: ["string", "null"]
         linkedin:
           type: ["string", "null"]
+        tiktok:
+          type: ["string", "null"]
+        youtube:
+          type: ["string", "null"]
         logoUrl:
           type: ["string", "null"]
         faviconUrl:
@@ -1561,6 +1565,10 @@ components:
         instagram:
           type: ["string", "null"]
         linkedin:
+          type: ["string", "null"]
+        tiktok:
+          type: ["string", "null"]
+        youtube:
           type: ["string", "null"]
         logoUrl:
           type: ["string", "null"]

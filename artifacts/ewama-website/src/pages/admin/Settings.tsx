@@ -23,6 +23,8 @@ const settingsSchema = z.object({
   facebook: z.string().url().optional().nullable().or(z.literal('')),
   instagram: z.string().url().optional().nullable().or(z.literal('')),
   linkedin: z.string().url().optional().nullable().or(z.literal('')),
+  tiktok: z.string().url().optional().nullable().or(z.literal('')),
+  youtube: z.string().url().optional().nullable().or(z.literal('')),
 });
 
 export default function AdminSettings() {
@@ -44,6 +46,8 @@ export default function AdminSettings() {
       facebook: '',
       instagram: '',
       linkedin: '',
+      tiktok: '',
+      youtube: '',
     },
   });
 
@@ -60,6 +64,8 @@ export default function AdminSettings() {
         facebook: settings.facebook || '',
         instagram: settings.instagram || '',
         linkedin: settings.linkedin || '',
+        tiktok: settings.tiktok || '',
+        youtube: settings.youtube || '',
       });
     }
   }, [settings, form]);
@@ -71,6 +77,8 @@ export default function AdminSettings() {
       facebook: data.facebook === '' ? null : data.facebook,
       instagram: data.instagram === '' ? null : data.instagram,
       linkedin: data.linkedin === '' ? null : data.linkedin,
+      tiktok: data.tiktok === '' ? null : data.tiktok,
+      youtube: data.youtube === '' ? null : data.youtube,
     };
 
     updateMutation.mutate({ data: payload }, {
@@ -212,6 +220,32 @@ export default function AdminSettings() {
                     <FormLabel>LinkedIn URL</FormLabel>
                     <FormControl>
                       <Input placeholder="https://linkedin.com/..." {...field} value={field.value || ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="tiktok"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>TikTok URL</FormLabel>
+                    <FormControl>
+                      <Input placeholder="https://www.tiktok.com/@ewama.properties" {...field} value={field.value || ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="youtube"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>YouTube URL</FormLabel>
+                    <FormControl>
+                      <Input placeholder="https://youtube.com/@..." {...field} value={field.value || ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

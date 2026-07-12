@@ -24,6 +24,9 @@ async function main() {
     if (!settings.facebook) {
       settingsUpdates.facebook = "https://www.facebook.com/p/Ewama-Properties-Ltd-100094290617746/";
     }
+    if (!settings.tiktok) {
+      settingsUpdates.tiktok = "https://www.tiktok.com/@ewama.properties";
+    }
     const replaceableAddresses = [
       "Nairobi, Kenya",
       "Professional House, 4th Floor, Kiambu Town (opposite Kiambu Level 5 Hospital)",

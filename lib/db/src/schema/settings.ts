@@ -14,6 +14,8 @@ export const siteSettingsTable = pgTable("site_settings", {
   facebook: text("facebook"),
   instagram: text("instagram"),
   linkedin: text("linkedin"),
+  tiktok: text("tiktok"),
+  youtube: text("youtube"),
   logoUrl: text("logo_url"),
   faviconUrl: text("favicon_url"),
   footerText: text("footer_text"),

@@ -17,6 +17,7 @@ async function ensureSettings() {
       officeAddress: "Professional House, 4th Floor, Kiambu Road, Kiambu Town — RRW6+G44 (opposite Kiambu Level 5 Hospital)",
       businessHours: "Mon–Fri: 8:00 AM – 5:00 PM · Sat: 9:00 AM – 1:00 PM · Sun & Public Holidays: By appointment",
       facebook: "https://www.facebook.com/p/Ewama-Properties-Ltd-100094290617746/",
+      tiktok: "https://www.tiktok.com/@ewama.properties",
     }).returning();
     return row!;
   }
