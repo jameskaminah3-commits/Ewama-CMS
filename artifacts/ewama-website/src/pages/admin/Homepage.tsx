@@ -1,6 +1,6 @@
 import { AdminLayout } from '@/components/admin/AdminLayout';
-import { useGetHomepageContent, useUpdateHomepageContent } from '@workspace/api-client-react';
-import { useForm } from 'react-hook-form';
+import { useGetHomepageContent, useUpdateHomepageContent, getGetHomepageContentQueryKey } from '@workspace/api-client-react';
+import { useForm, useFieldArray, Control } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -9,11 +9,23 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Save } from 'lucide-react';
+import { Loader2, Save, Plus, Trash2 } from 'lucide-react';
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
+const cardSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  description: z.string().min(1, 'Description is required'),
+});
+
+const testimonialSchema = z.object({
+  quote: z.string().min(1, 'Quote is required'),
+  name: z.string().min(1, 'Name is required'),
+  role: z.string().min(1, 'Role is required'),
+});
+
 const homepageSchema = z.object({
+  heroBadge: z.string().optional().nullable(),
   heroHeading: z.string().optional().nullable(),
   heroSubheading: z.string().optional().nullable(),
   heroImage: z.string().optional().nullable(),
@@ -24,7 +36,113 @@ const homepageSchema = z.object({
   statsPropertiesSold: z.coerce.number().optional().nullable(),
   statsHappyClients: z.coerce.number().optional().nullable(),
   statsCountiesCovered: z.coerce.number().optional().nullable(),
+  ctaHeading: z.string().optional().nullable(),
+  ctaSubheading: z.string().optional().nullable(),
+  advantages: z.array(cardSchema),
+  processSteps: z.array(cardSchema),
+  testimonials: z.array(testimonialSchema),
 });
+
+type HomepageForm = z.infer<typeof homepageSchema>;
+
+function CardListEditor({ control, name, itemLabel }: { control: Control<HomepageForm>; name: 'advantages' | 'processSteps'; itemLabel: string }) {
+  const { fields, append, remove } = useFieldArray({ control, name });
+  return (
+    <div className="space-y-4">
+      {fields.map((item, index) => (
+        <div key={item.id} className="border border-gray-200 rounded-lg p-4 space-y-3 relative">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-gray-500">{itemLabel} {index + 1}</p>
+            <Button type="button" size="icon" variant="ghost" className="h-8 w-8 text-red-500 hover:text-red-600" onClick={() => remove(index)}>
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
+          <FormField
+            control={control}
+            name={`${name}.${index}.title`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Title</FormLabel>
+                <FormControl><Input {...field} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name={`${name}.${index}.description`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl><Textarea className="resize-none" {...field} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+      ))}
+      <Button type="button" variant="outline" className="gap-2" onClick={() => append({ title: '', description: '' })}>
+        <Plus className="w-4 h-4" /> Add {itemLabel}
+      </Button>
+    </div>
+  );
+}
+
+function TestimonialListEditor({ control }: { control: Control<HomepageForm> }) {
+  const { fields, append, remove } = useFieldArray({ control, name: 'testimonials' });
+  return (
+    <div className="space-y-4">
+      {fields.map((item, index) => (
+        <div key={item.id} className="border border-gray-200 rounded-lg p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-gray-500">Testimonial {index + 1}</p>
+            <Button type="button" size="icon" variant="ghost" className="h-8 w-8 text-red-500 hover:text-red-600" onClick={() => remove(index)}>
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
+          <FormField
+            control={control}
+            name={`testimonials.${index}.quote`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Quote</FormLabel>
+                <FormControl><Textarea className="resize-none" placeholder="What the client said..." {...field} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={control}
+              name={`testimonials.${index}.name`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Client Name</FormLabel>
+                  <FormControl><Input placeholder="Jane W., Nairobi" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name={`testimonials.${index}.role`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Detail Line</FormLabel>
+                  <FormControl><Input placeholder="Plot owner since 2023" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+      ))}
+      <Button type="button" variant="outline" className="gap-2" onClick={() => append({ quote: '', name: '', role: '' })}>
+        <Plus className="w-4 h-4" /> Add Testimonial
+      </Button>
+    </div>
+  );
+}
 
 export default function AdminHomepage() {
   const { data: content, isLoading } = useGetHomepageContent();
@@ -32,9 +150,10 @@ export default function AdminHomepage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const form = useForm<z.infer<typeof homepageSchema>>({
+  const form = useForm<HomepageForm>({
     resolver: zodResolver(homepageSchema),
     defaultValues: {
+      heroBadge: '',
       heroHeading: '',
       heroSubheading: '',
       heroImage: '',
@@ -45,12 +164,18 @@ export default function AdminHomepage() {
       statsPropertiesSold: 0,
       statsHappyClients: 0,
       statsCountiesCovered: 0,
+      ctaHeading: '',
+      ctaSubheading: '',
+      advantages: [],
+      processSteps: [],
+      testimonials: [],
     },
   });
 
   useEffect(() => {
     if (content) {
       form.reset({
+        heroBadge: content.heroBadge || '',
         heroHeading: content.heroHeading || '',
         heroSubheading: content.heroSubheading || '',
         heroImage: content.heroImage || '',
@@ -61,15 +186,20 @@ export default function AdminHomepage() {
         statsPropertiesSold: content.statsPropertiesSold || 0,
         statsHappyClients: content.statsHappyClients || 0,
         statsCountiesCovered: content.statsCountiesCovered || 0,
+        ctaHeading: content.ctaHeading || '',
+        ctaSubheading: content.ctaSubheading || '',
+        advantages: content.advantages || [],
+        processSteps: content.processSteps || [],
+        testimonials: content.testimonials || [],
       });
     }
   }, [content, form]);
 
-  const onSubmit = (data: z.infer<typeof homepageSchema>) => {
+  const onSubmit = (data: HomepageForm) => {
     updateMutation.mutate({ data }, {
       onSuccess: () => {
         toast({ title: 'Homepage content updated' });
-        queryClient.invalidateQueries({ queryKey: ['/api/homepage/content'] });
+        queryClient.invalidateQueries({ queryKey: getGetHomepageContentQueryKey() });
       },
       onError: () => {
         toast({ title: 'Failed to update content', variant: 'destructive' });
@@ -96,6 +226,19 @@ export default function AdminHomepage() {
               <CardTitle>Hero Section</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
+              <FormField
+                control={form.control}
+                name="heroBadge"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Badge Text (small label above the headline)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Foundation of Trust" {...field} value={field.value || ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="heroHeading"
@@ -252,9 +395,70 @@ export default function AdminHomepage() {
             </CardContent>
           </Card>
 
+          <Card className="shadow-sm border-gray-100">
+            <CardHeader>
+              <CardTitle>How to Own Your Plot (Process Steps)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardListEditor control={form.control} name="processSteps" itemLabel="Step" />
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-sm border-gray-100">
+            <CardHeader>
+              <CardTitle>The EWAMA Advantage (Why Choose Us)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardListEditor control={form.control} name="advantages" itemLabel="Advantage" />
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-sm border-gray-100">
+            <CardHeader>
+              <CardTitle>Client Testimonials</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <TestimonialListEditor control={form.control} />
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-sm border-gray-100">
+            <CardHeader>
+              <CardTitle>Bottom Call-to-Action Banner</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <FormField
+                control={form.control}
+                name="ctaHeading"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Heading</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ready to Secure Your Piece of Kenya?" {...field} value={field.value || ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="ctaSubheading"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Supporting Text</FormLabel>
+                    <FormControl>
+                      <Textarea className="resize-none" placeholder="Join hundreds of smart investors..." {...field} value={field.value || ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
           <div className="flex justify-end">
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="bg-primary hover:bg-primary/90 text-white px-8 h-12"
               disabled={updateMutation.isPending}
             >

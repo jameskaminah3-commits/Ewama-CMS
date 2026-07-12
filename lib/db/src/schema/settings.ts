@@ -1,4 +1,4 @@
-import { pgTable, serial, text, timestamp, integer } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp, integer, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -35,6 +35,12 @@ export const homepageContentTable = pgTable("homepage_content", {
   statsCountiesCovered: integer("stats_counties_covered"),
   communityImpact: text("community_impact"),
   footerCta: text("footer_cta"),
+  heroBadge: text("hero_badge"),
+  ctaHeading: text("cta_heading"),
+  ctaSubheading: text("cta_subheading"),
+  advantages: jsonb("advantages").$type<{ title: string; description: string }[]>(),
+  processSteps: jsonb("process_steps").$type<{ title: string; description: string }[]>(),
+  testimonials: jsonb("testimonials").$type<{ quote: string; name: string; role: string }[]>(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 

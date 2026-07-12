@@ -1050,6 +1050,22 @@ export const GetHomepageContentResponse = zod.object({
   "statsCountiesCovered": zod.number().nullish(),
   "communityImpact": zod.string().nullish(),
   "footerCta": zod.string().nullish(),
+  "heroBadge": zod.string().nullish(),
+  "ctaHeading": zod.string().nullish(),
+  "ctaSubheading": zod.string().nullish(),
+  "advantages": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})).nullish(),
+  "processSteps": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})).nullish(),
+  "testimonials": zod.array(zod.object({
+  "quote": zod.string(),
+  "name": zod.string(),
+  "role": zod.string()
+})).nullish(),
   "updatedAt": zod.coerce.date().optional()
 })
 
@@ -1070,7 +1086,23 @@ export const UpdateHomepageContentBody = zod.object({
   "statsHappyClients": zod.number().nullish(),
   "statsCountiesCovered": zod.number().nullish(),
   "communityImpact": zod.string().nullish(),
-  "footerCta": zod.string().nullish()
+  "footerCta": zod.string().nullish(),
+  "heroBadge": zod.string().nullish(),
+  "ctaHeading": zod.string().nullish(),
+  "ctaSubheading": zod.string().nullish(),
+  "advantages": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})).nullish(),
+  "processSteps": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})).nullish(),
+  "testimonials": zod.array(zod.object({
+  "quote": zod.string(),
+  "name": zod.string(),
+  "role": zod.string()
+})).nullish()
 })
 
 export const UpdateHomepageContentResponse = zod.object({
@@ -1088,6 +1120,22 @@ export const UpdateHomepageContentResponse = zod.object({
   "statsCountiesCovered": zod.number().nullish(),
   "communityImpact": zod.string().nullish(),
   "footerCta": zod.string().nullish(),
+  "heroBadge": zod.string().nullish(),
+  "ctaHeading": zod.string().nullish(),
+  "ctaSubheading": zod.string().nullish(),
+  "advantages": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})).nullish(),
+  "processSteps": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})).nullish(),
+  "testimonials": zod.array(zod.object({
+  "quote": zod.string(),
+  "name": zod.string(),
+  "role": zod.string()
+})).nullish(),
   "updatedAt": zod.coerce.date().optional()
 })
 

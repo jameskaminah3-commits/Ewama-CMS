@@ -530,6 +530,17 @@ export interface SiteSettingsUpdate {
   footerText?: string | null;
 }
 
+export interface HomepageCard {
+  title: string;
+  description: string;
+}
+
+export interface HomepageTestimonial {
+  quote: string;
+  name: string;
+  role: string;
+}
+
 export interface HomepageContent {
   id: number;
   /** @nullable */
@@ -558,6 +569,18 @@ export interface HomepageContent {
   communityImpact?: string | null;
   /** @nullable */
   footerCta?: string | null;
+  /** @nullable */
+  heroBadge?: string | null;
+  /** @nullable */
+  ctaHeading?: string | null;
+  /** @nullable */
+  ctaSubheading?: string | null;
+  /** @nullable */
+  advantages?: HomepageCard[] | null;
+  /** @nullable */
+  processSteps?: HomepageCard[] | null;
+  /** @nullable */
+  testimonials?: HomepageTestimonial[] | null;
   updatedAt?: string;
 }
 
@@ -588,6 +611,18 @@ export interface HomepageContentUpdate {
   communityImpact?: string | null;
   /** @nullable */
   footerCta?: string | null;
+  /** @nullable */
+  heroBadge?: string | null;
+  /** @nullable */
+  ctaHeading?: string | null;
+  /** @nullable */
+  ctaSubheading?: string | null;
+  /** @nullable */
+  advantages?: HomepageCard[] | null;
+  /** @nullable */
+  processSteps?: HomepageCard[] | null;
+  /** @nullable */
+  testimonials?: HomepageTestimonial[] | null;
 }
 
 export interface NewsletterInput {

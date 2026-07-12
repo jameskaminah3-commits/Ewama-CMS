@@ -1558,9 +1558,47 @@ components:
           type: ["string", "null"]
         footerCta:
           type: ["string", "null"]
+        heroBadge:
+          type: ["string", "null"]
+        ctaHeading:
+          type: ["string", "null"]
+        ctaSubheading:
+          type: ["string", "null"]
+        advantages:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/HomepageCard"
+        processSteps:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/HomepageCard"
+        testimonials:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/HomepageTestimonial"
         updatedAt:
           type: string
           format: date-time
+
+    HomepageCard:
+      type: object
+      required: [title, description]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+
+    HomepageTestimonial:
+      type: object
+      required: [quote, name, role]
+      properties:
+        quote:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
 
     HomepageContentUpdate:
       type: object
@@ -1591,6 +1629,24 @@ components:
           type: ["string", "null"]
         footerCta:
           type: ["string", "null"]
+        heroBadge:
+          type: ["string", "null"]
+        ctaHeading:
+          type: ["string", "null"]
+        ctaSubheading:
+          type: ["string", "null"]
+        advantages:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/HomepageCard"
+        processSteps:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/HomepageCard"
+        testimonials:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/HomepageTestimonial"
 
     # ─── NEWSLETTER ────────────────────────────────────────
     NewsletterInput:
