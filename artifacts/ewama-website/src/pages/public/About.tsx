@@ -1,18 +1,27 @@
 import { PublicLayout } from '@/components/layout/PublicLayout';
 import { Seo } from '@/components/Seo';
 import { useGetHomepageContent } from '@workspace/api-client-react';
-import { Target, Eye, Shield, Users, Home as HomeIcon, CalendarCheck, LineChart, Headphones, Wallet, Lightbulb, ArrowRight } from 'lucide-react';
+import { Target, Eye, Shield, Users, Home as HomeIcon, CalendarCheck, LineChart, Headphones, Wallet, FileSearch, ArrowRight, Award, Sprout, Lightbulb, HeartHandshake } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
 
 const SERVICES = [
-  { icon: HomeIcon, title: 'Property Sales', description: 'Access carefully selected properties suited to residential, commercial, and investment purposes.' },
-  { icon: CalendarCheck, title: 'Site Visits', description: 'Experience properties firsthand through organised site visits designed to help you make informed decisions.' },
-  { icon: LineChart, title: 'Investment Advisory', description: 'Receive professional guidance on selecting property opportunities aligned with your financial objectives.' },
-  { icon: Headphones, title: 'Customer Support', description: 'Our team remains available throughout your property ownership journey, ensuring a seamless experience.' },
-  { icon: Wallet, title: 'Flexible Payment Arrangements', description: 'We work with clients to explore payment options that make property ownership more achievable.' },
-  { icon: Lightbulb, title: 'Property Consultation', description: 'Gain insights into property trends, growth areas, and investment opportunities from experienced professionals.' },
+  { icon: HomeIcon, title: 'Property Sales', tagline: 'Secure Investments. Endless Possibilities.', description: 'Carefully selected residential, commercial, and investment properties in areas with strong growth potential — every one vetted before it is introduced to our clients.' },
+  { icon: LineChart, title: 'Investment Advisory', tagline: 'Making Every Investment Count', description: 'Professional guidance based on market trends, location potential, and your personal objectives. Our goal is not simply to sell property — it is to help you make smart decisions.' },
+  { icon: CalendarCheck, title: 'Site Visits', tagline: 'Experience the Property Before You Invest', description: 'Guided visits covering boundaries, accessibility, infrastructure, nearby amenities, and investment potential. Informed buyers make confident investors.' },
+  { icon: FileSearch, title: 'Property Verification & Due Diligence', tagline: 'Confidence Begins with Transparency', description: 'Every property we market undergoes comprehensive verification — ownership documentation, legal compliance, and accurate information — before being offered to clients.' },
+  { icon: Wallet, title: 'Flexible Payment Plans', tagline: 'Property Ownership Made Accessible', description: 'Upfront purchase or structured installments — we work with you to find an option that fits your budget, with schedules and timelines clearly explained. No surprises.' },
+  { icon: Headphones, title: 'Customer Support', tagline: 'A Relationship That Continues Beyond the Sale', description: 'From first inquiry to ownership and beyond, our team is available to answer questions, provide updates, and assist throughout your investment journey.' },
+];
+
+const CORE_VALUES = [
+  { icon: Shield, title: 'Trust', description: 'Trust is the cornerstone of our business. We communicate openly, act with integrity, and honour every commitment we make.' },
+  { icon: Eye, title: 'Transparency', description: 'From property information and pricing to legal documentation and payment plans, we ensure every detail is communicated honestly.' },
+  { icon: HeartHandshake, title: 'Customer First', description: 'Every client has unique goals. We take time to understand them and provide tailored guidance aligned with their vision.' },
+  { icon: Award, title: 'Excellence', description: 'We continuously pursue the highest standards in service delivery, professionalism, and operational efficiency.' },
+  { icon: Sprout, title: 'Sustainability', description: 'We support responsible development that promotes environmental stewardship and long-term community growth.' },
+  { icon: Lightbulb, title: 'Innovation', description: 'By embracing modern technologies and customer-focused solutions, we make property ownership simpler and more convenient.' },
 ];
 
 export default function About() {
@@ -44,15 +53,30 @@ export default function About() {
           
           {/* History */}
           <div className="prose prose-lg max-w-none text-gray-600 mb-20">
-            <h2 className="text-3xl font-heading font-bold text-primary mb-6">Who We Are</h2>
+            <h2 className="text-3xl font-heading font-bold text-primary mb-6">Our Story</h2>
             <p className="lead">
-              EWAMA Properties Ltd is a trusted real estate company dedicated to providing secure, transparent, and sustainable property investment opportunities. Our goal is to make property ownership a reality for every aspiring homeowner and investor while fostering thriving communities across Kenya.
+              EWAMA Properties Ltd was established with a simple yet powerful purpose: to make property ownership accessible, transparent, and rewarding.
             </p>
             <p>
-              Guided by our belief that every property purchase is a step toward a better future, we focus on delivering value through honesty, professionalism, and customer-centered service.
+              We recognised that many aspiring homeowners and investors faced uncertainty when navigating the real estate market — unclear processes, questionable documentation, and limited professional guidance often stood between them and their dreams.
             </p>
             <p>
-              We understand that purchasing property is one of life's most significant investments. That's why we walk with our clients every step of the journey, ensuring they have the information, support, and confidence they need to make informed decisions.
+              We envisioned a different experience. An experience where clients receive honest advice, verified investment opportunities, and personalised support from their first inquiry to the day they proudly receive ownership documents. That vision continues to define everything we do.
+            </p>
+            <p>
+              Today, EWAMA serves individuals looking to build family homes, investors seeking long-term value, businesses searching for strategic locations, and members of the diaspora looking for a trusted partner back home. Regardless of where our clients begin their journey, our mission remains the same: helping them secure a piece of tomorrow with confidence.
+            </p>
+          </div>
+
+          {/* Differentiator */}
+          <div className="bg-primary rounded-2xl p-10 md:p-14 text-center mb-20">
+            <p className="text-white/60 uppercase tracking-widest text-sm font-semibold mb-4">What Makes EWAMA Different</p>
+            <p className="font-heading text-3xl md:text-4xl font-bold text-white leading-snug">
+              Many companies sell plots.<br />
+              <span className="text-secondary">We build confidence.</span>
+            </p>
+            <p className="text-white/75 mt-6 max-w-2xl mx-auto leading-relaxed">
+              Our focus extends far beyond completing property transactions. We guide clients through every stage of their investment journey, ensuring they understand every decision they make. An informed client is an empowered client.
             </p>
           </div>
 
@@ -70,7 +94,8 @@ export default function About() {
                   <div className="w-12 h-12 bg-primary/5 text-primary rounded-xl flex items-center justify-center mb-5">
                     <service.icon className="w-6 h-6" />
                   </div>
-                  <h3 className="text-lg font-heading font-bold text-gray-900 mb-2">{service.title}</h3>
+                  <h3 className="text-lg font-heading font-bold text-gray-900 mb-1">{service.title}</h3>
+                  <p className="text-secondary text-xs font-semibold uppercase tracking-wide mb-3">{service.tagline}</p>
                   <p className="text-gray-600 text-sm leading-relaxed">{service.description}</p>
                 </div>
               ))}
@@ -112,24 +137,17 @@ export default function About() {
           <div className="mb-20">
             <h2 className="text-3xl font-heading font-bold text-center text-primary mb-12">Our Core Values</h2>
             <div className="grid sm:grid-cols-2 gap-8">
-              <div className="flex gap-4">
-                <div className="w-12 h-12 rounded-full bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
-                  <Shield className="w-6 h-6" />
+              {CORE_VALUES.map((value) => (
+                <div key={value.title} className="flex gap-4">
+                  <div className="w-12 h-12 rounded-full bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
+                    <value.icon className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold text-gray-900 mb-2">{value.title}</h4>
+                    <p className="text-gray-600">{value.description}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-xl font-bold text-gray-900 mb-2">Integrity</h4>
-                  <p className="text-gray-600">We do what is right, always. Total transparency in pricing, title processing, and property features.</p>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <div className="w-12 h-12 rounded-full bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
-                  <Users className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="text-xl font-bold text-gray-900 mb-2">Client-Centricity</h4>
-                  <p className="text-gray-600">We don't rush sales. We advise, guide, and ensure every investment aligns with our client's goals.</p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
