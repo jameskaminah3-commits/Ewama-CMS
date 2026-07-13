@@ -14,8 +14,66 @@ dotenv.config({ path: path.resolve(process.cwd(), "../.env") });
 dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
 async function main() {
-  const { db, pool, propertiesTable, articlesTable, siteSettingsTable } = await import("@workspace/db");
+  const { db, pool, propertiesTable, articlesTable, siteSettingsTable, mediaTable } = await import("@workspace/db");
   const { eq } = await import("drizzle-orm");
+
+  // ─── Push bundled brand/office photos into the Media Library ───
+  // Makes them visible and reusable in Admin → Media Library.
+  const supabaseUrl = process.env["SUPABASE_URL"];
+  const supabaseKey = process.env["SUPABASE_SERVICE_ROLE_KEY"];
+  if (supabaseUrl && supabaseKey) {
+    const { createClient } = await import("@supabase/supabase-js");
+    const fs = await import("node:fs");
+    const supabase = createClient(supabaseUrl, supabaseKey, { auth: { autoRefreshToken: false, persistSession: false } });
+    const bucket = process.env["SUPABASE_MEDIA_BUCKET"] || "media";
+    const { data: bucketInfo } = await supabase.storage.getBucket(bucket);
+    if (!bucketInfo) {
+      const { error } = await supabase.storage.createBucket(bucket, { public: true });
+      if (error && !/already exists/i.test(error.message)) throw error;
+    }
+
+    const publicDir = path.resolve(process.cwd(), "../artifacts/ewama-website/public");
+    const photos = [
+      { file: "office-reception.webp", alt: "EWAMA Customer Care Centre reception, Kiambu Town" },
+      { file: "office-frontdesk.webp", alt: "EWAMA Customer Care Centre front desk, Kiambu Town" },
+      { file: "office-lounge.webp", alt: "EWAMA Customer Care Centre client lounge, Kiambu Town" },
+    ];
+    for (const photo of photos) {
+      const [existing] = await db.select({ id: mediaTable.id }).from(mediaTable).where(eq(mediaTable.fileName, photo.file));
+      if (existing) {
+        console.log(`- skipped (in media library): ${photo.file}`);
+        continue;
+      }
+      const filePath = path.join(publicDir, photo.file);
+      if (!fs.existsSync(filePath)) {
+        console.log(`- skipped (file missing): ${photo.file}`);
+        continue;
+      }
+      const buffer = fs.readFileSync(filePath);
+      const storagePath = `seed/${photo.file}`;
+      const { error: upErr } = await supabase.storage.from(bucket).upload(storagePath, buffer, {
+        contentType: "image/webp",
+        cacheControl: "31536000",
+        upsert: true,
+      });
+      if (upErr) {
+        console.log(`! upload failed for ${photo.file}: ${upErr.message}`);
+        continue;
+      }
+      const url = supabase.storage.from(bucket).getPublicUrl(storagePath).data.publicUrl;
+      await db.insert(mediaTable).values({
+        fileName: photo.file,
+        url,
+        mimeType: "image/webp",
+        size: buffer.length,
+        thumbnailUrl: null,
+        altText: photo.alt,
+      });
+      console.log(`+ added to media library: ${photo.file}`);
+    }
+  } else {
+    console.log("- skipped media library sync (SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY not set)");
+  }
 
   // ─── Real contact details (fills gaps only; admin edits are preserved) ───
   const [settings] = await db.select().from(siteSettingsTable);

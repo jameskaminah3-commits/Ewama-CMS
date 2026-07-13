@@ -13,6 +13,7 @@
     "tsx": "catalog:"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.110.2",
     "@workspace/db": "workspace:*",
     "dotenv": "^16.6.1",
     "drizzle-orm": "catalog:"

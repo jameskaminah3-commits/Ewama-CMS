@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useSearch } from 'wouter';
 import { useListProperties } from '@workspace/api-client-react';
 import { PublicLayout } from '@/components/layout/PublicLayout';
 import { Seo } from '@/components/Seo';
@@ -16,6 +17,17 @@ export default function Properties() {
   const [countyFilter, setCountyFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
+
+  // Allow deep links like /properties?county=Kajiado (used by the
+  // homepage Featured Locations cards).
+  const searchString = useSearch();
+  useEffect(() => {
+    const county = new URLSearchParams(searchString).get('county');
+    if (county) {
+      setCountyFilter(county);
+      setPage(1);
+    }
+  }, [searchString]);
 
   const { data: propertiesData, isLoading } = useListProperties({
     search: searchTerm || undefined,

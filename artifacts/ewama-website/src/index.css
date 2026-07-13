@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Poppins:wght@400;500;600&family=Playfair+Display:wght@500;600;700;800&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @plugin "@tailwindcss/typography";
@@ -71,7 +71,7 @@
   --elevate-2: rgba(0, 0, 0, 0.08);
 
   /* Background: #FAFAF8 */
-  --background: 60 14% 98%;
+  --background: 38 33% 96%;
   /* Charcoal: #2F2F2F */
   --foreground: 0 0% 18%;
 
@@ -83,12 +83,12 @@
   --card-border: 0 0% 90%;
 
   /* Primary Green */
-  --sidebar: 159 41% 21%;
+  --sidebar: 215 55% 24%;
   --sidebar-foreground: 0 0% 100%;
-  --sidebar-border: 159 41% 18%;
+  --sidebar-border: 215 55% 19%;
   --sidebar-primary: 41 82% 47%;
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 159 41% 28%;
+  --sidebar-accent: 217 48% 35%;
   --sidebar-accent-foreground: 0 0% 100%;
   --sidebar-ring: 41 82% 47%;
 
@@ -97,27 +97,27 @@
   --popover-border: 0 0% 90%;
 
   /* Primary Green: #1F4A3B */
-  --primary: 159 41% 21%;
+  --primary: 215 55% 24%;
   --primary-foreground: 0 0% 100%;
 
   /* Primary Gold: #D89B16 */
   --secondary: 41 82% 47%;
   --secondary-foreground: 0 0% 100%;
 
-  --muted: 60 14% 92%;
+  --muted: 38 25% 90%;
   --muted-foreground: 0 0% 40%;
 
-  --accent: 159 41% 95%;
-  --accent-foreground: 159 41% 21%;
+  --accent: 215 45% 95%;
+  --accent-foreground: 215 55% 24%;
 
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
 
   --input: 0 0% 85%;
-  --ring: 159 41% 21%;
+  --ring: 215 55% 24%;
 
   --app-font-sans: 'Inter', sans-serif;
-  --app-font-heading: 'Poppins', sans-serif;
+  --app-font-heading: 'Playfair Display', Georgia, serif;
   --radius: 0.25rem;
   
   --shadow-2xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.05);
@@ -132,35 +132,35 @@
 
 .dark {
   /* Enforce light mode since it's a luxury brand that should feel like a prospectus */
-  --background: 60 14% 98%;
+  --background: 38 33% 96%;
   --foreground: 0 0% 18%;
   --border: 0 0% 90%;
   --card: 0 0% 100%;
   --card-foreground: 0 0% 18%;
   --card-border: 0 0% 90%;
-  --sidebar: 159 41% 21%;
+  --sidebar: 215 55% 24%;
   --sidebar-foreground: 0 0% 100%;
-  --sidebar-border: 159 41% 18%;
+  --sidebar-border: 215 55% 19%;
   --sidebar-primary: 41 82% 47%;
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 159 41% 28%;
+  --sidebar-accent: 217 48% 35%;
   --sidebar-accent-foreground: 0 0% 100%;
   --sidebar-ring: 41 82% 47%;
   --popover: 0 0% 100%;
   --popover-foreground: 0 0% 18%;
   --popover-border: 0 0% 90%;
-  --primary: 159 41% 21%;
+  --primary: 215 55% 24%;
   --primary-foreground: 0 0% 100%;
   --secondary: 41 82% 47%;
   --secondary-foreground: 0 0% 100%;
-  --muted: 60 14% 92%;
+  --muted: 38 25% 90%;
   --muted-foreground: 0 0% 40%;
-  --accent: 159 41% 95%;
-  --accent-foreground: 159 41% 21%;
+  --accent: 215 45% 95%;
+  --accent-foreground: 215 55% 24%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
   --input: 0 0% 85%;
-  --ring: 159 41% 21%;
+  --ring: 215 55% 24%;
 }
 
 @layer base {

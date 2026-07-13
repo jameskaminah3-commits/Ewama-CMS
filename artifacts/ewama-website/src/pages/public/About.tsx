@@ -36,8 +36,8 @@ export default function About() {
       <div className="bg-primary pt-16 pb-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1524813686514-a57563d77965?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] opacity-5 mix-blend-overlay bg-cover bg-center" />
         <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
-          <div className="w-16 h-16 bg-secondary flex items-center justify-center rounded-xl mx-auto mb-6">
-            <span className="text-white font-heading font-bold text-3xl">E</span>
+          <div className="inline-block bg-white rounded-xl px-5 py-3 mb-6">
+            <img src="/logo.png" alt="EWAMA Properties Ltd" className="h-14 w-auto" />
           </div>
           <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">
             About EWAMA Properties
