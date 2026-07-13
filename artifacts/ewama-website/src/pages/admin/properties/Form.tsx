@@ -9,6 +9,7 @@ import { useCreateProperty, useUpdateProperty, useGetProperty, getGetPropertyQue
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -352,7 +353,7 @@ export default function AdminPropertyForm() {
                 <CardContent className="space-y-8">
                   
                   <div>
-                    <FormLabel>Value Additions / Amenities</FormLabel>
+                    <Label>Value Additions / Amenities</Label>
                     <div className="flex gap-2 mt-2 mb-4">
                       <Input 
                         value={amenityInput} 
@@ -386,7 +387,7 @@ export default function AdminPropertyForm() {
                   </div>
 
                   <div>
-                    <FormLabel>Investment Highlights</FormLabel>
+                    <Label>Investment Highlights</Label>
                     <div className="flex gap-2 mt-2 mb-4">
                       <Input 
                         value={highlightInput} 
