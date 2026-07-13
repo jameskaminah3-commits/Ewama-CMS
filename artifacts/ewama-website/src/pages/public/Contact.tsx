@@ -92,13 +92,13 @@ export default function Contact() {
                   <div>
                     <h3 className="font-bold text-gray-900 mb-1">Visit Us</h3>
                     <p className="text-gray-600 leading-relaxed">
-                      {settings?.officeAddress || 'Professional House, 4th Floor, Kiambu Road, Kiambu Town (opposite Kiambu Level 5 Hospital)'}
+                      {settings?.officeAddress || 'Ewama Properties Ltd, RRW6+G44, Kiambu Road, Kiambu'}
                     </p>
                     <p className="text-gray-500 text-sm mt-1">
                       Planning to stop by? Contact us in advance so we can give you the attention you deserve.
                     </p>
                     <a
-                      href="https://www.google.com/maps/dir/?api=1&destination=RRW6%2BG44%2C%20Kiambu%20Rd%2C%20Kiambu"
+                      href="https://www.google.com/maps/dir/?api=1&destination=Ewama%20Properties%20limited%2C%20RRW6%2BG44%2C%20Kiambu%20Rd%2C%20Kiambu"
                       target="_blank"
                       rel="noreferrer"
                       className="inline-block mt-2 text-sm font-semibold text-secondary hover:text-primary transition-colors"
@@ -243,7 +243,7 @@ export default function Contact() {
         <div className="mt-8 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
           <iframe
             title="EWAMA Properties office location"
-            src={`https://maps.google.com/maps?q=${encodeURIComponent(settings?.officeAddress || 'RRW6+G44, Kiambu Rd, Kiambu, Kenya')}&z=17&output=embed`}
+            src="https://maps.google.com/maps?q=-1.1537477,36.8103259&z=17&output=embed"
             className="w-full h-[400px] border-0"
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"

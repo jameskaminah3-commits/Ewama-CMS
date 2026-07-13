@@ -30,9 +30,10 @@ async function main() {
     const replaceableAddresses = [
       "Nairobi, Kenya",
       "Professional House, 4th Floor, Kiambu Town (opposite Kiambu Level 5 Hospital)",
+      "Professional House, 4th Floor, Kiambu Road, Kiambu Town — RRW6+G44 (opposite Kiambu Level 5 Hospital)",
     ];
     if (!settings.officeAddress || replaceableAddresses.includes(settings.officeAddress)) {
-      settingsUpdates.officeAddress = "Professional House, 4th Floor, Kiambu Road, Kiambu Town — RRW6+G44 (opposite Kiambu Level 5 Hospital)";
+      settingsUpdates.officeAddress = "Ewama Properties Ltd, RRW6+G44, Kiambu Road, Kiambu";
     }
     if (Object.keys(settingsUpdates).length > 0) {
       await db.update(siteSettingsTable).set({ ...settingsUpdates, updatedAt: new Date() }).where(eq(siteSettingsTable.id, settings.id));

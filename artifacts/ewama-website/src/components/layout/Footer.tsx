@@ -142,7 +142,7 @@ export function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3 text-sm text-white/80">
                 <MapPin className="w-5 h-5 text-secondary shrink-0" />
-                <span>{settings?.officeAddress || 'Professional House, 4th Floor, Kiambu Town'}</span>
+                <span>{settings?.officeAddress || 'Ewama Properties Ltd, RRW6+G44, Kiambu Road, Kiambu'}</span>
               </li>
               <li className="flex items-center gap-3 text-sm text-white/80">
                 <Phone className="w-5 h-5 text-secondary shrink-0" />

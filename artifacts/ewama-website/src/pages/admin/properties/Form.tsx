@@ -4,6 +4,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AdminLayout } from '@/components/admin/AdminLayout';
+import { MediaPickerDialog } from '@/components/admin/MediaPickerDialog';
 import { useCreateProperty, useUpdateProperty, useGetProperty, getGetPropertyQueryKey, PropertyUpdateStatus, PropertyInputStatus } from '@workspace/api-client-react';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
@@ -30,6 +31,7 @@ const propertySchema = z.object({
   status: z.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   featured: z.boolean().default(false),
   heroImage: z.string().optional().nullable(),
+  gallery: z.array(z.string()).default([]),
   googleMapsLink: z.string().optional().nullable(),
   amenities: z.array(z.string()).default([]),
   investmentHighlights: z.array(z.string()).default([]),
@@ -55,6 +57,7 @@ export default function AdminPropertyForm() {
   
   const [amenityInput, setAmenityInput] = useState('');
   const [highlightInput, setHighlightInput] = useState('');
+  const [pickerTarget, setPickerTarget] = useState<'hero' | 'gallery' | null>(null);
 
   const { data: property, isLoading } = useGetProperty(propertyId, { 
     query: { enabled: isEdit, retry: false, queryKey: getGetPropertyQueryKey(propertyId) } 
@@ -77,6 +80,7 @@ export default function AdminPropertyForm() {
       status: 'draft',
       featured: false,
       heroImage: '',
+      gallery: [],
       googleMapsLink: '',
       amenities: [],
       investmentHighlights: [],
@@ -103,6 +107,7 @@ export default function AdminPropertyForm() {
         status: property.status as any,
         featured: property.featured || false,
         heroImage: property.heroImage || '',
+        gallery: property.gallery || [],
         googleMapsLink: property.googleMapsLink || '',
         amenities: property.amenities || [],
         investmentHighlights: property.investmentHighlights || [],
@@ -600,17 +605,25 @@ export default function AdminPropertyForm() {
                     ) : (
                       <div className="text-center p-4">
                         <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                        <p className="text-sm text-gray-500 mb-2">Provide an image URL from the media library</p>
+                        <p className="text-sm text-gray-500 mb-2">Pick a photo from your Media Library</p>
                       </div>
                     )}
                   </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full gap-2"
+                    onClick={() => setPickerTarget('hero')}
+                  >
+                    <ImageIcon className="w-4 h-4" /> Choose from Media Library
+                  </Button>
                   <FormField
                     control={form.control}
                     name="heroImage"
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input placeholder="Image URL" value={field.value || ''} onChange={field.onChange} />
+                          <Input placeholder="...or paste an image URL" value={field.value || ''} onChange={field.onChange} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -618,6 +631,55 @@ export default function AdminPropertyForm() {
                   />
                 </CardContent>
               </Card>
+
+              <Card className="shadow-sm border-gray-100">
+                <CardHeader>
+                  <CardTitle>Photo Gallery</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-gray-500 -mt-2">
+                    Extra photos shown on the property page. Visitors can browse them in the full-screen viewer.
+                  </p>
+                  {form.watch('gallery').length > 0 && (
+                    <div className="grid grid-cols-3 gap-2">
+                      {form.watch('gallery').map((img, idx) => (
+                        <div key={idx} className="group relative aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                          <img src={img} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            aria-label={`Remove photo ${idx + 1}`}
+                            className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 hover:bg-red-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => form.setValue('gallery', form.getValues('gallery').filter((_, i) => i !== idx))}
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full gap-2"
+                    onClick={() => setPickerTarget('gallery')}
+                  >
+                    <Plus className="w-4 h-4" /> Add Photo from Media Library
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <MediaPickerDialog
+                open={pickerTarget !== null}
+                onOpenChange={(open) => !open && setPickerTarget(null)}
+                title={pickerTarget === 'gallery' ? 'Add a gallery photo' : 'Choose the main photo'}
+                onSelect={(url) => {
+                  if (pickerTarget === 'hero') {
+                    form.setValue('heroImage', url);
+                  } else if (pickerTarget === 'gallery') {
+                    form.setValue('gallery', [...form.getValues('gallery'), url]);
+                  }
+                }}
+              />
 
               <Button 
                 type="submit" 
