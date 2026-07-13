@@ -69,7 +69,7 @@ export function Footer() {
   return (
     <footer className="bg-primary text-primary-foreground pt-16 pb-8">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12 border-b border-white/10 pb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12 border-b border-white/10 pb-12">
           
           <div className="space-y-4">
             <div className="mb-6">
@@ -114,6 +114,17 @@ export function Footer() {
           </div>
 
           <div>
+            <h3 className="font-heading font-semibold text-lg mb-6 text-white">Properties</h3>
+            <ul className="space-y-3">
+              <li><Link href="/properties"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">All Properties</span></Link></li>
+              <li><Link href="/properties?county=Kajiado"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Kimana – Imbirikani</span></Link></li>
+              <li><Link href="/properties?county=Kirinyaga"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Sagana</span></Link></li>
+              <li><Link href="/properties?county=Nakuru"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Naivasha</span></Link></li>
+              <li><Link href="/properties?county=Machakos"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Joska · Mananja · Matuu</span></Link></li>
+            </ul>
+          </div>
+
+          <div>
             <h3 className="font-heading font-semibold text-lg mb-6 text-white">Quick Links</h3>
             <ul className="space-y-3">
               <li><Link href="/"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Home</span></Link></li>
@@ -138,7 +149,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-heading font-semibold text-lg mb-6 text-white">Contact Us</h3>
+            <h3 className="font-heading font-semibold text-lg mb-6 text-white">Let's Talk</h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3 text-sm text-white/80">
                 <MapPin className="w-5 h-5 text-secondary shrink-0" />

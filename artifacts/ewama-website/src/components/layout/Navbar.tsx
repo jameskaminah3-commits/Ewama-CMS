@@ -1,42 +1,34 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useLocation } from 'wouter';
-import { Phone, Menu, X } from 'lucide-react';
+import { Phone, Mail, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useGetSettings } from '@workspace/api-client-react';
+
+const NAV_LINKS = [
+  { label: 'Home', href: '/' },
+  { label: 'About', href: '/about' },
+  { label: 'Properties', href: '/properties' },
+  { label: 'Our Impact', href: '/communities' },
+  { label: 'Blog', href: '/articles' },
+  { label: 'FAQ', href: '/faq' },
+  { label: 'Contact', href: '/contact' },
+];
 
 export function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [location] = useLocation();
+  const { data: settings } = useGetSettings();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const navLinks = [
-    { label: 'Home', href: '/' },
-    { label: 'Properties', href: '/properties' },
-    { label: 'About Us', href: '/about' },
-    { label: 'Our Impact', href: '/communities' },
-    { label: 'Insights', href: '/articles' },
-    { label: 'FAQ', href: '/faq' },
-    { label: 'Contact', href: '/contact' },
-  ];
+  const phone = settings?.phone || '+254 720 769 999';
+  const email = settings?.email || 'ewamapropertiesltd@gmail.com';
 
   return (
-    <header className={cn(
-      "fixed top-0 w-full z-50 transition-all duration-300 border-b",
-      isScrolled 
-        ? "bg-white/95 backdrop-blur-md shadow-sm border-gray-100 py-3" 
-        : "bg-white border-transparent py-4"
-    )}>
-      <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
+    <header className="fixed top-0 w-full z-50 bg-white shadow-sm">
+      {/* Top tier: logo, contact info, CTA */}
+      <div className="container mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-4">
         <Link href="/">
-          <div className="flex items-center cursor-pointer">
+          <div className="flex items-center cursor-pointer shrink-0">
             <img
               src="/logo.png"
               alt="EWAMA Properties Ltd — Foundation of Trust"
@@ -45,67 +37,86 @@ export function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-8">
-          <div className="flex gap-6">
-            {navLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
-                <span className={cn(
-                  "text-sm font-medium transition-colors hover:text-secondary cursor-pointer",
-                  location === link.href ? "text-secondary" : "text-gray-600"
-                )}>
-                  {link.label}
-                </span>
-              </Link>
-            ))}
-          </div>
-          
-          <div className="flex items-center gap-4 border-l pl-4 border-gray-200">
-            <div className="flex flex-col items-end">
-              <span className="text-xs text-gray-500">Call us today</span>
-              <a href="tel:+254720769999" className="text-sm font-semibold text-primary flex items-center gap-1 hover:text-secondary transition-colors">
-                <Phone className="w-3 h-3" />
-                +254 720 769 999
-              </a>
+        <div className="hidden lg:flex items-center gap-8">
+          <a href={`tel:${phone.replace(/\s/g, '')}`} className="flex items-center gap-3 group">
+            <div className="w-11 h-11 rounded-full bg-primary/5 text-primary flex items-center justify-center group-hover:bg-secondary group-hover:text-white transition-colors">
+              <Phone className="w-5 h-5" />
             </div>
-            <Link href="/book-site-visit">
-              <Button className="bg-secondary text-white hover:bg-secondary/90 font-medium">
-                Book Site Visit
-              </Button>
-            </Link>
-          </div>
-        </nav>
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-wide">Call Support</p>
+              <p className="text-sm font-semibold text-primary">{phone}</p>
+            </div>
+          </a>
+          <a href={`mailto:${email}`} className="hidden xl:flex items-center gap-3 group">
+            <div className="w-11 h-11 rounded-full bg-primary/5 text-primary flex items-center justify-center group-hover:bg-secondary group-hover:text-white transition-colors">
+              <Mail className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-wide">Email Address</p>
+              <p className="text-sm font-semibold text-primary">{email}</p>
+            </div>
+          </a>
+          <Link href="/contact">
+            <Button className="bg-secondary text-white hover:bg-secondary/90 font-medium h-11 px-6">
+              Get In Touch
+            </Button>
+          </Link>
+        </div>
 
-        {/* Mobile Nav Toggle */}
+        {/* Mobile toggle */}
         <button
           className="lg:hidden text-primary p-2"
+          aria-label="Toggle menu"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden absolute top-full left-0 w-full bg-white border-b border-gray-100 shadow-lg py-4 px-6 flex flex-col gap-4">
-          {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} onClick={() => setIsMobileMenuOpen(false)}>
+      {/* Bottom tier: navy nav strip */}
+      <nav className="hidden lg:block bg-primary">
+        <div className="container mx-auto px-4 md:px-6 flex items-center">
+          {NAV_LINKS.map((link) => (
+            <Link key={link.href} href={link.href}>
               <span className={cn(
-                "block text-base font-medium py-2 border-b border-gray-50",
-                location === link.href ? "text-secondary" : "text-gray-800"
+                'inline-block px-5 py-3.5 text-sm font-medium transition-colors cursor-pointer',
+                location === link.href
+                  ? 'bg-secondary text-white'
+                  : 'text-white/85 hover:bg-white/10 hover:text-white'
               )}>
                 {link.label}
               </span>
             </Link>
           ))}
-          <div className="pt-4 flex flex-col gap-4">
-            <a href="tel:+254720769999" className="flex items-center justify-center gap-2 p-3 bg-gray-50 rounded-md text-primary font-medium">
+          <Link href="/book-site-visit">
+            <span className="ml-auto inline-block px-5 py-3.5 text-sm font-semibold bg-white/10 text-secondary hover:bg-secondary hover:text-white transition-colors cursor-pointer">
+              Book a Site Visit
+            </span>
+          </Link>
+        </div>
+      </nav>
+
+      {/* Mobile menu */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden absolute top-full left-0 w-full bg-white border-b border-gray-100 shadow-lg py-4 px-6 flex flex-col gap-1">
+          {NAV_LINKS.map((link) => (
+            <Link key={link.href} href={link.href} onClick={() => setIsMobileMenuOpen(false)}>
+              <span className={cn(
+                'block text-base font-medium py-3 border-b border-gray-50',
+                location === link.href ? 'text-secondary' : 'text-gray-800'
+              )}>
+                {link.label}
+              </span>
+            </Link>
+          ))}
+          <div className="pt-4 flex flex-col gap-3">
+            <a href={`tel:${phone.replace(/\s/g, '')}`} className="flex items-center justify-center gap-2 p-3 bg-gray-50 rounded-md text-primary font-medium">
               <Phone className="w-4 h-4" />
-              +254 720 769 999
+              {phone}
             </a>
             <Link href="/book-site-visit" onClick={() => setIsMobileMenuOpen(false)}>
               <Button className="w-full bg-secondary text-white hover:bg-secondary/90 h-12">
-                Book Site Visit
+                Book a Site Visit
               </Button>
             </Link>
           </div>
