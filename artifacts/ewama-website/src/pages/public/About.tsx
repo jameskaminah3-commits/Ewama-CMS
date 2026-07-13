@@ -68,6 +68,21 @@ export default function About() {
             </p>
           </div>
 
+          {/* Office */}
+          <div className="mb-20">
+            <div className="rounded-2xl overflow-hidden shadow-lg">
+              <img
+                src="/office-frontdesk.webp"
+                alt="Inside the EWAMA Properties Customer Care Centre in Kiambu Town"
+                loading="lazy"
+                className="w-full h-[320px] md:h-[420px] object-cover"
+              />
+            </div>
+            <p className="text-sm text-gray-500 text-center mt-3">
+              Our Customer Care Centre in Kiambu Town — karibu.
+            </p>
+          </div>
+
           {/* Differentiator */}
           <div className="bg-primary rounded-2xl p-10 md:p-14 text-center mb-20">
             <p className="text-white/60 uppercase tracking-widest text-sm font-semibold mb-4">What Makes EWAMA Different</p>

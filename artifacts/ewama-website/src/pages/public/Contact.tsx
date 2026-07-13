@@ -240,15 +240,31 @@ export default function Contact() {
           </div>
         </div>
 
-        <div className="mt-8 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-          <iframe
-            title="EWAMA Properties office location"
-            src="https://maps.google.com/maps?q=-1.1537477,36.8103259&z=17&output=embed"
-            className="w-full h-[400px] border-0"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            allowFullScreen
-          />
+        <div className="mt-8 grid lg:grid-cols-2 gap-8">
+          <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+            <img
+              src="/office-reception.webp"
+              alt="The EWAMA Properties Customer Care Centre reception in Kiambu Town"
+              loading="lazy"
+              className="w-full h-[400px] object-cover"
+            />
+            <p className="text-sm text-gray-500 text-center py-3 border-t border-gray-100">
+              Our Customer Care Centre — we look forward to welcoming you.
+            </p>
+          </div>
+          <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+            <iframe
+              title="EWAMA Properties office location"
+              src="https://maps.google.com/maps?q=-1.1537477,36.8103259&z=17&output=embed"
+              className="w-full h-[400px] border-0"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
+            <p className="text-sm text-gray-500 text-center py-3 border-t border-gray-100">
+              Ewama Properties Ltd, Kiambu Road, Kiambu
+            </p>
+          </div>
         </div>
       </div>
     </PublicLayout>
