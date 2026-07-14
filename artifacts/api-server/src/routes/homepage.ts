@@ -5,10 +5,7 @@ import { requireAuth } from "../middlewares/auth.js";
 
 const router = Router();
 
-async function ensureHomepage() {
-  const rows = await db.select().from(homepageContentTable);
-  if (!rows.length) {
-    const [row] = await db.insert(homepageContentTable).values({
+const HOMEPAGE_DEFAULTS: Partial<typeof homepageContentTable.$inferInsert> = {
       heroHeading: "Secure Your Future Through Smart Property Investment",
       heroSubheading: "We believe land and property ownership should be accessible, transparent, and rewarding — whether you are purchasing your first plot, building your dream home, or expanding your investment portfolio. Own Today. Prosper Tomorrow.",
       heroButtonText: "Explore Properties",
@@ -80,10 +77,44 @@ async function ensureHomepage() {
         "Strategic investment locations",
         "Dedicated guidance throughout the buying process",
       ],
-    }).returning();
+};
+
+// Copy from retired releases: rows still carrying these exact strings get
+// upgraded to the current defaults; anything the admin edited is left alone.
+const STALE_TEXT: Record<string, string[]> = {
+  heroHeading: ["Own Your Piece of Kenya"],
+  heroSubheading: ["Trusted land investments across Kenya — transparent pricing, genuine title deeds, free site visits."],
+  mission: ["To provide accessible, transparent and trustworthy land investment opportunities that empower Kenyans to build lasting wealth."],
+  vision: ["To be the most trusted land company in Kenya — known for integrity, transparency and community impact."],
+  communityImpact: ["We believe in building communities, not just selling land. Every plot we sell contributes to the growth of a vibrant, thriving Kenyan community."],
+  footerCta: ["Ready to invest? Speak to our team today."],
+};
+
+async function ensureHomepage() {
+  const rows = await db.select().from(homepageContentTable);
+  if (!rows.length) {
+    const [row] = await db.insert(homepageContentTable).values(HOMEPAGE_DEFAULTS).returning();
     return row!;
   }
-  return rows[0]!;
+
+  // Self-heal existing rows: fill fields that are empty or still carry
+  // retired default text, so new sections appear without manual DB work.
+  const row = rows[0]!;
+  const updates: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(HOMEPAGE_DEFAULTS)) {
+    const current = (row as Record<string, unknown>)[key];
+    const isEmpty = current === null || current === undefined || (Array.isArray(current) && current.length === 0);
+    const isStale = typeof current === "string" && (STALE_TEXT[key] ?? []).includes(current);
+    if (isEmpty || isStale) updates[key] = value;
+  }
+  if (Object.keys(updates).length > 0) {
+    const [updated] = await db.update(homepageContentTable)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(homepageContentTable.id, row.id))
+      .returning();
+    return updated!;
+  }
+  return row;
 }
 
 // GET /homepage

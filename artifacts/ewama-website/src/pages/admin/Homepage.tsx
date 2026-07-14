@@ -380,7 +380,16 @@ export default function AdminHomepage() {
           
           <Card className="shadow-sm border-gray-100">
             <CardHeader>
-              <CardTitle>Hero Section</CardTitle>
+              <CardTitle>Hero Slides (the rotating banners at the top of the homepage)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <HeroSlidesEditor form={form} />
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-sm border-gray-100">
+            <CardHeader>
+              <CardTitle>Fallback Hero Text (only shown if there are no slides above)</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <FormField
@@ -549,15 +558,6 @@ export default function AdminHomepage() {
                   )}
                 />
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-sm border-gray-100">
-            <CardHeader>
-              <CardTitle>Hero Slides (rotating banners)</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <HeroSlidesEditor form={form} />
             </CardContent>
           </Card>
 
