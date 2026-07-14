@@ -26,6 +26,7 @@ export * from './enquiryUpdate';
 export * from './enquiryUpdateStatus';
 export * from './exportEnquiries200';
 export * from './healthStatus';
+export * from './heroSlide';
 export * from './homepageCard';
 export * from './homepageContent';
 export * from './homepageContentUpdate';

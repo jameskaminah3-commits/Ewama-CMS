@@ -24,7 +24,7 @@ const fadeUp = {
   transition: { duration: 0.6 },
 };
 
-const WHAT_YOU_GET = [
+const DEFAULT_WHAT_YOU_GET = [
   'Verified property ownership',
   'Transparent pricing',
   'Professional customer support',
@@ -35,31 +35,43 @@ const WHAT_YOU_GET = [
 
 const CONTACT_REASONS = ['Property Inquiry', 'Schedule Viewing', 'Investment Consultation', 'General Question'];
 
-function HeroSlider({ heroImage, heroHeading, heroSubheading }: { heroImage?: string | null; heroHeading?: string | null; heroSubheading?: string | null }) {
-  const slides = [
-    {
-      image: heroImage || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
-      kicker: 'EWAMA PROPERTIES LTD',
-      title: heroHeading || 'Secure Your Future Through Smart Property Investment',
-      text: heroSubheading || 'We make land ownership accessible, transparent, and rewarding.',
-      cta: { label: 'Explore Properties', href: '/properties' },
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
-      kicker: 'EWAMA PROPERTIES LTD',
-      title: 'Own Today. Prosper Tomorrow.',
-      text: 'Prime value-added plots with title deeds guaranteed, in Kenya’s fastest-growing regions.',
-      cta: { label: 'Book a Site Visit', href: '/book-site-visit' },
-    },
-    {
-      image: '/office-reception.webp',
-      kicker: 'A FOUNDATION OF TRUST',
-      title: 'Karibu EWAMA Properties',
-      text: 'Visit our Customer Care Centre on Kiambu Road — our team is ready to walk you home.',
-      cta: { label: 'Talk to Us', href: '/contact' },
-    },
-  ];
+interface Slide {
+  kicker: string;
+  title: string;
+  text: string;
+  image: string;
+  ctaLabel: string;
+  ctaHref: string;
+}
 
+const DEFAULT_SLIDES: Slide[] = [
+  {
+    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+    kicker: 'EWAMA PROPERTIES LTD',
+    title: 'Secure Your Future Through Smart Property Investment',
+    text: 'We make land ownership accessible, transparent, and rewarding.',
+    ctaLabel: 'Explore Properties',
+    ctaHref: '/properties',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+    kicker: 'EWAMA PROPERTIES LTD',
+    title: 'Own Today. Prosper Tomorrow.',
+    text: 'Prime value-added plots with title deeds guaranteed, in Kenya’s fastest-growing regions.',
+    ctaLabel: 'Book a Site Visit',
+    ctaHref: '/book-site-visit',
+  },
+  {
+    image: '/office-reception.webp',
+    kicker: 'A FOUNDATION OF TRUST',
+    title: 'Karibu EWAMA Properties',
+    text: 'Visit our Customer Care Centre on Kiambu Road — our team is ready to walk you home.',
+    ctaLabel: 'Talk to Us',
+    ctaHref: '/contact',
+  },
+];
+
+function HeroSlider({ slides }: { slides: Slide[] }) {
   const [index, setIndex] = useState(0);
   useEffect(() => {
     const timer = setInterval(() => setIndex(i => (i + 1) % slides.length), 6500);
@@ -97,9 +109,9 @@ function HeroSlider({ heroImage, heroHeading, heroSubheading }: { heroImage?: st
               {slide.title}
             </h1>
             <p className="text-lg md:text-xl text-white/85 leading-relaxed mb-9 font-light">{slide.text}</p>
-            <Link href={slide.cta.href}>
+            <Link href={slide.ctaHref}>
               <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 h-13 px-8 text-base font-medium">
-                {slide.cta.label} <ArrowRight className="w-4 h-4 ml-2" />
+                {slide.ctaLabel} <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
           </motion.div>
@@ -187,15 +199,17 @@ export default function Home() {
   }, [allProperties?.data]);
 
   const testimonials = content?.testimonials?.length ? content.testimonials : [];
+  const slides: Slide[] = content?.heroSlides?.length ? content.heroSlides : DEFAULT_SLIDES;
+  const whatYouGet = content?.whatYouGet?.length ? content.whatYouGet : DEFAULT_WHAT_YOU_GET;
 
   return (
     <PublicLayout>
       <Seo
         description="EWAMA Properties Ltd — Foundation of Trust. Investment-grade land in Kenya with ready title deeds, transparent pricing, and flexible payment plans."
-        image={content?.heroImage || undefined}
+        image={slides[0]?.image}
       />
 
-      <HeroSlider heroImage={content?.heroImage} heroHeading={content?.heroHeading} heroSubheading={content?.heroSubheading} />
+      <HeroSlider slides={slides} />
 
       {/* Explore Our Properties */}
       <section className="py-24">
@@ -309,12 +323,11 @@ export default function Home() {
               <p className="text-secondary font-semibold tracking-widest uppercase text-sm mb-3">About Us</p>
               <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary mb-6">Our Approach</h2>
               <p className="text-gray-600 text-lg leading-relaxed mb-8">
-                Finding the right piece of land is personal. We listen first, then guide you through every step —
-                from your first site visit to the day you receive your title deed.
+                {content?.approachText || 'Finding the right piece of land is personal. We listen first, then guide you through every step — from your first site visit to the day you receive your title deed.'}
               </p>
               <blockquote className="border-l-4 border-secondary pl-6 mb-8">
                 <p className="font-heading text-xl md:text-2xl text-gray-800 italic leading-relaxed">
-                  "We don't just sell plots. We help families find the place where their best memories will be made."
+                  "{content?.approachQuote || "We don't just sell plots. We help families find the place where their best memories will be made."}"
                 </p>
                 <footer className="text-sm text-gray-500 mt-3">— EWAMA Properties Ltd, Foundation of Trust</footer>
               </blockquote>
@@ -353,7 +366,7 @@ export default function Home() {
             <motion.div {...fadeUp} className="bg-white rounded-2xl p-10 shadow-xl">
               <h3 className="text-2xl font-heading font-bold text-primary mb-6">What You Get</h3>
               <ul className="space-y-4">
-                {WHAT_YOU_GET.map((item) => (
+                {whatYouGet.map((item) => (
                   <li key={item} className="flex items-start gap-3">
                     <div className="w-6 h-6 rounded-full bg-secondary/10 text-secondary flex items-center justify-center shrink-0 mt-0.5">
                       <Check className="w-4 h-4" />

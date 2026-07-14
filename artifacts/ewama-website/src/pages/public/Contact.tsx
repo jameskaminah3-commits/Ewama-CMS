@@ -1,4 +1,5 @@
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { PageHeader } from '@/components/PageHeader';
 import { Seo } from '@/components/Seo';
 import { useGetSettings } from '@workspace/api-client-react';
 import { MapPin, Phone, Mail, Clock, MessageSquare } from 'lucide-react';
@@ -64,18 +65,11 @@ export default function Contact() {
         title="Customer Care Centre"
         description="Let's start the conversation — call, email, WhatsApp, or visit EWAMA Properties. Honest guidance and clear answers, no pressure and no jargon."
       />
-      <div className="bg-primary pt-16 pb-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] opacity-5 mix-blend-overlay bg-cover bg-center" />
-        <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
-          <p className="text-secondary font-semibold tracking-widest uppercase text-sm mb-4">Customer Care Centre</p>
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">
-            Let's Start the Conversation
-          </h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto font-light">
-            Every great investment begins with a simple conversation. No pressure, no complicated jargon — just clear answers to help you make informed decisions.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        kicker="Customer Care Centre"
+        title="Let's Start the Conversation"
+        subtitle="Every great investment begins with a simple conversation. No pressure, no complicated jargon — just clear answers to help you make informed decisions."
+      />
 
       <div className="container mx-auto px-4 md:px-6 -mt-12 relative z-20 mb-24">
         <div className="grid lg:grid-cols-5 gap-8">

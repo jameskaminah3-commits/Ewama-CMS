@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { PageHeader } from '@/components/PageHeader';
 import { Seo } from '@/components/Seo';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
@@ -128,16 +129,11 @@ export default function Faq() {
         title="Frequently Asked Questions"
         description="Answers to the questions we receive most often about buying land through EWAMA Properties — reservations, payments, title deeds, site visits, and diaspora investment."
       />
-      <div className="bg-primary pt-16 pb-24 relative overflow-hidden">
-        <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">
-            Frequently Asked Questions
-          </h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto font-light">
-            Buying property is one of the most important decisions you'll ever make, and it's natural to have questions. Informed buyers make confident investors.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        kicker="We're Here to Help"
+        title="Frequently Asked Questions"
+        subtitle="Buying property is one of the most important decisions you'll ever make, and it's natural to have questions. Informed buyers make confident investors."
+      />
 
       <div className="container mx-auto px-4 md:px-6 py-16">
         <div className="max-w-3xl mx-auto space-y-10">

@@ -1,4 +1,5 @@
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { PageHeader } from '@/components/PageHeader';
 import { Seo } from '@/components/Seo';
 
 export default function PrivacyPolicy() {
@@ -8,14 +9,11 @@ export default function PrivacyPolicy() {
         title="Privacy Policy"
         description="How EWAMA Properties Ltd collects, uses, and protects your personal information."
       />
-      <div className="bg-primary pt-16 pb-20">
-        <div className="container mx-auto px-4 md:px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">Privacy Policy</h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto font-light">
-            Your trust is our foundation. Here is how we handle your information.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        kicker="Legal"
+        title="Privacy Policy"
+        subtitle="Your trust is our foundation. Here is how we handle your information."
+      />
 
       <div className="container mx-auto px-4 md:px-6 py-16">
         <div className="max-w-3xl mx-auto prose prose-lg text-gray-600">

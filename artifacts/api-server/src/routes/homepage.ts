@@ -44,6 +44,42 @@ async function ensureHomepage() {
         { quote: "From the site visit to ownership, the team was supportive, honest, and responsive. We highly recommend EWAMA.", name: "Verified Client", role: "Site visit to ownership" },
         { quote: "We were looking for a secure investment opportunity, and EWAMA helped us find exactly what we needed.", name: "Verified Client", role: "Investment purchase" },
       ],
+      heroSlides: [
+        {
+          kicker: "EWAMA PROPERTIES LTD",
+          title: "Secure Your Future Through Smart Property Investment",
+          text: "We make land and property ownership accessible, transparent, and rewarding — whether you are purchasing your first plot, building your dream home, or expanding your portfolio.",
+          image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
+          ctaLabel: "Explore Properties",
+          ctaHref: "/properties",
+        },
+        {
+          kicker: "EWAMA PROPERTIES LTD",
+          title: "Own Today. Prosper Tomorrow.",
+          text: "Prime value-added plots with title deeds guaranteed, in Kenya's fastest-growing regions.",
+          image: "https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
+          ctaLabel: "Book a Site Visit",
+          ctaHref: "/book-site-visit",
+        },
+        {
+          kicker: "A FOUNDATION OF TRUST",
+          title: "Karibu EWAMA Properties",
+          text: "Visit our Customer Care Centre on Kiambu Road — our team is ready to walk you home.",
+          image: "/office-reception.webp",
+          ctaLabel: "Talk to Us",
+          ctaHref: "/contact",
+        },
+      ],
+      approachText: "Finding the right piece of land is personal. We listen first, then guide you through every step — from your first site visit to the day you receive your title deed.",
+      approachQuote: "We don't just sell plots. We help families find the place where their best memories will be made.",
+      whatYouGet: [
+        "Verified property ownership",
+        "Transparent pricing",
+        "Professional customer support",
+        "Flexible payment plans",
+        "Strategic investment locations",
+        "Dedicated guidance throughout the buying process",
+      ],
     }).returning();
     return row!;
   }

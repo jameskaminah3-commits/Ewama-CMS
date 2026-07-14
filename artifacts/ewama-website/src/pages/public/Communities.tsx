@@ -1,4 +1,5 @@
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { PageHeader } from '@/components/PageHeader';
 import { Seo } from '@/components/Seo';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
@@ -28,19 +29,11 @@ export default function Communities() {
         description="At EWAMA Properties, real estate is ultimately about people. Discover how we create opportunities, restore hope, and build communities where families thrive."
       />
 
-      {/* Hero */}
-      <div className="bg-primary pt-20 pb-28 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] opacity-10 mix-blend-overlay bg-cover bg-center" />
-        <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
-          <p className="text-secondary font-semibold tracking-widest uppercase text-sm mb-4">Our Impact</p>
-          <h1 className="text-4xl md:text-6xl font-heading font-bold text-white mb-6 leading-tight">
-            Building Communities
-          </h1>
-          <p className="text-white/85 text-xl max-w-2xl mx-auto font-light">
-            Beyond Property. Beyond Transactions.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        kicker="Our Impact"
+        title="Building Communities"
+        subtitle="Beyond Property. Beyond Transactions."
+      />
 
       <div className="container mx-auto px-4 md:px-6 py-20">
         <div className="max-w-3xl mx-auto">

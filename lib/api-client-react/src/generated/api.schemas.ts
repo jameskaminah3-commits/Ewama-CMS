@@ -566,6 +566,15 @@ export interface HomepageTestimonial {
   role: string;
 }
 
+export interface HeroSlide {
+  kicker: string;
+  title: string;
+  text: string;
+  image: string;
+  ctaLabel: string;
+  ctaHref: string;
+}
+
 export interface HomepageContent {
   id: number;
   /** @nullable */
@@ -606,6 +615,14 @@ export interface HomepageContent {
   processSteps?: HomepageCard[] | null;
   /** @nullable */
   testimonials?: HomepageTestimonial[] | null;
+  /** @nullable */
+  heroSlides?: HeroSlide[] | null;
+  /** @nullable */
+  approachText?: string | null;
+  /** @nullable */
+  approachQuote?: string | null;
+  /** @nullable */
+  whatYouGet?: string[] | null;
   updatedAt?: string;
 }
 
@@ -648,6 +665,14 @@ export interface HomepageContentUpdate {
   processSteps?: HomepageCard[] | null;
   /** @nullable */
   testimonials?: HomepageTestimonial[] | null;
+  /** @nullable */
+  heroSlides?: HeroSlide[] | null;
+  /** @nullable */
+  approachText?: string | null;
+  /** @nullable */
+  approachQuote?: string | null;
+  /** @nullable */
+  whatYouGet?: string[] | null;
 }
 
 export interface NewsletterInput {

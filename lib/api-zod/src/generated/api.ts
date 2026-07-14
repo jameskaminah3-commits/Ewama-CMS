@@ -1171,6 +1171,17 @@ export const GetHomepageContentResponse = zod.object({
   "name": zod.string(),
   "role": zod.string()
 })).nullish(),
+  "heroSlides": zod.array(zod.object({
+  "kicker": zod.string(),
+  "title": zod.string(),
+  "text": zod.string(),
+  "image": zod.string(),
+  "ctaLabel": zod.string(),
+  "ctaHref": zod.string()
+})).nullish(),
+  "approachText": zod.string().nullish(),
+  "approachQuote": zod.string().nullish(),
+  "whatYouGet": zod.array(zod.string()).nullish(),
   "updatedAt": zod.coerce.date().optional()
 })
 
@@ -1207,7 +1218,18 @@ export const UpdateHomepageContentBody = zod.object({
   "quote": zod.string(),
   "name": zod.string(),
   "role": zod.string()
-})).nullish()
+})).nullish(),
+  "heroSlides": zod.array(zod.object({
+  "kicker": zod.string(),
+  "title": zod.string(),
+  "text": zod.string(),
+  "image": zod.string(),
+  "ctaLabel": zod.string(),
+  "ctaHref": zod.string()
+})).nullish(),
+  "approachText": zod.string().nullish(),
+  "approachQuote": zod.string().nullish(),
+  "whatYouGet": zod.array(zod.string()).nullish()
 })
 
 export const UpdateHomepageContentResponse = zod.object({
@@ -1241,6 +1263,17 @@ export const UpdateHomepageContentResponse = zod.object({
   "name": zod.string(),
   "role": zod.string()
 })).nullish(),
+  "heroSlides": zod.array(zod.object({
+  "kicker": zod.string(),
+  "title": zod.string(),
+  "text": zod.string(),
+  "image": zod.string(),
+  "ctaLabel": zod.string(),
+  "ctaHref": zod.string()
+})).nullish(),
+  "approachText": zod.string().nullish(),
+  "approachQuote": zod.string().nullish(),
+  "whatYouGet": zod.array(zod.string()).nullish(),
   "updatedAt": zod.coerce.date().optional()
 })
 

@@ -1,4 +1,5 @@
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { PageHeader } from '@/components/PageHeader';
 import { Seo } from '@/components/Seo';
 import { useGetHomepageContent } from '@workspace/api-client-react';
 import { Target, Eye, Shield, Users, Home as HomeIcon, CalendarCheck, LineChart, Headphones, Wallet, FileSearch, ArrowRight, Award, Sprout, Lightbulb, HeartHandshake } from 'lucide-react';
@@ -33,20 +34,11 @@ export default function About() {
         title="About Us"
         description="Learn about EWAMA Properties Ltd — a Kenyan real estate company bringing banking-level professionalism, transparency, and trust to land investment."
       />
-      <div className="bg-primary pt-16 pb-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1524813686514-a57563d77965?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] opacity-5 mix-blend-overlay bg-cover bg-center" />
-        <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
-          <div className="inline-block bg-white rounded-xl px-5 py-3 mb-6">
-            <img src="/logo.png" alt="EWAMA Properties Ltd" className="h-14 w-auto" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">
-            About EWAMA Properties
-          </h1>
-          <p className="text-white/85 text-xl max-w-2xl mx-auto font-light">
-            Building Trust. Creating Wealth. Transforming Communities.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        kicker="About Us"
+        title="About EWAMA Properties"
+        subtitle="Building Trust. Creating Wealth. Transforming Communities."
+      />
 
       <div className="container mx-auto px-4 md:px-6 py-20">
         <div className="max-w-4xl mx-auto">

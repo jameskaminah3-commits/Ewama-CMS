@@ -1628,6 +1628,18 @@ components:
           type: ["array", "null"]
           items:
             $ref: "#/components/schemas/HomepageTestimonial"
+        heroSlides:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/HeroSlide"
+        approachText:
+          type: ["string", "null"]
+        approachQuote:
+          type: ["string", "null"]
+        whatYouGet:
+          type: ["array", "null"]
+          items:
+            type: string
         updatedAt:
           type: string
           format: date-time
@@ -1650,6 +1662,23 @@ components:
         name:
           type: string
         role:
+          type: string
+
+    HeroSlide:
+      type: object
+      required: [kicker, title, text, image, ctaLabel, ctaHref]
+      properties:
+        kicker:
+          type: string
+        title:
+          type: string
+        text:
+          type: string
+        image:
+          type: string
+        ctaLabel:
+          type: string
+        ctaHref:
           type: string
 
     HomepageContentUpdate:
@@ -1699,6 +1728,18 @@ components:
           type: ["array", "null"]
           items:
             $ref: "#/components/schemas/HomepageTestimonial"
+        heroSlides:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/HeroSlide"
+        approachText:
+          type: ["string", "null"]
+        approachQuote:
+          type: ["string", "null"]
+        whatYouGet:
+          type: ["array", "null"]
+          items:
+            type: string
 
     # ─── NEWSLETTER ────────────────────────────────────────
     NewsletterInput:

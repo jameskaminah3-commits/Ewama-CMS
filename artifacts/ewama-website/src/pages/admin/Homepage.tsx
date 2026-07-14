@@ -1,6 +1,7 @@
 import { AdminLayout } from '@/components/admin/AdminLayout';
+import { MediaPickerDialog } from '@/components/admin/MediaPickerDialog';
 import { useGetHomepageContent, useUpdateHomepageContent, getGetHomepageContentQueryKey } from '@workspace/api-client-react';
-import { useForm, useFieldArray, Control } from 'react-hook-form';
+import { useForm, useFieldArray, Control, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -9,8 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Save, Plus, Trash2 } from 'lucide-react';
-import { useEffect } from 'react';
+import { Loader2, Save, Plus, Trash2, Image as ImageIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 const cardSchema = z.object({
@@ -22,6 +23,15 @@ const testimonialSchema = z.object({
   quote: z.string().min(1, 'Quote is required'),
   name: z.string().min(1, 'Name is required'),
   role: z.string().min(1, 'Role is required'),
+});
+
+const heroSlideSchema = z.object({
+  kicker: z.string().min(1, 'Small label is required'),
+  title: z.string().min(1, 'Headline is required'),
+  text: z.string().min(1, 'Text is required'),
+  image: z.string().min(1, 'Image is required'),
+  ctaLabel: z.string().min(1, 'Button label is required'),
+  ctaHref: z.string().min(1, 'Button link is required'),
 });
 
 const homepageSchema = z.object({
@@ -41,9 +51,148 @@ const homepageSchema = z.object({
   advantages: z.array(cardSchema),
   processSteps: z.array(cardSchema),
   testimonials: z.array(testimonialSchema),
+  heroSlides: z.array(heroSlideSchema),
+  approachText: z.string().optional().nullable(),
+  approachQuote: z.string().optional().nullable(),
+  whatYouGet: z.array(z.string()),
 });
 
 type HomepageForm = z.infer<typeof homepageSchema>;
+
+function HeroSlidesEditor({ form }: { form: UseFormReturn<HomepageForm> }) {
+  const { fields, append, remove } = useFieldArray({ control: form.control, name: 'heroSlides' });
+  const [pickerIndex, setPickerIndex] = useState<number | null>(null);
+
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-gray-500">
+        These are the rotating banners at the top of the homepage. Each slide has a small label, a headline, supporting text, a photo, and a button.
+      </p>
+      {fields.map((item, index) => (
+        <div key={item.id} className="border border-gray-200 rounded-lg p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-gray-500">Slide {index + 1}</p>
+            <Button type="button" size="icon" variant="ghost" className="h-8 w-8 text-red-500 hover:text-red-600" onClick={() => remove(index)}>
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField control={form.control} name={`heroSlides.${index}.kicker`} render={({ field }) => (
+              <FormItem>
+                <FormLabel>Small Label (above headline)</FormLabel>
+                <FormControl><Input placeholder="EWAMA PROPERTIES LTD" {...field} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+            <FormField control={form.control} name={`heroSlides.${index}.title`} render={({ field }) => (
+              <FormItem>
+                <FormLabel>Headline</FormLabel>
+                <FormControl><Input placeholder="Own Today. Prosper Tomorrow." {...field} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+          </div>
+          <FormField control={form.control} name={`heroSlides.${index}.text`} render={({ field }) => (
+            <FormItem>
+              <FormLabel>Supporting Text</FormLabel>
+              <FormControl><Textarea className="resize-none" {...field} /></FormControl>
+              <FormMessage />
+            </FormItem>
+          )} />
+          <div className="flex items-end gap-3">
+            <div className="flex-1">
+              <FormField control={form.control} name={`heroSlides.${index}.image`} render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Background Photo</FormLabel>
+                  <FormControl><Input placeholder="Pick from Media Library or paste a URL" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+            </div>
+            <Button type="button" variant="outline" className="gap-2 shrink-0" onClick={() => setPickerIndex(index)}>
+              <ImageIcon className="w-4 h-4" /> Choose
+            </Button>
+          </div>
+          {form.watch(`heroSlides.${index}.image`) && (
+            <div className="h-28 rounded-lg overflow-hidden border border-gray-200">
+              <img src={form.watch(`heroSlides.${index}.image`)} alt="Slide preview" className="w-full h-full object-cover" />
+            </div>
+          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField control={form.control} name={`heroSlides.${index}.ctaLabel`} render={({ field }) => (
+              <FormItem>
+                <FormLabel>Button Label</FormLabel>
+                <FormControl><Input placeholder="Explore Properties" {...field} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+            <FormField control={form.control} name={`heroSlides.${index}.ctaHref`} render={({ field }) => (
+              <FormItem>
+                <FormLabel>Button Link</FormLabel>
+                <FormControl><Input placeholder="/properties" {...field} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+          </div>
+        </div>
+      ))}
+      <Button
+        type="button"
+        variant="outline"
+        className="gap-2"
+        onClick={() => append({ kicker: 'EWAMA PROPERTIES LTD', title: '', text: '', image: '', ctaLabel: 'Explore Properties', ctaHref: '/properties' })}
+      >
+        <Plus className="w-4 h-4" /> Add Slide
+      </Button>
+
+      <MediaPickerDialog
+        open={pickerIndex !== null}
+        onOpenChange={(open) => !open && setPickerIndex(null)}
+        title="Choose a slide photo"
+        onSelect={(url) => {
+          if (pickerIndex !== null) form.setValue(`heroSlides.${pickerIndex}.image`, url);
+        }}
+      />
+    </div>
+  );
+}
+
+function WhatYouGetEditor({ form }: { form: UseFormReturn<HomepageForm> }) {
+  const [input, setInput] = useState('');
+  const items = form.watch('whatYouGet');
+
+  const add = () => {
+    if (!input.trim()) return;
+    form.setValue('whatYouGet', [...form.getValues('whatYouGet'), input.trim()]);
+    setInput('');
+  };
+
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-gray-500">The checklist shown beside the statistics ("What You Get").</p>
+      <div className="flex gap-2">
+        <Input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="e.g. Transparent pricing"
+          onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); add(); } }}
+        />
+        <Button type="button" variant="secondary" onClick={add}><Plus className="w-4 h-4" /></Button>
+      </div>
+      <ul className="space-y-2">
+        {items.map((item, idx) => (
+          <li key={idx} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-md text-sm border border-gray-100">
+            {item}
+            <Button type="button" variant="ghost" size="sm" className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+              onClick={() => form.setValue('whatYouGet', form.getValues('whatYouGet').filter((_, i) => i !== idx))}>
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 function CardListEditor({ control, name, itemLabel }: { control: Control<HomepageForm>; name: 'advantages' | 'processSteps'; itemLabel: string }) {
   const { fields, append, remove } = useFieldArray({ control, name });
@@ -169,6 +318,10 @@ export default function AdminHomepage() {
       advantages: [],
       processSteps: [],
       testimonials: [],
+      heroSlides: [],
+      approachText: '',
+      approachQuote: '',
+      whatYouGet: [],
     },
   });
 
@@ -191,6 +344,10 @@ export default function AdminHomepage() {
         advantages: content.advantages || [],
         processSteps: content.processSteps || [],
         testimonials: content.testimonials || [],
+        heroSlides: content.heroSlides || [],
+        approachText: content.approachText || '',
+        approachQuote: content.approachQuote || '',
+        whatYouGet: content.whatYouGet || [],
       });
     }
   }, [content, form]);
@@ -392,6 +549,58 @@ export default function AdminHomepage() {
                   )}
                 />
               </div>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-sm border-gray-100">
+            <CardHeader>
+              <CardTitle>Hero Slides (rotating banners)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <HeroSlidesEditor form={form} />
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-sm border-gray-100">
+            <CardHeader>
+              <CardTitle>Our Approach Section</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <FormField
+                control={form.control}
+                name="approachText"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Introduction Text</FormLabel>
+                    <FormControl>
+                      <Textarea className="resize-none" placeholder="Finding the right piece of land is personal..." {...field} value={field.value || ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="approachQuote"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Pull Quote (shown in italics with a gold bar)</FormLabel>
+                    <FormControl>
+                      <Textarea className="resize-none" placeholder="We don't just sell plots..." {...field} value={field.value || ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-sm border-gray-100">
+            <CardHeader>
+              <CardTitle>What You Get (checklist)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <WhatYouGetEditor form={form} />
             </CardContent>
           </Card>
 

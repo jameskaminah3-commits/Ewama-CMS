@@ -1,4 +1,5 @@
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { PageHeader } from '@/components/PageHeader';
 import { Seo } from '@/components/Seo';
 import { useListArticles } from '@workspace/api-client-react';
 import { Link } from 'wouter';
@@ -16,17 +17,11 @@ export default function Articles() {
         title="Real Estate Insights"
         description="Expert advice, market trends, and guides for investing in Kenyan real estate — from the EWAMA Properties team."
       />
-      <div className="bg-primary pt-16 pb-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] opacity-5 mix-blend-overlay bg-cover bg-center" />
-        <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">
-            Real Estate Insights
-          </h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto font-light">
-            Expert advice, market trends, and guides to help you make informed investment decisions in Kenyan real estate.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        kicker="Latest News"
+        title="Blog & Insights"
+        subtitle="Your source for market updates, property insights, and expert real estate advice."
+      />
 
       <div className="container mx-auto px-4 md:px-6 -mt-8 relative z-20 pb-24">
         {isLoading ? (
