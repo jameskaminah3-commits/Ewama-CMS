@@ -1,6 +1,7 @@
 import "./config/env.js";
 import app from "./app";
 import { logger } from "./lib/logger";
+import { autoMigrate } from "./lib/autoMigrate.js";
 
 const rawPort = process.env["PORT"];
 
@@ -15,6 +16,10 @@ const port = Number(rawPort);
 if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
+
+// Bring the database schema up to date before accepting traffic, so a
+// missing column can never crash the app.
+await autoMigrate();
 
 app.listen(port, (err) => {
   if (err) {
