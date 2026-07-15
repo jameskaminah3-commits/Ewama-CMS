@@ -1,14 +1,30 @@
 import { Router } from "express";
 import multer from "multer";
-import sharp from "sharp";
 import crypto from "node:crypto";
 import path from "node:path";
 import { db, mediaTable } from "@workspace/db";
 import { eq, ilike, sql, desc } from "drizzle-orm";
 import { requireAuth } from "../middlewares/auth.js";
 import { supabaseAdmin } from "../services/supabase.js";
+import { logger } from "../lib/logger.js";
 
 const router = Router();
+
+// sharp is a native module. On some shared hosts it can't be installed;
+// load it lazily so the API still runs (uploads just skip optimization)
+// instead of crashing on boot.
+type Sharp = (typeof import("sharp"))["default"];
+let sharpModule: Sharp | null | undefined;
+async function getSharp(): Promise<Sharp | null> {
+  if (sharpModule !== undefined) return sharpModule;
+  try {
+    sharpModule = (await import("sharp")).default;
+  } catch (err) {
+    logger.warn({ err }, "sharp unavailable — uploads will be stored without optimization");
+    sharpModule = null;
+  }
+  return sharpModule;
+}
 
 const MEDIA_BUCKET = process.env["SUPABASE_MEDIA_BUCKET"] || "media";
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10 MB
@@ -63,7 +79,8 @@ interface ProcessedImage {
  * Falls back to the original bytes if the image can't be decoded.
  */
 async function optimizeImage(buffer: Buffer, mimeType: string): Promise<ProcessedImage> {
-  if (!OPTIMIZABLE_MIMES.has(mimeType)) {
+  const sharp = await getSharp();
+  if (!sharp || !OPTIMIZABLE_MIMES.has(mimeType)) {
     return { buffer, mimeType, ext: "", thumbnail: null };
   }
   try {
@@ -115,13 +132,26 @@ router.post("/upload", requireAuth, upload.single("file"), async (req, res) => {
   }
   // Browsers (especially on Windows) sometimes mislabel images as
   // application/octet-stream, so verify by sniffing the actual bytes
-  // instead of trusting the reported type.
+  // instead of trusting the reported type. When sharp isn't available we
+  // fall back to accepting common image extensions.
   if (!ALLOWED_MIME_PREFIXES.some((p) => file.mimetype.startsWith(p))) {
-    try {
-      const meta = await sharp(file.buffer).metadata();
-      if (meta.format) file.mimetype = `image/${meta.format}`;
-      else throw new Error("unknown format");
-    } catch {
+    const sharp = await getSharp();
+    let recovered = false;
+    if (sharp) {
+      try {
+        const meta = await sharp(file.buffer).metadata();
+        if (meta.format) { file.mimetype = `image/${meta.format}`; recovered = true; }
+      } catch { /* falls through to extension check */ }
+    }
+    if (!recovered) {
+      const ext = path.extname(file.originalname).toLowerCase();
+      const imageExts = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif", ".heic", ".heif", ".tif", ".tiff"];
+      if (imageExts.includes(ext)) {
+        file.mimetype = ext === ".jpg" ? "image/jpeg" : `image/${ext.slice(1)}`;
+        recovered = true;
+      }
+    }
+    if (!recovered) {
       req.log.warn({ reportedType: file.mimetype, fileName: file.originalname }, "Rejected upload: not an image or PDF");
       res.status(400).json({ error: `"${file.originalname}" does not look like an image or PDF (browser reported type: ${file.mimetype}).` });
       return;
