@@ -49,14 +49,15 @@ export default function AdminMedia() {
     const uploadable = list.filter(f => f.size <= MAX_UPLOAD_BYTES);
     setUploadingCount(uploadable.length);
     let uploaded = 0;
-    let failed = 0;
+    const failures: string[] = [];
 
     for (const file of uploadable) {
       try {
         await uploadMutation.mutateAsync({ data: { file, altText: file.name } });
         uploaded++;
-      } catch {
-        failed++;
+      } catch (err) {
+        const serverMessage = (err as { data?: { error?: string } })?.data?.error;
+        failures.push(serverMessage || `${file.name}: upload failed`);
       }
       setUploadingCount(c => Math.max(0, c - 1));
     }
@@ -65,10 +66,10 @@ export default function AdminMedia() {
     if (uploaded > 0) {
       toast({ title: uploaded === 1 ? 'File uploaded' : `${uploaded} files uploaded` });
     }
-    if (failed > 0) {
+    if (failures.length > 0) {
       toast({
-        title: 'Some uploads failed',
-        description: `${failed} file${failed === 1 ? '' : 's'} could not be uploaded. Please try again.`,
+        title: `${failures.length} upload${failures.length === 1 ? '' : 's'} failed`,
+        description: failures[0],
         variant: 'destructive',
       });
     }

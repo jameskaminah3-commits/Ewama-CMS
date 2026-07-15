@@ -40,8 +40,9 @@ export function MediaPickerDialog({ open, onOpenChange, onSelect, title = 'Choos
       // Hand the fresh image straight to the caller — fastest path.
       onSelect(uploaded.url);
       onOpenChange(false);
-    } catch {
-      toast({ title: 'Upload failed. Please try again.', variant: 'destructive' });
+    } catch (err) {
+      const serverMessage = (err as { data?: { error?: string } })?.data?.error;
+      toast({ title: 'Upload failed', description: serverMessage || 'Please try again.', variant: 'destructive' });
     } finally {
       if (fileInputRef.current) fileInputRef.current.value = '';
     }

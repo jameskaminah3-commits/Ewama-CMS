@@ -109,12 +109,23 @@ router.get("/", async (req, res) => {
 router.post("/upload", requireAuth, upload.single("file"), async (req, res) => {
   const file = req.file;
   if (!file) {
-    res.status(400).json({ error: "A file is required (multipart field name: file)" });
+    req.log.warn({ contentType: req.headers["content-type"] }, "Upload arrived without a parsable file");
+    res.status(400).json({ error: "No file reached the server. Please try again, or try a different browser." });
     return;
   }
+  // Browsers (especially on Windows) sometimes mislabel images as
+  // application/octet-stream, so verify by sniffing the actual bytes
+  // instead of trusting the reported type.
   if (!ALLOWED_MIME_PREFIXES.some((p) => file.mimetype.startsWith(p))) {
-    res.status(400).json({ error: "Only images and PDF documents can be uploaded" });
-    return;
+    try {
+      const meta = await sharp(file.buffer).metadata();
+      if (meta.format) file.mimetype = `image/${meta.format}`;
+      else throw new Error("unknown format");
+    } catch {
+      req.log.warn({ reportedType: file.mimetype, fileName: file.originalname }, "Rejected upload: not an image or PDF");
+      res.status(400).json({ error: `"${file.originalname}" does not look like an image or PDF (browser reported type: ${file.mimetype}).` });
+      return;
+    }
   }
 
   await ensureBucket();
