@@ -67,7 +67,7 @@ export default function Properties() {
         subtitle="Prime value-added plots with title deeds guaranteed — thoroughly vetted land in Kenya's high-growth corridors."
       />
 
-      <div className="container mx-auto px-4 md:px-6 -mt-8 relative z-20">
+      <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-6 lg:px-10 -mt-8 relative z-20">
         <div className="bg-white rounded-xl shadow-md border border-gray-100 p-4 mb-12 flex flex-col md:flex-row gap-4 items-center">
           <div className="flex-1 w-full relative">
             <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -113,7 +113,7 @@ export default function Properties() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
             {isLoading ? (
               [1,2,3,4,5,6].map(i => (
                 <div key={i} className="rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm">

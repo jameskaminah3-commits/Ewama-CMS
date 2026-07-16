@@ -71,7 +71,7 @@ export default function Contact() {
         subtitle="Every great investment begins with a simple conversation. No pressure, no complicated jargon — just clear answers to help you make informed decisions."
       />
 
-      <div className="container mx-auto px-4 md:px-6 -mt-12 relative z-20 mb-24">
+      <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-6 lg:px-10 -mt-12 relative z-20 mb-24">
         <div className="grid lg:grid-cols-5 gap-8">
           
           <div className="lg:col-span-2 space-y-6">
@@ -223,7 +223,7 @@ export default function Contact() {
                   />
                   <Button 
                     type="submit" 
-                    className="w-full md:w-auto px-8 h-12 bg-secondary hover:bg-secondary/90 text-white font-medium text-lg"
+                    className="w-full md:w-auto px-8 h-12 bg-secondary hover:bg-secondary/90 text-primary font-semibold text-lg"
                     disabled={createEnquiry.isPending}
                   >
                     {createEnquiry.isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send Message'}

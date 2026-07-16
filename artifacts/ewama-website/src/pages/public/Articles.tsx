@@ -23,9 +23,9 @@ export default function Articles() {
         subtitle="Your source for market updates, property insights, and expert real estate advice."
       />
 
-      <div className="container mx-auto px-4 md:px-6 -mt-8 relative z-20 pb-24">
+      <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-6 lg:px-10 -mt-8 relative z-20 pb-24">
         {isLoading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8 mt-16">
             {[1,2,3,4].map(i => (
               <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <Skeleton className="h-48 w-full rounded-none" />
@@ -46,7 +46,7 @@ export default function Articles() {
             <p className="text-gray-500">Check back later for market insights and investment guides.</p>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8 mt-16">
             {articles.map((article) => (
               <Link key={article.id} href={`/articles/${article.slug}`}>
                 <article className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full cursor-pointer group">

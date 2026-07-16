@@ -35,39 +35,41 @@ export default function Communities() {
         subtitle="Beyond Property. Beyond Transactions."
       />
 
-      <div className="container mx-auto px-4 md:px-6 py-20">
-        <div className="max-w-3xl mx-auto">
+      <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-6 lg:px-10 py-20">
+        <div>
 
-          {/* Opening */}
-          <motion.div {...fadeUp} className="prose prose-lg max-w-none text-gray-600 mb-16">
-            <p className="text-2xl font-heading text-primary leading-relaxed">
-              At EWAMA Properties Ltd, we believe that real estate is ultimately about people.
-            </p>
-            <p>
-              A plot of land is more than a parcel defined by boundaries — it is the place where families build homes,
-              children create memories, businesses begin, and dreams take shape. Every property we help someone acquire
-              represents a new chapter in their story.
-            </p>
-            <p>
-              That's why our work extends beyond selling land. We are committed to creating opportunities, restoring hope,
-              and building communities where people can thrive. This commitment is at the heart of our promise:{' '}
-              <strong className="text-primary">Foundation of Trust.</strong>
-            </p>
-          </motion.div>
+          {/* Opening — text beside the impact stat */}
+          <div className="grid lg:grid-cols-5 gap-10 items-center mb-20">
+            <motion.div {...fadeUp} className="lg:col-span-3 space-y-4 text-gray-600 leading-relaxed">
+              <p className="text-2xl font-heading text-primary leading-relaxed">
+                At EWAMA Properties Ltd, we believe that real estate is ultimately about people.
+              </p>
+              <p>
+                A plot of land is more than a parcel defined by boundaries — it is the place where families build homes,
+                children create memories, businesses begin, and dreams take shape. Every property we help someone acquire
+                represents a new chapter in their story.
+              </p>
+              <p>
+                That's why our work extends beyond selling land. We are committed to creating opportunities, restoring hope,
+                and building communities where people can thrive. This commitment is at the heart of our promise:{' '}
+                <strong className="text-primary">Foundation of Trust.</strong>
+              </p>
+            </motion.div>
 
-          {/* Impact stat */}
-          <motion.div {...fadeUp} className="bg-secondary/10 border border-secondary/20 rounded-2xl p-10 text-center mb-16">
-            <div className="w-14 h-14 mx-auto bg-secondary text-white rounded-2xl flex items-center justify-center mb-5">
-              <HomeIcon className="w-7 h-7" />
-            </div>
-            <p className="text-5xl font-heading font-bold text-primary mb-3">10+</p>
-            <p className="text-lg text-gray-700 max-w-md mx-auto">
-              families helped to find stability and begin new chapters in their lives through our social initiatives.
-            </p>
-          </motion.div>
+            <motion.div {...fadeUp} className="lg:col-span-2 bg-secondary/10 border border-secondary/20 rounded-2xl p-10 text-center">
+              <div className="w-14 h-14 mx-auto bg-secondary text-white rounded-2xl flex items-center justify-center mb-5">
+                <HomeIcon className="w-7 h-7" />
+              </div>
+              <p className="text-5xl font-heading font-bold text-primary mb-3">10+</p>
+              <p className="text-gray-700">
+                families helped to find stability and begin new chapters in their lives through our social initiatives.
+              </p>
+            </motion.div>
+          </div>
 
           {/* Purpose */}
-          <motion.div {...fadeUp} className="mb-16">
+          <div className="grid gap-12 lg:grid-cols-2 mb-16">
+          <motion.div {...fadeUp}>
             <h2 className="text-3xl font-heading font-bold text-primary mb-6">Our Purpose</h2>
             <div className="prose prose-lg max-w-none text-gray-600">
               <p className="font-medium text-gray-800">We measure success differently.</p>
@@ -84,7 +86,7 @@ export default function Communities() {
           </motion.div>
 
           {/* Communities that last */}
-          <motion.div {...fadeUp} className="mb-16">
+          <motion.div {...fadeUp}>
             <h2 className="text-3xl font-heading font-bold text-primary mb-6">Building Communities That Last</h2>
             <div className="prose prose-lg max-w-none text-gray-600">
               <p>
@@ -98,11 +100,12 @@ export default function Communities() {
               </p>
             </div>
           </motion.div>
+          </div>
 
           {/* Commitments */}
           <motion.div {...fadeUp} className="mb-16">
             <h2 className="text-3xl font-heading font-bold text-primary mb-8">Our Commitment</h2>
-            <div className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
               {COMMITMENTS.map((item, idx) => (
                 <div key={idx} className="flex items-center gap-4 bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
                   <div className="w-11 h-11 rounded-full bg-primary/5 text-primary flex items-center justify-center shrink-0">
@@ -115,9 +118,9 @@ export default function Communities() {
           </motion.div>
 
           {/* Looking ahead */}
-          <motion.div {...fadeUp} className="bg-primary rounded-2xl p-10 md:p-14 text-center">
+          <motion.div {...fadeUp} className="bg-primary rounded-2xl p-10 md:p-14 grid gap-8 lg:grid-cols-[0.45fr_0.55fr] lg:items-center">
             <h2 className="text-3xl font-heading font-bold text-white mb-6">Looking Ahead</h2>
-            <p className="text-white/80 text-lg leading-relaxed max-w-2xl mx-auto mb-8">
+            <p className="text-white/80 text-lg leading-relaxed mb-8">
               The future we envision is one where more families own property, more investors build lasting wealth,
               and more communities flourish through responsible development.
             </p>
@@ -126,9 +129,9 @@ export default function Communities() {
               <p className="text-secondary">We can build opportunity. We can build hope.</p>
               <p>We can build communities — and a future founded on trust.</p>
             </div>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/properties">
-                <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 h-12 px-8">
+                <Button size="lg" className="bg-secondary text-primary hover:bg-secondary/90 h-12 px-8 font-semibold">
                   Explore Our Projects
                 </Button>
               </Link>

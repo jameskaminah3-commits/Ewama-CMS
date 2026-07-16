@@ -13,16 +13,18 @@ interface PageHeaderProps {
  */
 export function PageHeader({ kicker, title, subtitle, children }: PageHeaderProps) {
   return (
-    <div className="relative bg-primary pt-16 pb-24 overflow-hidden">
+    <div className="relative bg-primary py-14 md:py-16 overflow-hidden">
       <div className="absolute inset-x-0 bottom-0 h-1 bg-secondary" aria-hidden="true" />
-      <div className="container mx-auto px-4 md:px-6 relative z-10 text-left">
+      <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-6 lg:px-10 relative z-10 text-left">
         {kicker && (
           <p className="text-secondary font-semibold tracking-[0.25em] uppercase text-sm mb-4">{kicker}</p>
         )}
-        <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">{title}</h1>
-        {subtitle && (
-          <p className="text-white/80 text-lg max-w-3xl font-light">{subtitle}</p>
-        )}
+        <div className="grid gap-5 lg:grid-cols-[0.42fr_0.58fr] lg:items-end">
+          <h1 className="text-4xl md:text-5xl font-heading font-bold text-white">{title}</h1>
+          {subtitle && (
+            <p className="text-white/80 text-lg max-w-4xl font-light lg:justify-self-end lg:text-right">{subtitle}</p>
+          )}
+        </div>
         {children}
       </div>
     </div>

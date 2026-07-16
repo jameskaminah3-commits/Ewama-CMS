@@ -40,58 +40,65 @@ export default function About() {
         subtitle="Building Trust. Creating Wealth. Transforming Communities."
       />
 
-      <div className="container mx-auto px-4 md:px-6 py-20">
-        <div className="max-w-4xl mx-auto">
-          
-          {/* History */}
-          <div className="prose prose-lg max-w-none text-gray-600 mb-20">
-            <h2 className="text-3xl font-heading font-bold text-primary mb-6">Our Story</h2>
-            <p className="lead">
-              EWAMA Properties Ltd was established with a simple yet powerful purpose: to make property ownership accessible, transparent, and rewarding.
-            </p>
-            <p>
-              We recognised that many aspiring homeowners and investors faced uncertainty when navigating the real estate market — unclear processes, questionable documentation, and limited professional guidance often stood between them and their dreams.
-            </p>
-            <p>
-              We envisioned a different experience. An experience where clients receive honest advice, verified investment opportunities, and personalised support from their first inquiry to the day they proudly receive ownership documents. That vision continues to define everything we do.
-            </p>
-            <p>
-              Today, EWAMA serves individuals looking to build family homes, investors seeking long-term value, businesses searching for strategic locations, and members of the diaspora looking for a trusted partner back home. Regardless of where our clients begin their journey, our mission remains the same: helping them secure a piece of tomorrow with confidence.
-            </p>
-          </div>
+      <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-6 lg:px-10 py-20">
+        <div>
 
-          {/* Office */}
-          <div className="mb-20">
-            <div className="rounded-2xl overflow-hidden shadow-lg">
-              <img
-                src="/office-frontdesk.webp"
-                alt="Inside the EWAMA Properties Customer Care Centre in Kiambu Town"
-                loading="lazy"
-                className="w-full h-[320px] md:h-[420px] object-cover"
-              />
+          {/* Our Story — text beside the office photo */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center mb-24">
+            <div>
+              <p className="text-secondary font-semibold tracking-widest uppercase text-sm mb-3">Our Story</p>
+              <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary mb-6">
+                Built to make ownership simple and secure
+              </h2>
+              <div className="space-y-4 text-gray-600 leading-relaxed">
+                <p>
+                  EWAMA Properties Ltd was established with a simple yet powerful purpose: to make property ownership accessible, transparent, and rewarding.
+                </p>
+                <p>
+                  We recognised that many aspiring homeowners and investors faced uncertainty — unclear processes, questionable documentation, and limited professional guidance often stood between them and their dreams.
+                </p>
+                <p>
+                  We envisioned a different experience: honest advice, verified opportunities, and personalised support from the first inquiry to the day you proudly receive your ownership documents. That vision continues to define everything we do.
+                </p>
+                <p>
+                  Today, EWAMA serves families building homes, investors seeking long-term value, businesses searching for strategic locations, and members of the diaspora looking for a trusted partner back home.
+                </p>
+              </div>
             </div>
-            <p className="text-sm text-gray-500 text-center mt-3">
-              Our Customer Care Centre in Kiambu Town — karibu.
-            </p>
+            <div>
+              <div className="rounded-2xl overflow-hidden shadow-xl">
+                <img
+                  src="/office-frontdesk.webp"
+                  alt="Inside the EWAMA Properties Customer Care Centre in Kiambu Town"
+                  loading="lazy"
+                  className="w-full h-[380px] lg:h-[460px] object-cover"
+                />
+              </div>
+              <p className="text-sm text-gray-500 text-center mt-3">
+                Our Customer Care Centre in Kiambu Town — karibu.
+              </p>
+            </div>
           </div>
 
           {/* Differentiator */}
-          <div className="bg-primary rounded-2xl p-10 md:p-14 text-center mb-20">
-            <p className="text-white/60 uppercase tracking-widest text-sm font-semibold mb-4">What Makes EWAMA Different</p>
-            <p className="font-heading text-3xl md:text-4xl font-bold text-white leading-snug">
-              Many companies sell plots.<br />
-              <span className="text-secondary">We build confidence.</span>
-            </p>
-            <p className="text-white/75 mt-6 max-w-2xl mx-auto leading-relaxed">
+          <div className="bg-primary rounded-2xl p-10 md:p-14 mb-20 grid gap-8 lg:grid-cols-[0.45fr_0.55fr] lg:items-center">
+            <div>
+              <p className="text-white/60 uppercase tracking-widest text-sm font-semibold mb-4">What Makes EWAMA Different</p>
+              <p className="font-heading text-3xl md:text-4xl font-bold text-white leading-snug">
+                Many companies sell plots.<br />
+                <span className="text-secondary">We build confidence.</span>
+              </p>
+            </div>
+            <p className="text-white/75 leading-relaxed text-lg lg:max-w-3xl">
               Our focus extends far beyond completing property transactions. We guide clients through every stage of their investment journey, ensuring they understand every decision they make. An informed client is an empowered client.
             </p>
           </div>
 
           {/* Services */}
           <div className="mb-20">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-heading font-bold text-primary mb-4">Comprehensive Real Estate Solutions</h2>
-              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            <div className="mb-12 grid gap-4 lg:grid-cols-[0.42fr_0.58fr] lg:items-end">
+              <h2 className="text-3xl font-heading font-bold text-primary">Comprehensive Real Estate Solutions</h2>
+              <p className="text-gray-600 text-lg lg:text-right lg:justify-self-end lg:max-w-3xl">
                 We provide more than property listings. We offer guidance, support, and solutions that simplify your investment journey.
               </p>
             </div>
@@ -142,8 +149,8 @@ export default function About() {
 
           {/* Values */}
           <div className="mb-20">
-            <h2 className="text-3xl font-heading font-bold text-center text-primary mb-12">Our Core Values</h2>
-            <div className="grid sm:grid-cols-2 gap-8">
+            <h2 className="text-3xl font-heading font-bold text-primary mb-12">Our Core Values</h2>
+            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-8">
               {CORE_VALUES.map((value) => (
                 <div key={value.title} className="flex gap-4">
                   <div className="w-12 h-12 rounded-full bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
@@ -159,12 +166,12 @@ export default function About() {
           </div>
 
           {/* CSR */}
-          <div className="bg-gray-50 p-10 rounded-2xl border border-gray-100 text-center">
-            <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">Building More Than Properties</h2>
+          <div className="bg-gray-50 p-10 rounded-2xl border border-gray-100 grid gap-8 lg:grid-cols-[0.45fr_0.55fr] lg:items-center">
+            <h2 className="text-2xl font-heading font-bold text-gray-900">Building More Than Properties</h2>
             {isLoading ? (
-              <Skeleton className="h-20 w-3/4 mx-auto" />
+              <Skeleton className="h-20 w-full" />
             ) : (
-              <p className="text-gray-600 leading-relaxed max-w-2xl mx-auto mb-8">
+              <p className="text-gray-600 leading-relaxed">
                 {content?.communityImpact || "Through our community-focused initiatives and commitment to social responsibility, we have helped settle more than ten families. Because true success is measured by the difference we make in people's lives."}
               </p>
             )}
