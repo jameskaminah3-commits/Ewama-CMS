@@ -46,7 +46,7 @@ interface Slide {
 
 const DEFAULT_SLIDES: Slide[] = [
   {
-    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+    image: '/images/ewama-office-welcome.jpeg',
     kicker: 'EWAMA PROPERTIES LTD',
     title: 'Secure Your Future Through Smart Property Investment',
     text: 'We make land ownership accessible, transparent, and rewarding.',
@@ -54,7 +54,7 @@ const DEFAULT_SLIDES: Slide[] = [
     ctaHref: '/properties',
   },
   {
-    image: 'https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+    image: '/images/ewama-site-visit.jpeg',
     kicker: 'EWAMA PROPERTIES LTD',
     title: 'Own Today. Prosper Tomorrow.',
     text: 'Prime value-added plots with title deeds guaranteed, in Kenya’s fastest-growing regions.',
@@ -62,7 +62,7 @@ const DEFAULT_SLIDES: Slide[] = [
     ctaHref: '/book-site-visit',
   },
   {
-    image: '/office-reception.webp',
+    image: '/images/ewama-reception.jpeg',
     kicker: 'A FOUNDATION OF TRUST',
     title: 'Karibu EWAMA Properties',
     text: 'Visit our Customer Care Centre on Kiambu Road — our team is ready to walk you home.',
@@ -70,6 +70,21 @@ const DEFAULT_SLIDES: Slide[] = [
     ctaHref: '/contact',
   },
 ];
+
+function normalizeSlides(slides?: Slide[] | null): Slide[] {
+  if (!slides?.length) return DEFAULT_SLIDES;
+  return slides.map((slide, index) => {
+    const fallback = DEFAULT_SLIDES[index % DEFAULT_SLIDES.length]!;
+    return {
+      image: slide.image || fallback.image,
+      kicker: slide.kicker || fallback.kicker,
+      title: slide.title || fallback.title,
+      text: slide.text || fallback.text,
+      ctaLabel: slide.ctaLabel || fallback.ctaLabel,
+      ctaHref: slide.ctaHref || fallback.ctaHref,
+    };
+  });
+}
 
 function HeroSlider({ slides }: { slides: Slide[] }) {
   const [index, setIndex] = useState(0);
@@ -79,8 +94,6 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
   }, [slides.length]);
 
   const slide = slides[index]!;
-  const hasText = Boolean(slide.kicker || slide.title || slide.text || (slide.ctaLabel && slide.ctaHref));
-
   return (
     <section className="relative h-[80vh] min-h-[560px] overflow-hidden bg-primary">
       <AnimatePresence mode="popLayout">
@@ -92,43 +105,32 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
           transition={{ duration: 1.1, ease: 'easeOut' }}
           className="absolute inset-0"
         >
-          <img src={slide.image} alt="" className="w-full h-full object-cover" />
-          {/* Only dim the photo when there's text to read over it. */}
-          {hasText && <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/70 to-primary/30" />}
+          <img src={slide.image} alt="" className="w-full h-full object-cover object-center" />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/70 to-primary/25" />
         </motion.div>
       </AnimatePresence>
 
-      {hasText && (
-        <div className="relative z-10 container mx-auto px-4 md:px-6 h-full flex items-center">
-          <div className="max-w-2xl">
-            <motion.div
-              key={`text-${index}`}
-              initial={{ opacity: 0, y: 26 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.15 }}
-            >
-              {slide.kicker && (
-                <p className="text-secondary font-semibold tracking-[0.25em] uppercase text-sm mb-5">{slide.kicker}</p>
-              )}
-              {slide.title && (
-                <h1 className="text-4xl md:text-6xl font-heading font-bold text-white leading-[1.1] mb-6">
-                  {slide.title}
-                </h1>
-              )}
-              {slide.text && (
-                <p className="text-lg md:text-xl text-white/85 leading-relaxed mb-9 font-light">{slide.text}</p>
-              )}
-              {slide.ctaLabel && slide.ctaHref && (
-                <Link href={slide.ctaHref}>
-                  <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 h-13 px-8 text-base font-medium">
-                    {slide.ctaLabel} <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
-              )}
-            </motion.div>
-          </div>
+      <div className="relative z-10 container mx-auto px-4 md:px-6 h-full flex items-center">
+        <div className="max-w-2xl">
+          <motion.div
+            key={`text-${index}`}
+            initial={{ opacity: 0, y: 26 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.15 }}
+          >
+            <p className="text-secondary font-semibold tracking-[0.25em] uppercase text-sm mb-5">{slide.kicker}</p>
+            <h1 className="text-4xl md:text-6xl font-heading font-bold text-white leading-[1.1] mb-6">
+              {slide.title}
+            </h1>
+            <p className="text-lg md:text-xl text-white/85 leading-relaxed mb-9 font-light">{slide.text}</p>
+            <Link href={slide.ctaHref}>
+              <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 h-13 px-8 text-base font-medium">
+                {slide.ctaLabel} <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </motion.div>
         </div>
-      )}
+      </div>
 
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex gap-2">
         {slides.map((_, i) => (
@@ -211,7 +213,7 @@ export default function Home() {
   }, [allProperties?.data]);
 
   const testimonials = content?.testimonials?.length ? content.testimonials : [];
-  const slides: Slide[] = content?.heroSlides?.length ? content.heroSlides : DEFAULT_SLIDES;
+  const slides: Slide[] = normalizeSlides(content?.heroSlides);
   const whatYouGet = content?.whatYouGet?.length ? content.whatYouGet : DEFAULT_WHAT_YOU_GET;
 
   return (
