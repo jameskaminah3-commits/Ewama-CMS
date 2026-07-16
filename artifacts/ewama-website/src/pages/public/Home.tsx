@@ -95,50 +95,52 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
 
   const slide = slides[index]!;
   return (
-    <section className="relative h-[80vh] min-h-[560px] overflow-hidden bg-primary">
-      <AnimatePresence mode="popLayout">
-        <motion.div
-          key={index}
-          initial={{ opacity: 0, scale: 1.04 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.1, ease: 'easeOut' }}
-          className="absolute inset-0"
-        >
-          <img src={slide.image} alt="" className="w-full h-full object-cover object-center" />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/70 to-primary/25" />
-        </motion.div>
-      </AnimatePresence>
-
-      <div className="relative z-10 container mx-auto px-4 md:px-6 h-full flex items-center">
-        <div className="max-w-2xl">
+    <section className="relative overflow-hidden bg-primary text-white">
+      <div className="grid min-h-[calc(100svh-72px)] lg:min-h-[calc(100svh-124px)] lg:grid-cols-[0.86fr_1.14fr]">
+        <div className="flex items-center px-4 py-14 md:px-8 lg:px-[max(2rem,calc((100vw-1180px)/2))] lg:pr-12">
           <motion.div
             key={`text-${index}`}
             initial={{ opacity: 0, y: 26 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.15 }}
+            className="max-w-xl"
           >
-            <p className="text-secondary font-semibold tracking-[0.25em] uppercase text-sm mb-5">{slide.kicker}</p>
-            <h1 className="text-4xl md:text-6xl font-heading font-bold text-white leading-[1.1] mb-6">
+            <p className="text-secondary font-semibold tracking-[0.22em] uppercase text-sm mb-5">{slide.kicker}</p>
+            <h1 className="text-4xl md:text-6xl font-heading font-bold text-white leading-[1.05] mb-6">
               {slide.title}
             </h1>
-            <p className="text-lg md:text-xl text-white/85 leading-relaxed mb-9 font-light">{slide.text}</p>
+            <p className="text-lg md:text-xl text-white/80 leading-relaxed mb-9 font-light">{slide.text}</p>
             <Link href={slide.ctaHref}>
-              <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 h-13 px-8 text-base font-medium">
+              <Button size="lg" className="bg-secondary text-primary hover:bg-secondary/90 h-13 px-8 text-base font-semibold">
                 {slide.ctaLabel} <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
           </motion.div>
         </div>
+
+        <div className="relative min-h-[360px] lg:min-h-0">
+          <AnimatePresence mode="popLayout">
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, scale: 1.025 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.9, ease: 'easeOut' }}
+              className="absolute inset-0"
+            >
+              <img src={slide.image} alt="" className="h-full w-full object-cover object-center" />
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
 
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex gap-2">
+      <div className="absolute bottom-6 left-4 z-10 flex gap-2 md:left-8 lg:left-[max(2rem,calc((100vw-1180px)/2))]">
         {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => setIndex(i)}
             aria-label={`Slide ${i + 1}`}
-            className={`h-1.5 rounded-full transition-all ${i === index ? 'w-8 bg-secondary' : 'w-4 bg-white/40 hover:bg-white/70'}`}
+            className={`h-1.5 rounded-full transition-all ${i === index ? 'w-8 bg-secondary' : 'w-4 bg-white/30 hover:bg-white/70'}`}
           />
         ))}
       </div>
@@ -188,7 +190,7 @@ function HomeEnquiryForm() {
         </SelectContent>
       </Select>
       <Textarea placeholder="Your message..." value={message} onChange={e => setMessage(e.target.value)} className="bg-gray-50 min-h-[110px] resize-none" />
-      <Button type="submit" disabled={createEnquiry.isPending} className="w-full bg-secondary text-white hover:bg-secondary/90 h-12 text-base font-medium">
+      <Button type="submit" disabled={createEnquiry.isPending} className="w-full bg-secondary text-primary hover:bg-secondary/90 h-12 text-base font-semibold">
         {createEnquiry.isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send Message'}
       </Button>
     </form>
@@ -228,9 +230,9 @@ export default function Home() {
       {/* Explore Our Properties */}
       <section className="py-24">
         <div className="container mx-auto px-4 md:px-6">
-          <motion.div {...fadeUp} className="text-center max-w-3xl mx-auto mb-14">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary mb-4">Explore Our Properties</h2>
-            <p className="text-lg text-gray-600">Prime value-added plots with title deeds guaranteed.</p>
+          <motion.div {...fadeUp} className="mb-14 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <h2 className="max-w-xl text-3xl md:text-4xl font-heading font-bold text-primary">Explore Our Properties</h2>
+            <p className="max-w-xl text-lg text-gray-600 lg:text-right">Prime value-added plots with title deeds guaranteed.</p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -255,7 +257,7 @@ export default function Home() {
                       loading="lazy"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
-                    <div className="absolute top-4 left-4 bg-secondary text-white text-xs font-bold px-3 py-1.5 uppercase tracking-wide">
+                    <div className="absolute top-4 left-4 bg-secondary text-primary text-xs font-bold px-3 py-1.5 uppercase tracking-wide">
                       For Sale
                     </div>
                   </div>
@@ -284,7 +286,7 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="text-center mt-12">
+          <div className="mt-12">
             <Link href="/properties">
               <Button size="lg" className="bg-primary text-white hover:bg-primary/90 h-12 px-8">
                 View All Properties <ArrowRight className="w-4 h-4 ml-2" />
@@ -298,9 +300,9 @@ export default function Home() {
       {locations.length > 0 && (
         <section className="py-24 bg-white">
           <div className="container mx-auto px-4 md:px-6">
-            <motion.div {...fadeUp} className="text-center max-w-3xl mx-auto mb-14">
-              <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary mb-4">Featured Locations</h2>
-              <p className="text-lg text-gray-600">Carefully selected developments in Kenya's fastest-growing regions.</p>
+            <motion.div {...fadeUp} className="mb-14 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <h2 className="max-w-xl text-3xl md:text-4xl font-heading font-bold text-primary">Featured Locations</h2>
+              <p className="max-w-xl text-lg text-gray-600 lg:text-right">Carefully selected developments in Kenya's fastest-growing regions.</p>
             </motion.div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
               {locations.slice(0, 5).map((loc, idx) => (
@@ -346,7 +348,7 @@ export default function Home() {
                 <footer className="text-sm text-gray-500 mt-3">— EWAMA Properties Ltd, Foundation of Trust</footer>
               </blockquote>
               <Link href="/contact">
-                <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 h-12 px-8">
+                <Button size="lg" className="bg-secondary text-primary hover:bg-secondary/90 h-12 px-8 font-semibold">
                   Book a Consultation
                 </Button>
               </Link>
@@ -358,9 +360,9 @@ export default function Home() {
       {/* How We Deliver Excellence */}
       <section className="py-24 bg-primary relative overflow-hidden">
         <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <motion.div {...fadeUp} className="text-center max-w-3xl mx-auto mb-14">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-white mb-4">How We Deliver Excellence</h2>
-            <p className="text-lg text-white/70">Growing expertise. Hundreds of happy landowners. One seamless experience.</p>
+          <motion.div {...fadeUp} className="mb-14 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <h2 className="max-w-xl text-3xl md:text-4xl font-heading font-bold text-white">How We Deliver Excellence</h2>
+            <p className="max-w-xl text-lg text-white/70 lg:text-right">Growing expertise. Hundreds of happy landowners. One seamless experience.</p>
           </motion.div>
 
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -397,7 +399,7 @@ export default function Home() {
       {/* Connect with Us Today */}
       <section className="py-24 bg-white">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="grid lg:grid-cols-[0.95fr_1.05fr] gap-12">
             <motion.div {...fadeUp}>
               <p className="text-secondary font-semibold tracking-widest uppercase text-sm mb-3">Get In Touch</p>
               <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary mb-6">Connect with Us Today</h2>
@@ -446,7 +448,7 @@ export default function Home() {
       {(latestArticles?.data?.length ?? 0) > 0 && (
         <section className="py-24">
           <div className="container mx-auto px-4 md:px-6">
-            <motion.div {...fadeUp} className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+            <motion.div {...fadeUp} className="flex flex-col md:flex-row justify-between md:items-end mb-12 gap-4">
               <div>
                 <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary">Latest News</h2>
                 <p className="text-lg text-gray-600 mt-2">Market updates, property insights, and expert real estate advice.</p>
@@ -495,9 +497,9 @@ export default function Home() {
       {testimonials.length > 0 && (
         <section className="py-24 bg-white">
           <div className="container mx-auto px-4 md:px-6">
-            <motion.div {...fadeUp} className="text-center max-w-3xl mx-auto mb-14">
-              <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary mb-4">What Our Clients Say</h2>
-              <p className="text-lg text-gray-600">Real stories from investors who built their future with EWAMA.</p>
+            <motion.div {...fadeUp} className="mb-14 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <h2 className="max-w-xl text-3xl md:text-4xl font-heading font-bold text-primary">What Our Clients Say</h2>
+              <p className="max-w-xl text-lg text-gray-600 lg:text-right">Real stories from investors who built their future with EWAMA.</p>
             </motion.div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {testimonials.map((t, idx) => (

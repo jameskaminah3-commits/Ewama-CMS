@@ -39,7 +39,7 @@ export function Navbar() {
 
         <div className="hidden lg:flex items-center gap-8">
           <a href={`tel:${phone.replace(/\s/g, '')}`} className="flex items-center gap-3 group">
-            <div className="w-11 h-11 rounded-full bg-primary/5 text-primary flex items-center justify-center group-hover:bg-secondary group-hover:text-white transition-colors">
+            <div className="w-11 h-11 rounded-full bg-secondary/15 text-primary flex items-center justify-center group-hover:bg-secondary transition-colors">
               <Phone className="w-5 h-5" />
             </div>
             <div>
@@ -48,7 +48,7 @@ export function Navbar() {
             </div>
           </a>
           <a href={`mailto:${email}`} className="hidden xl:flex items-center gap-3 group">
-            <div className="w-11 h-11 rounded-full bg-primary/5 text-primary flex items-center justify-center group-hover:bg-secondary group-hover:text-white transition-colors">
+            <div className="w-11 h-11 rounded-full bg-secondary/15 text-primary flex items-center justify-center group-hover:bg-secondary transition-colors">
               <Mail className="w-5 h-5" />
             </div>
             <div>
@@ -57,7 +57,7 @@ export function Navbar() {
             </div>
           </a>
           <Link href="/contact">
-            <Button className="bg-secondary text-white hover:bg-secondary/90 font-medium h-11 px-6">
+            <Button className="bg-secondary text-primary hover:bg-secondary/90 font-semibold h-11 px-6">
               Get In Touch
             </Button>
           </Link>
@@ -89,7 +89,7 @@ export function Navbar() {
             </Link>
           ))}
           <Link href="/book-site-visit">
-            <span className="ml-auto inline-block px-5 py-3.5 text-sm font-semibold bg-primary text-white hover:bg-primary/85 transition-colors cursor-pointer">
+            <span className="ml-auto inline-block px-5 py-3.5 text-sm font-semibold bg-primary text-secondary hover:bg-primary/85 transition-colors cursor-pointer">
               Book a Site Visit
             </span>
           </Link>
@@ -115,7 +115,7 @@ export function Navbar() {
               {phone}
             </a>
             <Link href="/book-site-visit" onClick={() => setIsMobileMenuOpen(false)}>
-              <Button className="w-full bg-secondary text-white hover:bg-secondary/90 h-12">
+              <Button className="w-full bg-secondary text-primary hover:bg-secondary/90 h-12 font-semibold">
                 Book a Site Visit
               </Button>
             </Link>
