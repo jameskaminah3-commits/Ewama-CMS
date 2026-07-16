@@ -79,6 +79,7 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
   }, [slides.length]);
 
   const slide = slides[index]!;
+  const hasText = Boolean(slide.kicker || slide.title || slide.text || (slide.ctaLabel && slide.ctaHref));
 
   return (
     <section className="relative h-[80vh] min-h-[560px] overflow-hidden bg-primary">
@@ -92,31 +93,42 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
           className="absolute inset-0"
         >
           <img src={slide.image} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/70 to-primary/30" />
+          {/* Only dim the photo when there's text to read over it. */}
+          {hasText && <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/70 to-primary/30" />}
         </motion.div>
       </AnimatePresence>
 
-      <div className="relative z-10 container mx-auto px-4 md:px-6 h-full flex items-center">
-        <div className="max-w-2xl">
-          <motion.div
-            key={`text-${index}`}
-            initial={{ opacity: 0, y: 26 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.15 }}
-          >
-            <p className="text-secondary font-semibold tracking-[0.25em] uppercase text-sm mb-5">{slide.kicker}</p>
-            <h1 className="text-4xl md:text-6xl font-heading font-bold text-white leading-[1.1] mb-6">
-              {slide.title}
-            </h1>
-            <p className="text-lg md:text-xl text-white/85 leading-relaxed mb-9 font-light">{slide.text}</p>
-            <Link href={slide.ctaHref}>
-              <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 h-13 px-8 text-base font-medium">
-                {slide.ctaLabel} <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-          </motion.div>
+      {hasText && (
+        <div className="relative z-10 container mx-auto px-4 md:px-6 h-full flex items-center">
+          <div className="max-w-2xl">
+            <motion.div
+              key={`text-${index}`}
+              initial={{ opacity: 0, y: 26 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.15 }}
+            >
+              {slide.kicker && (
+                <p className="text-secondary font-semibold tracking-[0.25em] uppercase text-sm mb-5">{slide.kicker}</p>
+              )}
+              {slide.title && (
+                <h1 className="text-4xl md:text-6xl font-heading font-bold text-white leading-[1.1] mb-6">
+                  {slide.title}
+                </h1>
+              )}
+              {slide.text && (
+                <p className="text-lg md:text-xl text-white/85 leading-relaxed mb-9 font-light">{slide.text}</p>
+              )}
+              {slide.ctaLabel && slide.ctaHref && (
+                <Link href={slide.ctaHref}>
+                  <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 h-13 px-8 text-base font-medium">
+                    {slide.ctaLabel} <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              )}
+            </motion.div>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex gap-2">
         {slides.map((_, i) => (

@@ -25,13 +25,15 @@ const testimonialSchema = z.object({
   role: z.string().min(1, 'Role is required'),
 });
 
+// Only the photo is required — a slide can be just a clean picture with no
+// label, headline, text, or button. Empty fields simply aren't shown.
 const heroSlideSchema = z.object({
-  kicker: z.string().min(1, 'Small label is required'),
-  title: z.string().min(1, 'Headline is required'),
-  text: z.string().min(1, 'Text is required'),
-  image: z.string().min(1, 'Image is required'),
-  ctaLabel: z.string().min(1, 'Button label is required'),
-  ctaHref: z.string().min(1, 'Button link is required'),
+  kicker: z.string().optional().default(''),
+  title: z.string().optional().default(''),
+  text: z.string().optional().default(''),
+  image: z.string().min(1, 'Please choose a photo for this slide'),
+  ctaLabel: z.string().optional().default(''),
+  ctaHref: z.string().optional().default(''),
 });
 
 const homepageSchema = z.object({
@@ -66,7 +68,7 @@ function HeroSlidesEditor({ form }: { form: UseFormReturn<HomepageForm> }) {
   return (
     <div className="space-y-4">
       <p className="text-sm text-gray-500">
-        These are the rotating banners at the top of the homepage. Each slide has a small label, a headline, supporting text, a photo, and a button.
+        These are the rotating banners at the top of the homepage. <strong>Only the photo is required.</strong> Leave the label, headline, text, and button empty for a clean picture-only slide, or fill them in to show text over the photo.
       </p>
       {fields.map((item, index) => (
         <div key={item.id} className="border border-gray-200 rounded-lg p-4 space-y-3">
@@ -79,14 +81,14 @@ function HeroSlidesEditor({ form }: { form: UseFormReturn<HomepageForm> }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField control={form.control} name={`heroSlides.${index}.kicker`} render={({ field }) => (
               <FormItem>
-                <FormLabel>Small Label (above headline)</FormLabel>
+                <FormLabel>Small Label (optional)</FormLabel>
                 <FormControl><Input placeholder="EWAMA PROPERTIES LTD" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
             <FormField control={form.control} name={`heroSlides.${index}.title`} render={({ field }) => (
               <FormItem>
-                <FormLabel>Headline</FormLabel>
+                <FormLabel>Headline (optional)</FormLabel>
                 <FormControl><Input placeholder="Own Today. Prosper Tomorrow." {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
@@ -94,7 +96,7 @@ function HeroSlidesEditor({ form }: { form: UseFormReturn<HomepageForm> }) {
           </div>
           <FormField control={form.control} name={`heroSlides.${index}.text`} render={({ field }) => (
             <FormItem>
-              <FormLabel>Supporting Text</FormLabel>
+              <FormLabel>Supporting Text (optional)</FormLabel>
               <FormControl><Textarea className="resize-none" {...field} /></FormControl>
               <FormMessage />
             </FormItem>
@@ -121,14 +123,14 @@ function HeroSlidesEditor({ form }: { form: UseFormReturn<HomepageForm> }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField control={form.control} name={`heroSlides.${index}.ctaLabel`} render={({ field }) => (
               <FormItem>
-                <FormLabel>Button Label</FormLabel>
+                <FormLabel>Button Label (optional)</FormLabel>
                 <FormControl><Input placeholder="Explore Properties" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
             <FormField control={form.control} name={`heroSlides.${index}.ctaHref`} render={({ field }) => (
               <FormItem>
-                <FormLabel>Button Link</FormLabel>
+                <FormLabel>Button Link (optional)</FormLabel>
                 <FormControl><Input placeholder="/properties" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
