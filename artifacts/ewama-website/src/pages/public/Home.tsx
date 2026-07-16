@@ -117,55 +117,50 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
 
   const slide = slides[index]!;
   return (
-    <section className="relative overflow-hidden bg-white">
-      <div className="mx-auto grid min-h-[calc(100svh-72px)] w-full max-w-[1440px] lg:min-h-[calc(100svh-124px)] lg:grid-cols-[0.42fr_0.58fr]">
-        <div className="flex items-center px-5 py-12 sm:px-8 lg:pl-12 lg:pr-10 xl:pl-16">
-          <motion.div
-            key={`text-${index}`}
-            initial={{ opacity: 0, y: 26 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.15 }}
-            className="max-w-[560px]"
-          >
-            <p className="text-primary font-semibold tracking-[0.22em] uppercase text-sm mb-5">
-              <span className="mr-3 inline-block h-2 w-10 rounded-full bg-secondary align-middle" />
-              {slide.kicker}
-            </p>
-            <h1 className="min-h-[2.15em] text-4xl font-heading font-bold leading-[1.06] text-primary md:text-6xl">
-              <TypewriterText text={slide.title} />
-            </h1>
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-gray-700 md:text-xl">{slide.text}</p>
-            <Link href={slide.ctaHref}>
-              <Button size="lg" className="mt-8 bg-secondary text-primary hover:bg-secondary/90 h-13 px-8 text-base font-semibold">
-                {slide.ctaLabel} <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-          </motion.div>
-        </div>
+    <section className="relative min-h-[calc(100svh-72px)] overflow-hidden lg:min-h-[calc(100svh-124px)]">
+      <AnimatePresence mode="popLayout">
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, scale: 1.025 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.9, ease: 'easeOut' }}
+          className="absolute inset-0"
+        >
+          <img src={slide.image} alt="" className="h-full w-full object-cover object-center" />
+        </motion.div>
+      </AnimatePresence>
 
-        <div className="relative min-h-[360px] sm:min-h-[460px] lg:min-h-0">
-          <AnimatePresence mode="popLayout">
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 1.025 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.9, ease: 'easeOut' }}
-              className="absolute inset-0"
-            >
-              <img src={slide.image} alt="" className="h-full w-full object-cover object-center" />
-            </motion.div>
-          </AnimatePresence>
-        </div>
+      <div className="relative z-10 mx-auto flex min-h-[calc(100svh-72px)] w-full max-w-7xl items-center px-5 py-14 sm:px-6 lg:min-h-[calc(100svh-124px)] lg:px-10">
+        <motion.div
+          key={`text-${index}`}
+          initial={{ opacity: 0, y: 26 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.15 }}
+          className="max-w-[660px]"
+        >
+          <p className="mb-5 text-sm font-semibold uppercase tracking-[0.22em] text-secondary [text-shadow:0_2px_14px_rgba(0,0,0,0.65)]">
+            {slide.kicker}
+          </p>
+          <h1 className="min-h-[2.15em] text-4xl font-heading font-bold leading-[1.06] text-white [text-shadow:0_4px_24px_rgba(0,0,0,0.78)] md:text-6xl">
+            <TypewriterText text={slide.title} />
+          </h1>
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-white [text-shadow:0_3px_18px_rgba(0,0,0,0.75)] md:text-xl">{slide.text}</p>
+          <Link href={slide.ctaHref}>
+            <Button size="lg" className="mt-8 bg-secondary text-primary hover:bg-secondary/90 h-13 px-8 text-base font-semibold">
+              {slide.ctaLabel} <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </Link>
+        </motion.div>
       </div>
 
-      <div className="absolute bottom-6 left-5 z-10 flex gap-2 sm:left-8 lg:left-12 xl:left-16 2xl:left-[calc((100vw-1440px)/2+4rem)]">
+      <div className="absolute bottom-6 left-5 z-10 flex gap-2 sm:left-6 lg:left-[max(2.5rem,calc((100vw-1280px)/2+2.5rem))]">
         {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => setIndex(i)}
             aria-label={`Slide ${i + 1}`}
-            className={`h-1.5 rounded-full transition-all ${i === index ? 'w-8 bg-secondary' : 'w-4 bg-primary/20 hover:bg-primary/40'}`}
+            className={`h-1.5 rounded-full transition-all ${i === index ? 'w-8 bg-secondary' : 'w-4 bg-white/60 hover:bg-white'}`}
           />
         ))}
       </div>
