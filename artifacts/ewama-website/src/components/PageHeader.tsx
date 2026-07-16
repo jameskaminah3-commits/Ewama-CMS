@@ -13,8 +13,8 @@ interface PageHeaderProps {
  */
 export function PageHeader({ kicker, title, subtitle, children }: PageHeaderProps) {
   return (
-    <div className="relative bg-primary pt-14 pb-20 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-[hsl(159,45%,14%)]" />
+    <div className="relative bg-primary pt-16 pb-24 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-[hsl(210,49%,16%)]" />
       <div className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-secondary/10 blur-3xl" aria-hidden="true" />
       <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
         {kicker && (
