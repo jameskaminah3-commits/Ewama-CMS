@@ -82,7 +82,7 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
   const hasText = Boolean(slide.kicker || slide.title || slide.text || (slide.ctaLabel && slide.ctaHref));
 
   return (
-    <section className="relative h-[80vh] min-h-[560px] overflow-hidden bg-primary">
+    <section className="relative h-[52vh] min-h-[360px] md:h-[62vh] md:min-h-[440px] max-h-[620px] overflow-hidden bg-primary">
       <AnimatePresence mode="popLayout">
         <motion.div
           key={index}
@@ -92,9 +92,9 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
           transition={{ duration: 1.1, ease: 'easeOut' }}
           className="absolute inset-0"
         >
-          <img src={slide.image} alt="" className="w-full h-full object-cover" />
+          <img src={slide.image} alt="" className="w-full h-full object-cover object-center" />
           {/* Only dim the photo when there's text to read over it. */}
-          {hasText && <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/70 to-primary/30" />}
+          {hasText && <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/60 to-primary/20" />}
         </motion.div>
       </AnimatePresence>
 
@@ -111,12 +111,12 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
                 <p className="text-secondary font-semibold tracking-[0.25em] uppercase text-sm mb-5">{slide.kicker}</p>
               )}
               {slide.title && (
-                <h1 className="text-4xl md:text-6xl font-heading font-bold text-white leading-[1.1] mb-6">
+                <h1 className="text-3xl md:text-5xl font-heading font-bold text-white leading-[1.12] mb-4">
                   {slide.title}
                 </h1>
               )}
               {slide.text && (
-                <p className="text-lg md:text-xl text-white/85 leading-relaxed mb-9 font-light">{slide.text}</p>
+                <p className="text-base md:text-lg text-white/85 leading-relaxed mb-7 font-light">{slide.text}</p>
               )}
               {slide.ctaLabel && slide.ctaHref && (
                 <Link href={slide.ctaHref}>

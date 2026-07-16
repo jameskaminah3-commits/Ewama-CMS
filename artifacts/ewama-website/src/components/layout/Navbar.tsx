@@ -73,23 +73,23 @@ export function Navbar() {
         </button>
       </div>
 
-      {/* Bottom tier: navy nav strip */}
-      <nav className="hidden lg:block bg-primary">
+      {/* Bottom tier: gold nav strip (brand colour) */}
+      <nav className="hidden lg:block bg-secondary">
         <div className="container mx-auto px-4 md:px-6 flex items-center">
           {NAV_LINKS.map((link) => (
             <Link key={link.href} href={link.href}>
               <span className={cn(
-                'inline-block px-5 py-3.5 text-sm font-medium transition-colors cursor-pointer',
+                'inline-block px-5 py-3.5 text-sm font-semibold transition-colors cursor-pointer',
                 location === link.href
-                  ? 'bg-secondary text-white'
-                  : 'text-white/85 hover:bg-white/10 hover:text-white'
+                  ? 'bg-primary text-white'
+                  : 'text-primary/90 hover:bg-primary hover:text-white'
               )}>
                 {link.label}
               </span>
             </Link>
           ))}
           <Link href="/book-site-visit">
-            <span className="ml-auto inline-block px-5 py-3.5 text-sm font-semibold bg-white/10 text-secondary hover:bg-secondary hover:text-white transition-colors cursor-pointer">
+            <span className="ml-auto inline-block px-5 py-3.5 text-sm font-semibold bg-primary text-white hover:bg-primary/85 transition-colors cursor-pointer">
               Book a Site Visit
             </span>
           </Link>
