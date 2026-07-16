@@ -136,27 +136,35 @@ export default function Faq() {
       />
 
       <div className="container mx-auto px-4 md:px-6 py-16">
-        <div className="max-w-3xl mx-auto space-y-10">
+        <div className="max-w-6xl mx-auto space-y-14">
           {faqSections.map((group) => (
-            <div key={group.section}>
-              <h2 className="text-xl font-heading font-bold text-primary mb-4">{group.section}</h2>
-              <Accordion type="single" collapsible className="bg-white rounded-xl border border-gray-100 shadow-sm px-6">
-                {group.items.map((item, idx) => (
-                  <AccordionItem key={idx} value={`${group.section}-${idx}`} className={idx === group.items.length - 1 ? 'border-b-0' : ''}>
-                    <AccordionTrigger className="text-left font-medium text-gray-900 hover:text-primary">{item.q}</AccordionTrigger>
-                    <AccordionContent className="text-gray-600 leading-relaxed">{item.a}</AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
+            <div key={group.section} className="grid lg:grid-cols-3 gap-6 lg:gap-10">
+              <div className="lg:col-span-1">
+                <h2 className="text-2xl font-heading font-bold text-primary lg:sticky lg:top-32">
+                  {group.section}
+                </h2>
+              </div>
+              <div className="lg:col-span-2">
+                <Accordion type="single" collapsible className="bg-white rounded-xl border border-gray-100 shadow-sm px-6">
+                  {group.items.map((item, idx) => (
+                    <AccordionItem key={idx} value={`${group.section}-${idx}`} className={idx === group.items.length - 1 ? 'border-b-0' : ''}>
+                      <AccordionTrigger className="text-left font-medium text-gray-900 hover:text-primary">{item.q}</AccordionTrigger>
+                      <AccordionContent className="text-gray-600 leading-relaxed">{item.a}</AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
             </div>
           ))}
 
-          <div className="bg-primary rounded-2xl p-10 text-center">
-            <h2 className="text-2xl font-heading font-bold text-white mb-3">Still Have Questions?</h2>
-            <p className="text-white/80 mb-8 max-w-xl mx-auto">
-              Our friendly team is ready to help you make informed decisions with confidence. Whether you're buying your first plot, investing for the future, or simply exploring your options, we're here to guide you every step of the way.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <div className="bg-primary rounded-2xl p-10 md:p-14 grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-heading font-bold text-white mb-3">Still Have Questions?</h2>
+              <p className="text-white/80">
+                Our friendly team is ready to help you make informed decisions with confidence — whether you're buying your first plot, investing for the future, or simply exploring your options.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row md:justify-end gap-4">
               <a href="tel:+254720769999">
                 <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 h-12 px-6 gap-2 w-full">
                   <Phone className="w-4 h-4" /> +254 720 769 999

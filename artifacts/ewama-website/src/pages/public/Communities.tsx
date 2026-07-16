@@ -36,35 +36,36 @@ export default function Communities() {
       />
 
       <div className="container mx-auto px-4 md:px-6 py-20">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-5xl mx-auto">
 
-          {/* Opening */}
-          <motion.div {...fadeUp} className="prose prose-lg max-w-none text-gray-600 mb-16">
-            <p className="text-2xl font-heading text-primary leading-relaxed">
-              At EWAMA Properties Ltd, we believe that real estate is ultimately about people.
-            </p>
-            <p>
-              A plot of land is more than a parcel defined by boundaries — it is the place where families build homes,
-              children create memories, businesses begin, and dreams take shape. Every property we help someone acquire
-              represents a new chapter in their story.
-            </p>
-            <p>
-              That's why our work extends beyond selling land. We are committed to creating opportunities, restoring hope,
-              and building communities where people can thrive. This commitment is at the heart of our promise:{' '}
-              <strong className="text-primary">Foundation of Trust.</strong>
-            </p>
-          </motion.div>
+          {/* Opening — text beside the impact stat */}
+          <div className="grid lg:grid-cols-5 gap-10 items-center mb-20">
+            <motion.div {...fadeUp} className="lg:col-span-3 space-y-4 text-gray-600 leading-relaxed">
+              <p className="text-2xl font-heading text-primary leading-relaxed">
+                At EWAMA Properties Ltd, we believe that real estate is ultimately about people.
+              </p>
+              <p>
+                A plot of land is more than a parcel defined by boundaries — it is the place where families build homes,
+                children create memories, businesses begin, and dreams take shape. Every property we help someone acquire
+                represents a new chapter in their story.
+              </p>
+              <p>
+                That's why our work extends beyond selling land. We are committed to creating opportunities, restoring hope,
+                and building communities where people can thrive. This commitment is at the heart of our promise:{' '}
+                <strong className="text-primary">Foundation of Trust.</strong>
+              </p>
+            </motion.div>
 
-          {/* Impact stat */}
-          <motion.div {...fadeUp} className="bg-secondary/10 border border-secondary/20 rounded-2xl p-10 text-center mb-16">
-            <div className="w-14 h-14 mx-auto bg-secondary text-white rounded-2xl flex items-center justify-center mb-5">
-              <HomeIcon className="w-7 h-7" />
-            </div>
-            <p className="text-5xl font-heading font-bold text-primary mb-3">10+</p>
-            <p className="text-lg text-gray-700 max-w-md mx-auto">
-              families helped to find stability and begin new chapters in their lives through our social initiatives.
-            </p>
-          </motion.div>
+            <motion.div {...fadeUp} className="lg:col-span-2 bg-secondary/10 border border-secondary/20 rounded-2xl p-10 text-center">
+              <div className="w-14 h-14 mx-auto bg-secondary text-white rounded-2xl flex items-center justify-center mb-5">
+                <HomeIcon className="w-7 h-7" />
+              </div>
+              <p className="text-5xl font-heading font-bold text-primary mb-3">10+</p>
+              <p className="text-gray-700">
+                families helped to find stability and begin new chapters in their lives through our social initiatives.
+              </p>
+            </motion.div>
+          </div>
 
           {/* Purpose */}
           <motion.div {...fadeUp} className="mb-16">

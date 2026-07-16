@@ -41,38 +41,43 @@ export default function About() {
       />
 
       <div className="container mx-auto px-4 md:px-6 py-20">
-        <div className="max-w-4xl mx-auto">
-          
-          {/* History */}
-          <div className="prose prose-lg max-w-none text-gray-600 mb-20">
-            <h2 className="text-3xl font-heading font-bold text-primary mb-6">Our Story</h2>
-            <p className="lead">
-              EWAMA Properties Ltd was established with a simple yet powerful purpose: to make property ownership accessible, transparent, and rewarding.
-            </p>
-            <p>
-              We recognised that many aspiring homeowners and investors faced uncertainty when navigating the real estate market — unclear processes, questionable documentation, and limited professional guidance often stood between them and their dreams.
-            </p>
-            <p>
-              We envisioned a different experience. An experience where clients receive honest advice, verified investment opportunities, and personalised support from their first inquiry to the day they proudly receive ownership documents. That vision continues to define everything we do.
-            </p>
-            <p>
-              Today, EWAMA serves individuals looking to build family homes, investors seeking long-term value, businesses searching for strategic locations, and members of the diaspora looking for a trusted partner back home. Regardless of where our clients begin their journey, our mission remains the same: helping them secure a piece of tomorrow with confidence.
-            </p>
-          </div>
+        <div className="max-w-6xl mx-auto">
 
-          {/* Office */}
-          <div className="mb-20">
-            <div className="rounded-2xl overflow-hidden shadow-lg">
-              <img
-                src="/office-frontdesk.webp"
-                alt="Inside the EWAMA Properties Customer Care Centre in Kiambu Town"
-                loading="lazy"
-                className="w-full h-[320px] md:h-[420px] object-cover"
-              />
+          {/* Our Story — text beside the office photo */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center mb-24">
+            <div>
+              <p className="text-secondary font-semibold tracking-widest uppercase text-sm mb-3">Our Story</p>
+              <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary mb-6">
+                Built to make ownership simple and secure
+              </h2>
+              <div className="space-y-4 text-gray-600 leading-relaxed">
+                <p>
+                  EWAMA Properties Ltd was established with a simple yet powerful purpose: to make property ownership accessible, transparent, and rewarding.
+                </p>
+                <p>
+                  We recognised that many aspiring homeowners and investors faced uncertainty — unclear processes, questionable documentation, and limited professional guidance often stood between them and their dreams.
+                </p>
+                <p>
+                  We envisioned a different experience: honest advice, verified opportunities, and personalised support from the first inquiry to the day you proudly receive your ownership documents. That vision continues to define everything we do.
+                </p>
+                <p>
+                  Today, EWAMA serves families building homes, investors seeking long-term value, businesses searching for strategic locations, and members of the diaspora looking for a trusted partner back home.
+                </p>
+              </div>
             </div>
-            <p className="text-sm text-gray-500 text-center mt-3">
-              Our Customer Care Centre in Kiambu Town — karibu.
-            </p>
+            <div>
+              <div className="rounded-2xl overflow-hidden shadow-xl">
+                <img
+                  src="/office-frontdesk.webp"
+                  alt="Inside the EWAMA Properties Customer Care Centre in Kiambu Town"
+                  loading="lazy"
+                  className="w-full h-[380px] lg:h-[460px] object-cover"
+                />
+              </div>
+              <p className="text-sm text-gray-500 text-center mt-3">
+                Our Customer Care Centre in Kiambu Town — karibu.
+              </p>
+            </div>
           </div>
 
           {/* Differentiator */}
