@@ -990,6 +990,14 @@ components:
           type: array
           items:
             type: string
+        faqs:
+          type: array
+          items:
+            $ref: "#/components/schemas/PropertyFaq"
+        phasePricing:
+          type: array
+          items:
+            $ref: "#/components/schemas/PhasePrice"
         status:
           type: string
           enum: [draft, available, coming_soon, sold_out, archived]
@@ -1005,6 +1013,26 @@ components:
         updatedAt:
           type: string
           format: date-time
+
+    PropertyFaq:
+      type: object
+      required: [question, answer]
+      properties:
+        question:
+          type: string
+        answer:
+          type: string
+
+    PhasePrice:
+      type: object
+      required: [phase, cashPrice, installmentPrice]
+      properties:
+        phase:
+          type: string
+        cashPrice:
+          type: number
+        installmentPrice:
+          type: number
 
     PropertyInput:
       type: object
@@ -1059,6 +1087,14 @@ components:
           type: array
           items:
             type: string
+        faqs:
+          type: array
+          items:
+            $ref: "#/components/schemas/PropertyFaq"
+        phasePricing:
+          type: array
+          items:
+            $ref: "#/components/schemas/PhasePrice"
         status:
           type: string
           enum: [draft, available, coming_soon, sold_out]
@@ -1120,6 +1156,14 @@ components:
           type: array
           items:
             type: string
+        faqs:
+          type: array
+          items:
+            $ref: "#/components/schemas/PropertyFaq"
+        phasePricing:
+          type: array
+          items:
+            $ref: "#/components/schemas/PhasePrice"
         status:
           type: string
           enum: [draft, available, coming_soon, sold_out, archived]
@@ -1485,6 +1529,10 @@ components:
           type: ["string", "null"]
         linkedin:
           type: ["string", "null"]
+        tiktok:
+          type: ["string", "null"]
+        youtube:
+          type: ["string", "null"]
         logoUrl:
           type: ["string", "null"]
         faviconUrl:
@@ -1517,6 +1565,10 @@ components:
         instagram:
           type: ["string", "null"]
         linkedin:
+          type: ["string", "null"]
+        tiktok:
+          type: ["string", "null"]
+        youtube:
           type: ["string", "null"]
         logoUrl:
           type: ["string", "null"]
@@ -1558,9 +1610,76 @@ components:
           type: ["string", "null"]
         footerCta:
           type: ["string", "null"]
+        heroBadge:
+          type: ["string", "null"]
+        ctaHeading:
+          type: ["string", "null"]
+        ctaSubheading:
+          type: ["string", "null"]
+        advantages:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/HomepageCard"
+        processSteps:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/HomepageCard"
+        testimonials:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/HomepageTestimonial"
+        heroSlides:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/HeroSlide"
+        approachText:
+          type: ["string", "null"]
+        approachQuote:
+          type: ["string", "null"]
+        whatYouGet:
+          type: ["array", "null"]
+          items:
+            type: string
         updatedAt:
           type: string
           format: date-time
+
+    HomepageCard:
+      type: object
+      required: [title, description]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+
+    HomepageTestimonial:
+      type: object
+      required: [quote, name, role]
+      properties:
+        quote:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+
+    HeroSlide:
+      type: object
+      required: [kicker, title, text, image, ctaLabel, ctaHref]
+      properties:
+        kicker:
+          type: string
+        title:
+          type: string
+        text:
+          type: string
+        image:
+          type: string
+        ctaLabel:
+          type: string
+        ctaHref:
+          type: string
 
     HomepageContentUpdate:
       type: object
@@ -1591,6 +1710,36 @@ components:
           type: ["string", "null"]
         footerCta:
           type: ["string", "null"]
+        heroBadge:
+          type: ["string", "null"]
+        ctaHeading:
+          type: ["string", "null"]
+        ctaSubheading:
+          type: ["string", "null"]
+        advantages:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/HomepageCard"
+        processSteps:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/HomepageCard"
+        testimonials:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/HomepageTestimonial"
+        heroSlides:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/HeroSlide"
+        approachText:
+          type: ["string", "null"]
+        approachQuote:
+          type: ["string", "null"]
+        whatYouGet:
+          type: ["array", "null"]
+          items:
+            type: string
 
     # ─── NEWSLETTER ────────────────────────────────────────
     NewsletterInput:

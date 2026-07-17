@@ -8,6 +8,7 @@ import { MapPin, Check, FileText, ChevronRight, Phone, Calendar, ArrowLeft, Load
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -239,20 +240,41 @@ export default function PropertyDetail() {
 
             <div className="bg-primary text-white p-8 rounded-xl mb-12">
               <h3 className="text-2xl font-heading font-bold mb-6">Pricing Options</h3>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-white/10 p-6 rounded-lg border border-white/20 backdrop-blur-sm">
-                  <h4 className="text-lg font-medium text-white/80 mb-2">Cash Offer</h4>
-                  <p className="text-3xl font-bold">{formatCurrency(property.cashPrice)}</p>
-                  <p className="text-sm text-white/60 mt-2">Payable within 30 days</p>
+              {property.phasePricing && property.phasePricing.length > 0 ? (
+                <div className="space-y-4">
+                  {property.phasePricing.map((phase, idx) => (
+                    <div key={idx} className="bg-white/10 p-6 rounded-lg border border-white/20 backdrop-blur-sm">
+                      <h4 className="text-lg font-heading font-bold text-secondary mb-4">{phase.phase}</h4>
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div>
+                          <p className="text-sm text-white/60 mb-1">Cash Purchase</p>
+                          <p className="text-2xl font-bold">{formatCurrency(phase.cashPrice)}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-white/60 mb-1">Installment Plan</p>
+                          <p className="text-2xl font-bold">{formatCurrency(phase.installmentPrice)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <p className="text-sm text-white/60">Speak with our sales team to receive a personalised payment schedule.</p>
                 </div>
-                {property.installmentPrice && (
-                  <div className="bg-white/5 p-6 rounded-lg border border-white/10">
-                    <h4 className="text-lg font-medium text-white/80 mb-2">Installment Plan</h4>
-                    <p className="text-3xl font-bold">{formatCurrency(property.installmentPrice)}</p>
-                    <p className="text-sm text-white/60 mt-2">Flexible monthly payments</p>
+              ) : (
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="bg-white/10 p-6 rounded-lg border border-white/20 backdrop-blur-sm">
+                    <h4 className="text-lg font-medium text-white/80 mb-2">Cash Offer</h4>
+                    <p className="text-3xl font-bold">{formatCurrency(property.cashPrice)}</p>
+                    <p className="text-sm text-white/60 mt-2">Payable within 30 days</p>
                   </div>
-                )}
-              </div>
+                  {property.installmentPrice && (
+                    <div className="bg-white/5 p-6 rounded-lg border border-white/10">
+                      <h4 className="text-lg font-medium text-white/80 mb-2">Installment Plan</h4>
+                      <p className="text-3xl font-bold">{formatCurrency(property.installmentPrice)}</p>
+                      <p className="text-sm text-white/60 mt-2">Flexible monthly payments</p>
+                    </div>
+                  )}
+                </div>
+              )}
               {property.titleDeedFee && (
                 <div className="mt-6 flex items-center gap-3 bg-white/5 p-4 rounded-lg">
                   <FileText className="w-6 h-6 text-secondary" />
@@ -263,6 +285,20 @@ export default function PropertyDetail() {
                 </div>
               )}
             </div>
+
+            {property.faqs && property.faqs.length > 0 && (
+              <div className="mb-12">
+                <h3 className="text-2xl font-heading font-bold text-gray-900 mb-6">Frequently Asked Questions</h3>
+                <Accordion type="single" collapsible className="bg-gray-50 rounded-xl border border-gray-100 px-6">
+                  {property.faqs.map((faq, idx) => (
+                    <AccordionItem key={idx} value={`faq-${idx}`} className={idx === property.faqs!.length - 1 ? 'border-b-0' : ''}>
+                      <AccordionTrigger className="text-left font-medium text-gray-900 hover:text-primary">{faq.question}</AccordionTrigger>
+                      <AccordionContent className="text-gray-600 leading-relaxed">{faq.answer}</AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+            )}
 
           </div>
 
@@ -353,8 +389,8 @@ export default function PropertyDetail() {
                 </Link>
                 <div className="text-center pt-4 border-t border-gray-100">
                   <p className="text-sm text-gray-500 mb-2">Or call us directly</p>
-                  <a href="tel:0720769999" className="text-2xl font-bold text-primary flex items-center justify-center gap-2 hover:text-secondary transition-colors">
-                    <Phone className="w-6 h-6" /> 0720 769 999
+                  <a href="tel:+254720769999" className="text-2xl font-bold text-primary flex items-center justify-center gap-2 hover:text-secondary transition-colors">
+                    <Phone className="w-6 h-6" /> +254 720 769 999
                   </a>
                 </div>
               </div>

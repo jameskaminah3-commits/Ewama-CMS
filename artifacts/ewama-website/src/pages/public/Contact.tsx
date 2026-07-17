@@ -1,4 +1,5 @@
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { PageHeader } from '@/components/PageHeader';
 import { Seo } from '@/components/Seo';
 import { useGetSettings } from '@workspace/api-client-react';
 import { MapPin, Phone, Mail, Clock, MessageSquare } from 'lucide-react';
@@ -61,38 +62,43 @@ export default function Contact() {
   return (
     <PublicLayout>
       <Seo
-        title="Contact Us"
-        description="Get in touch with EWAMA Properties Ltd — call, email, WhatsApp, or visit our Nairobi office to speak with a property advisor."
+        title="Customer Care Centre"
+        description="Let's start the conversation — call, email, WhatsApp, or visit EWAMA Properties. Honest guidance and clear answers, no pressure and no jargon."
       />
-      <div className="bg-primary pt-16 pb-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] opacity-5 mix-blend-overlay bg-cover bg-center" />
-        <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">
-            Contact Us
-          </h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto font-light">
-            Have questions about a property or our investment process? Our team of real estate advisors is here to help.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        kicker="Customer Care Centre"
+        title="Let's Start the Conversation"
+        subtitle="Every great investment begins with a simple conversation. No pressure, no complicated jargon — just clear answers to help you make informed decisions."
+      />
 
-      <div className="container mx-auto px-4 md:px-6 -mt-12 relative z-20 mb-24">
+      <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-6 lg:px-10 -mt-12 relative z-20 mb-24">
         <div className="grid lg:grid-cols-5 gap-8">
           
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 h-full">
-              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-8">Get in Touch</h2>
-              
+              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-8">Talk to Us</h2>
+
               <div className="space-y-8">
                 <div className="flex gap-4">
                   <div className="w-12 h-12 bg-primary/5 rounded-full flex items-center justify-center text-primary shrink-0">
                     <MapPin className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-1">Office Address</h3>
+                    <h3 className="font-bold text-gray-900 mb-1">Visit Us</h3>
                     <p className="text-gray-600 leading-relaxed">
-                      {settings?.officeAddress || 'Westlands, Nairobi, Kenya'}
+                      {settings?.officeAddress || 'Ewama Properties Ltd, RRW6+G44, Kiambu Road, Kiambu'}
                     </p>
+                    <p className="text-gray-500 text-sm mt-1">
+                      Planning to stop by? Contact us in advance so we can give you the attention you deserve.
+                    </p>
+                    <a
+                      href="https://www.google.com/maps/dir/?api=1&destination=Ewama%20Properties%20limited%2C%20RRW6%2BG44%2C%20Kiambu%20Rd%2C%20Kiambu"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-block mt-2 text-sm font-semibold text-secondary hover:text-primary transition-colors"
+                    >
+                      Get Directions &rarr;
+                    </a>
                   </div>
                 </div>
 
@@ -102,8 +108,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-bold text-gray-900 mb-1">Phone Number</h3>
-                    <a href={`tel:${settings?.phone || '0720769999'}`} className="text-gray-600 hover:text-primary transition-colors block mb-1">
-                      {settings?.phone || '0720 769 999'}
+                    <a href={`tel:${settings?.phone || '+254720769999'}`} className="text-gray-600 hover:text-primary transition-colors block mb-1">
+                      {settings?.phone || '+254 720 769 999'}
                     </a>
                   </div>
                 </div>
@@ -114,8 +120,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-bold text-gray-900 mb-1">Email Address</h3>
-                    <a href={`mailto:${settings?.email || 'info@ewamaproperties.co.ke'}`} className="text-gray-600 hover:text-primary transition-colors">
-                      {settings?.email || 'info@ewamaproperties.co.ke'}
+                    <a href={`mailto:${settings?.email || 'ewamapropertiesltd@gmail.com'}`} className="text-gray-600 hover:text-primary transition-colors">
+                      {settings?.email || 'ewamapropertiesltd@gmail.com'}
                     </a>
                   </div>
                 </div>
@@ -151,7 +157,10 @@ export default function Contact() {
 
           <div className="lg:col-span-3">
             <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
-              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-6">Send a Message</h2>
+              <h2 className="text-2xl font-heading font-bold text-gray-900 mb-2">Send Us a Message</h2>
+              <p className="text-gray-500 mb-6 text-sm">
+                To help us respond efficiently, include your preferred project or location and your question or request. We'll get back to you as soon as possible.
+              </p>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -214,7 +223,7 @@ export default function Contact() {
                   />
                   <Button 
                     type="submit" 
-                    className="w-full md:w-auto px-8 h-12 bg-secondary hover:bg-secondary/90 text-white font-medium text-lg"
+                    className="w-full md:w-auto px-8 h-12 bg-secondary hover:bg-secondary/90 text-primary font-semibold text-lg"
                     disabled={createEnquiry.isPending}
                   >
                     {createEnquiry.isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send Message'}
@@ -225,15 +234,31 @@ export default function Contact() {
           </div>
         </div>
 
-        <div className="mt-8 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-          <iframe
-            title="EWAMA Properties office location"
-            src={`https://maps.google.com/maps?q=${encodeURIComponent(settings?.officeAddress || 'Westlands, Nairobi, Kenya')}&z=15&output=embed`}
-            className="w-full h-[400px] border-0"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            allowFullScreen
-          />
+        <div className="mt-8 grid lg:grid-cols-2 gap-8">
+          <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+            <img
+              src="/office-reception.webp"
+              alt="The EWAMA Properties Customer Care Centre reception in Kiambu Town"
+              loading="lazy"
+              className="w-full h-[400px] object-cover"
+            />
+            <p className="text-sm text-gray-500 text-center py-3 border-t border-gray-100">
+              Our Customer Care Centre — we look forward to welcoming you.
+            </p>
+          </div>
+          <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+            <iframe
+              title="EWAMA Properties office location"
+              src="https://maps.google.com/maps?q=-1.1537477,36.8103259&z=17&output=embed"
+              className="w-full h-[400px] border-0"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
+            <p className="text-sm text-gray-500 text-center py-3 border-t border-gray-100">
+              Ewama Properties Ltd, Kiambu Road, Kiambu
+            </p>
+          </div>
         </div>
       </div>
     </PublicLayout>

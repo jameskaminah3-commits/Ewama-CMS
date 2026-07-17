@@ -5,6 +5,8 @@
  * EWAMA Properties Ltd API
  * OpenAPI spec version: 0.1.0
  */
+import type { PhasePrice } from './phasePrice';
+import type { PropertyFaq } from './propertyFaq';
 import type { PropertyUpdateStatus } from './propertyUpdateStatus';
 
 export interface PropertyUpdate {
@@ -34,6 +36,8 @@ export interface PropertyUpdate {
   amenities?: string[];
   investmentHighlights?: string[];
   nearbyLandmarks?: string[];
+  faqs?: PropertyFaq[];
+  phasePricing?: PhasePrice[];
   status?: PropertyUpdateStatus;
   featured?: boolean;
   /** @nullable */

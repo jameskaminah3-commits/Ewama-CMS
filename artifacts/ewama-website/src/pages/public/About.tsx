@@ -1,8 +1,29 @@
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { PageHeader } from '@/components/PageHeader';
 import { Seo } from '@/components/Seo';
 import { useGetHomepageContent } from '@workspace/api-client-react';
-import { Target, Eye, Shield, Users } from 'lucide-react';
+import { Target, Eye, Shield, Users, Home as HomeIcon, CalendarCheck, LineChart, Headphones, Wallet, FileSearch, ArrowRight, Award, Sprout, Lightbulb, HeartHandshake } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { Link } from 'wouter';
+
+const SERVICES = [
+  { icon: HomeIcon, title: 'Property Sales', tagline: 'Secure Investments. Endless Possibilities.', description: 'Carefully selected residential, commercial, and investment properties in areas with strong growth potential — every one vetted before it is introduced to our clients.' },
+  { icon: LineChart, title: 'Investment Advisory', tagline: 'Making Every Investment Count', description: 'Professional guidance based on market trends, location potential, and your personal objectives. Our goal is not simply to sell property — it is to help you make smart decisions.' },
+  { icon: CalendarCheck, title: 'Site Visits', tagline: 'Experience the Property Before You Invest', description: 'Guided visits covering boundaries, accessibility, infrastructure, nearby amenities, and investment potential. Informed buyers make confident investors.' },
+  { icon: FileSearch, title: 'Property Verification & Due Diligence', tagline: 'Confidence Begins with Transparency', description: 'Every property we market undergoes comprehensive verification — ownership documentation, legal compliance, and accurate information — before being offered to clients.' },
+  { icon: Wallet, title: 'Flexible Payment Plans', tagline: 'Property Ownership Made Accessible', description: 'Upfront purchase or structured installments — we work with you to find an option that fits your budget, with schedules and timelines clearly explained. No surprises.' },
+  { icon: Headphones, title: 'Customer Support', tagline: 'A Relationship That Continues Beyond the Sale', description: 'From first inquiry to ownership and beyond, our team is available to answer questions, provide updates, and assist throughout your investment journey.' },
+];
+
+const CORE_VALUES = [
+  { icon: Shield, title: 'Trust', description: 'Trust is the cornerstone of our business. We communicate openly, act with integrity, and honour every commitment we make.' },
+  { icon: Eye, title: 'Transparency', description: 'From property information and pricing to legal documentation and payment plans, we ensure every detail is communicated honestly.' },
+  { icon: HeartHandshake, title: 'Customer First', description: 'Every client has unique goals. We take time to understand them and provide tailored guidance aligned with their vision.' },
+  { icon: Award, title: 'Excellence', description: 'We continuously pursue the highest standards in service delivery, professionalism, and operational efficiency.' },
+  { icon: Sprout, title: 'Sustainability', description: 'We support responsible development that promotes environmental stewardship and long-term community growth.' },
+  { icon: Lightbulb, title: 'Innovation', description: 'By embracing modern technologies and customer-focused solutions, we make property ownership simpler and more convenient.' },
+];
 
 export default function About() {
   const { data: content, isLoading } = useGetHomepageContent();
@@ -13,36 +34,86 @@ export default function About() {
         title="About Us"
         description="Learn about EWAMA Properties Ltd — a Kenyan real estate company bringing banking-level professionalism, transparency, and trust to land investment."
       />
-      <div className="bg-primary pt-16 pb-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1524813686514-a57563d77965?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] opacity-5 mix-blend-overlay bg-cover bg-center" />
-        <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
-          <div className="w-16 h-16 bg-secondary flex items-center justify-center rounded-xl mx-auto mb-6">
-            <span className="text-white font-heading font-bold text-3xl">E</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">
-            About EWAMA Properties
-          </h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto font-light tracking-wide uppercase text-sm">
-            Foundation of Trust
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        kicker="About Us"
+        title="About EWAMA Properties"
+        subtitle="Building Trust. Creating Wealth. Transforming Communities."
+      />
 
-      <div className="container mx-auto px-4 md:px-6 py-20">
-        <div className="max-w-4xl mx-auto">
-          
-          {/* History */}
-          <div className="prose prose-lg max-w-none text-gray-600 mb-20">
-            <h2 className="text-3xl font-heading font-bold text-primary mb-6">Our Story</h2>
-            <p className="lead">
-              EWAMA Properties Ltd was established with a singular vision: to bring banking-level professionalism, transparency, and trust to the Kenyan real estate sector.
+      <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-6 lg:px-10 py-20">
+        <div>
+
+          {/* Our Story — text beside the office photo */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center mb-24">
+            <div>
+              <p className="text-secondary font-semibold tracking-widest uppercase text-sm mb-3">Our Story</p>
+              <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary mb-6">
+                Built to make ownership simple and secure
+              </h2>
+              <div className="space-y-4 text-gray-600 leading-relaxed">
+                <p>
+                  EWAMA Properties Ltd was established with a simple yet powerful purpose: to make property ownership accessible, transparent, and rewarding.
+                </p>
+                <p>
+                  We recognised that many aspiring homeowners and investors faced uncertainty — unclear processes, questionable documentation, and limited professional guidance often stood between them and their dreams.
+                </p>
+                <p>
+                  We envisioned a different experience: honest advice, verified opportunities, and personalised support from the first inquiry to the day you proudly receive your ownership documents. That vision continues to define everything we do.
+                </p>
+                <p>
+                  Today, EWAMA serves families building homes, investors seeking long-term value, businesses searching for strategic locations, and members of the diaspora looking for a trusted partner back home.
+                </p>
+              </div>
+            </div>
+            <div>
+              <div className="rounded-2xl overflow-hidden shadow-xl">
+                <img
+                  src="/office-frontdesk.webp"
+                  alt="Inside the EWAMA Properties Customer Care Centre in Kiambu Town"
+                  loading="lazy"
+                  className="w-full h-[380px] lg:h-[460px] object-cover"
+                />
+              </div>
+              <p className="text-sm text-gray-500 text-center mt-3">
+                Our Customer Care Centre in Kiambu Town — karibu.
+              </p>
+            </div>
+          </div>
+
+          {/* Differentiator */}
+          <div className="bg-primary rounded-2xl p-10 md:p-14 mb-20 grid gap-8 lg:grid-cols-[0.45fr_0.55fr] lg:items-center">
+            <div>
+              <p className="text-white/60 uppercase tracking-widest text-sm font-semibold mb-4">What Makes EWAMA Different</p>
+              <p className="font-heading text-3xl md:text-4xl font-bold text-white leading-snug">
+                Many companies sell plots.<br />
+                <span className="text-secondary">We build confidence.</span>
+              </p>
+            </div>
+            <p className="text-white/75 leading-relaxed text-lg lg:max-w-3xl">
+              Our focus extends far beyond completing property transactions. We guide clients through every stage of their investment journey, ensuring they understand every decision they make. An informed client is an empowered client.
             </p>
-            <p>
-              For years, land buyers both locally and in the diaspora have faced uncertainty when investing in Kenyan real estate. Fake title deeds, hidden fees, and unfulfilled promises have plagued the industry. EWAMA was founded to be the antidote to this chaos.
-            </p>
-            <p>
-              We operate differently. We don't just sell land; we provide investment-grade real estate assets. Before any property reaches our portfolio, it undergoes rigorous legal, financial, and topographical due diligence. When you buy from EWAMA, you are buying peace of mind.
-            </p>
+          </div>
+
+          {/* Services */}
+          <div className="mb-20">
+            <div className="mb-12 grid gap-4 lg:grid-cols-[0.42fr_0.58fr] lg:items-end">
+              <h2 className="text-3xl font-heading font-bold text-primary">Comprehensive Real Estate Solutions</h2>
+              <p className="text-gray-600 text-lg lg:text-right lg:justify-self-end lg:max-w-3xl">
+                We provide more than property listings. We offer guidance, support, and solutions that simplify your investment journey.
+              </p>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {SERVICES.map((service) => (
+                <div key={service.title} className="bg-white border border-gray-100 rounded-2xl p-7 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="w-12 h-12 bg-primary/5 text-primary rounded-xl flex items-center justify-center mb-5">
+                    <service.icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-lg font-heading font-bold text-gray-900 mb-1">{service.title}</h3>
+                  <p className="text-secondary text-xs font-semibold uppercase tracking-wide mb-3">{service.tagline}</p>
+                  <p className="text-gray-600 text-sm leading-relaxed">{service.description}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Mission & Vision */}
@@ -78,39 +149,37 @@ export default function About() {
 
           {/* Values */}
           <div className="mb-20">
-            <h2 className="text-3xl font-heading font-bold text-center text-primary mb-12">Our Core Values</h2>
-            <div className="grid sm:grid-cols-2 gap-8">
-              <div className="flex gap-4">
-                <div className="w-12 h-12 rounded-full bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
-                  <Shield className="w-6 h-6" />
+            <h2 className="text-3xl font-heading font-bold text-primary mb-12">Our Core Values</h2>
+            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-8">
+              {CORE_VALUES.map((value) => (
+                <div key={value.title} className="flex gap-4">
+                  <div className="w-12 h-12 rounded-full bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
+                    <value.icon className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold text-gray-900 mb-2">{value.title}</h4>
+                    <p className="text-gray-600">{value.description}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-xl font-bold text-gray-900 mb-2">Integrity</h4>
-                  <p className="text-gray-600">We do what is right, always. Total transparency in pricing, title processing, and property features.</p>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <div className="w-12 h-12 rounded-full bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
-                  <Users className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="text-xl font-bold text-gray-900 mb-2">Client-Centricity</h4>
-                  <p className="text-gray-600">We don't rush sales. We advise, guide, and ensure every investment aligns with our client's goals.</p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
           {/* CSR */}
-          <div className="bg-gray-50 p-10 rounded-2xl border border-gray-100 text-center">
-            <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">Community Impact</h2>
+          <div className="bg-gray-50 p-10 rounded-2xl border border-gray-100 grid gap-8 lg:grid-cols-[0.45fr_0.55fr] lg:items-center">
+            <h2 className="text-2xl font-heading font-bold text-gray-900">Building More Than Properties</h2>
             {isLoading ? (
-              <Skeleton className="h-20 w-3/4 mx-auto" />
+              <Skeleton className="h-20 w-full" />
             ) : (
-              <p className="text-gray-600 leading-relaxed max-w-2xl mx-auto">
-                {content?.communityImpact || "At EWAMA, we believe in growing with our communities. We actively participate in local development initiatives, from tree planting drives in our properties to supporting local education infrastructure."}
+              <p className="text-gray-600 leading-relaxed">
+                {content?.communityImpact || "Through our community-focused initiatives and commitment to social responsibility, we have helped settle more than ten families. Because true success is measured by the difference we make in people's lives."}
               </p>
             )}
+            <Link href="/communities">
+              <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white gap-2">
+                Read Our Impact Story <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
           </div>
 
         </div>

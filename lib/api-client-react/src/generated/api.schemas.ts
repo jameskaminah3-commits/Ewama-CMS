@@ -71,6 +71,17 @@ export const PropertyStatus = {
   archived: 'archived',
 } as const;
 
+export interface PropertyFaq {
+  question: string;
+  answer: string;
+}
+
+export interface PhasePrice {
+  phase: string;
+  cashPrice: number;
+  installmentPrice: number;
+}
+
 export interface Property {
   id: number;
   name: string;
@@ -98,6 +109,8 @@ export interface Property {
   amenities?: string[];
   investmentHighlights?: string[];
   nearbyLandmarks?: string[];
+  faqs?: PropertyFaq[];
+  phasePricing?: PhasePrice[];
   status: PropertyStatus;
   featured?: boolean;
   /** @nullable */
@@ -148,6 +161,8 @@ export interface PropertyInput {
   amenities?: string[];
   investmentHighlights?: string[];
   nearbyLandmarks?: string[];
+  faqs?: PropertyFaq[];
+  phasePricing?: PhasePrice[];
   status?: PropertyInputStatus;
   featured?: boolean;
   /** @nullable */
@@ -194,6 +209,8 @@ export interface PropertyUpdate {
   amenities?: string[];
   investmentHighlights?: string[];
   nearbyLandmarks?: string[];
+  faqs?: PropertyFaq[];
+  phasePricing?: PhasePrice[];
   status?: PropertyUpdateStatus;
   featured?: boolean;
   /** @nullable */
@@ -493,6 +510,10 @@ export interface SiteSettings {
   /** @nullable */
   linkedin?: string | null;
   /** @nullable */
+  tiktok?: string | null;
+  /** @nullable */
+  youtube?: string | null;
+  /** @nullable */
   logoUrl?: string | null;
   /** @nullable */
   faviconUrl?: string | null;
@@ -523,11 +544,35 @@ export interface SiteSettingsUpdate {
   /** @nullable */
   linkedin?: string | null;
   /** @nullable */
+  tiktok?: string | null;
+  /** @nullable */
+  youtube?: string | null;
+  /** @nullable */
   logoUrl?: string | null;
   /** @nullable */
   faviconUrl?: string | null;
   /** @nullable */
   footerText?: string | null;
+}
+
+export interface HomepageCard {
+  title: string;
+  description: string;
+}
+
+export interface HomepageTestimonial {
+  quote: string;
+  name: string;
+  role: string;
+}
+
+export interface HeroSlide {
+  kicker: string;
+  title: string;
+  text: string;
+  image: string;
+  ctaLabel: string;
+  ctaHref: string;
 }
 
 export interface HomepageContent {
@@ -558,6 +603,26 @@ export interface HomepageContent {
   communityImpact?: string | null;
   /** @nullable */
   footerCta?: string | null;
+  /** @nullable */
+  heroBadge?: string | null;
+  /** @nullable */
+  ctaHeading?: string | null;
+  /** @nullable */
+  ctaSubheading?: string | null;
+  /** @nullable */
+  advantages?: HomepageCard[] | null;
+  /** @nullable */
+  processSteps?: HomepageCard[] | null;
+  /** @nullable */
+  testimonials?: HomepageTestimonial[] | null;
+  /** @nullable */
+  heroSlides?: HeroSlide[] | null;
+  /** @nullable */
+  approachText?: string | null;
+  /** @nullable */
+  approachQuote?: string | null;
+  /** @nullable */
+  whatYouGet?: string[] | null;
   updatedAt?: string;
 }
 
@@ -588,6 +653,26 @@ export interface HomepageContentUpdate {
   communityImpact?: string | null;
   /** @nullable */
   footerCta?: string | null;
+  /** @nullable */
+  heroBadge?: string | null;
+  /** @nullable */
+  ctaHeading?: string | null;
+  /** @nullable */
+  ctaSubheading?: string | null;
+  /** @nullable */
+  advantages?: HomepageCard[] | null;
+  /** @nullable */
+  processSteps?: HomepageCard[] | null;
+  /** @nullable */
+  testimonials?: HomepageTestimonial[] | null;
+  /** @nullable */
+  heroSlides?: HeroSlide[] | null;
+  /** @nullable */
+  approachText?: string | null;
+  /** @nullable */
+  approachQuote?: string | null;
+  /** @nullable */
+  whatYouGet?: string[] | null;
 }
 
 export interface NewsletterInput {

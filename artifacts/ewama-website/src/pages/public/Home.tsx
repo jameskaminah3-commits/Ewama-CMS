@@ -1,127 +1,265 @@
-import { useGetHomepageContent, useGetSettings, useListProperties, useGetDashboardStats } from '@workspace/api-client-react';
+import { useEffect, useMemo, useState } from 'react';
+import { useGetHomepageContent, useListProperties, useListArticles, useCreateEnquiry } from '@workspace/api-client-react';
 import { PublicLayout } from '@/components/layout/PublicLayout';
 import { Seo } from '@/components/Seo';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Link } from 'wouter';
-import { MapPin, Shield, TrendingUp, Handshake, ChevronRight } from 'lucide-react';
+import {
+  MapPin, ChevronRight, ArrowRight, Check, Phone, Mail,
+  MessagesSquare, ReceiptText, LineChart, HeartHandshake, Loader2, Ruler,
+} from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { formatCurrency } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { formatDate } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useGetSettings } from '@workspace/api-client-react';
+
+const fadeUp = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-80px' },
+  transition: { duration: 0.6 },
+};
+
+const DEFAULT_WHAT_YOU_GET = [
+  'Verified property ownership',
+  'Transparent pricing',
+  'Professional customer support',
+  'Flexible payment plans',
+  'Strategic investment locations',
+  'Dedicated guidance throughout the buying process',
+];
+
+const CONTACT_REASONS = ['Property Inquiry', 'Schedule Viewing', 'Investment Consultation', 'General Question'];
+
+interface Slide {
+  kicker: string;
+  title: string;
+  text: string;
+  image: string;
+  ctaLabel: string;
+  ctaHref: string;
+}
+
+const DEFAULT_SLIDES: Slide[] = [
+  {
+    image: '/images/ewama-office-welcome.jpeg',
+    kicker: 'EWAMA PROPERTIES LTD',
+    title: 'Secure Your Future Through Smart Property Investment',
+    text: 'We make land ownership accessible, transparent, and rewarding.',
+    ctaLabel: 'Explore Properties',
+    ctaHref: '/properties',
+  },
+  {
+    image: '/images/ewama-site-visit.jpeg',
+    kicker: 'EWAMA PROPERTIES LTD',
+    title: 'Own Today. Prosper Tomorrow.',
+    text: 'Prime value-added plots with title deeds guaranteed, in Kenya’s fastest-growing regions.',
+    ctaLabel: 'Book a Site Visit',
+    ctaHref: '/book-site-visit',
+  },
+  {
+    image: '/images/ewama-reception.jpeg',
+    kicker: 'A FOUNDATION OF TRUST',
+    title: 'Karibu EWAMA Properties',
+    text: 'Visit our Customer Care Centre on Kiambu Road — our team is ready to walk you home.',
+    ctaLabel: 'Talk to Us',
+    ctaHref: '/contact',
+  },
+];
+
+function normalizeSlides(slides?: Slide[] | null): Slide[] {
+  if (!slides?.length) return DEFAULT_SLIDES;
+  return slides.map((slide, index) => {
+    const fallback = DEFAULT_SLIDES[index % DEFAULT_SLIDES.length]!;
+    return {
+      image: slide.image || fallback.image,
+      kicker: slide.kicker || fallback.kicker,
+      title: slide.title || fallback.title,
+      text: slide.text || fallback.text,
+      ctaLabel: slide.ctaLabel || fallback.ctaLabel,
+      ctaHref: slide.ctaHref || fallback.ctaHref,
+    };
+  });
+}
+
+function TypewriterText({ text, className, speed = 28 }: { text: string; className?: string; speed?: number }) {
+  const [visibleText, setVisibleText] = useState('');
+
+  useEffect(() => {
+    setVisibleText('');
+    let index = 0;
+    const timer = window.setInterval(() => {
+      index += 1;
+      setVisibleText(text.slice(0, index));
+      if (index >= text.length) window.clearInterval(timer);
+    }, speed);
+    return () => window.clearInterval(timer);
+  }, [text, speed]);
+
+  return (
+    <span className={className}>
+      {visibleText}
+      <span className="ml-1 inline-block h-[0.85em] w-[3px] translate-y-[0.08em] animate-pulse bg-secondary" aria-hidden="true" />
+    </span>
+  );
+}
+
+function HeroSlider({ slides }: { slides: Slide[] }) {
+  const [index, setIndex] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => setIndex(i => (i + 1) % slides.length), 6500);
+    return () => clearInterval(timer);
+  }, [slides.length]);
+
+  const slide = slides[index]!;
+  return (
+    <section className="relative min-h-[calc(100svh-72px)] overflow-hidden lg:min-h-[calc(100svh-124px)]">
+      <AnimatePresence mode="popLayout">
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, scale: 1.025 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.9, ease: 'easeOut' }}
+          className="absolute inset-0"
+        >
+          <img src={slide.image} alt="" className="h-full w-full object-cover object-center" />
+        </motion.div>
+      </AnimatePresence>
+
+      <div className="relative z-10 mx-auto flex min-h-[calc(100svh-72px)] w-full max-w-7xl items-center px-5 py-14 sm:px-6 lg:min-h-[calc(100svh-124px)] lg:px-10">
+        <motion.div
+          key={`text-${index}`}
+          initial={{ opacity: 0, y: 26 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.15 }}
+          className="max-w-[660px]"
+        >
+          <p className="mb-5 text-sm font-semibold uppercase tracking-[0.22em] text-secondary [text-shadow:0_2px_14px_rgba(0,0,0,0.65)]">
+            {slide.kicker}
+          </p>
+          <h1 className="min-h-[2.15em] text-4xl font-heading font-bold leading-[1.06] text-white [text-shadow:0_4px_24px_rgba(0,0,0,0.78)] md:text-6xl">
+            <TypewriterText text={slide.title} />
+          </h1>
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-white [text-shadow:0_3px_18px_rgba(0,0,0,0.75)] md:text-xl">{slide.text}</p>
+          <Link href={slide.ctaHref}>
+            <Button size="lg" className="mt-8 bg-secondary text-primary hover:bg-secondary/90 h-13 px-8 text-base font-semibold">
+              {slide.ctaLabel} <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </Link>
+        </motion.div>
+      </div>
+
+      <div className="absolute bottom-6 left-5 z-10 flex gap-2 sm:left-6 lg:left-[max(2.5rem,calc((100vw-1280px)/2+2.5rem))]">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setIndex(i)}
+            aria-label={`Slide ${i + 1}`}
+            className={`h-1.5 rounded-full transition-all ${i === index ? 'w-8 bg-secondary' : 'w-4 bg-white/60 hover:bg-white'}`}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function HomeEnquiryForm() {
+  const { toast } = useToast();
+  const createEnquiry = useCreateEnquiry();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [reason, setReason] = useState('');
+  const [message, setMessage] = useState('');
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !email || !reason) {
+      toast({ title: 'Please fill in your name, email, and reason for contact', variant: 'destructive' });
+      return;
+    }
+    createEnquiry.mutate({
+      data: { name, email, phone: phone || undefined, message: `[${reason}] ${message || 'No additional message.'}` },
+    }, {
+      onSuccess: () => {
+        toast({ title: 'Message sent', description: 'We will get back to you shortly.' });
+        setName(''); setEmail(''); setPhone(''); setReason(''); setMessage('');
+      },
+      onError: () => toast({ title: 'Failed to send. Please try again.', variant: 'destructive' }),
+    });
+  };
+
+  return (
+    <form onSubmit={submit} className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Input placeholder="Full Name *" value={name} onChange={e => setName(e.target.value)} className="bg-gray-50 h-12" />
+        <Input placeholder="Email Address *" type="email" value={email} onChange={e => setEmail(e.target.value)} className="bg-gray-50 h-12" />
+      </div>
+      <Input placeholder="Phone Number" value={phone} onChange={e => setPhone(e.target.value)} className="bg-gray-50 h-12" />
+      <Select value={reason} onValueChange={setReason}>
+        <SelectTrigger className="bg-gray-50 h-12">
+          <SelectValue placeholder="Reason for Contact *" />
+        </SelectTrigger>
+        <SelectContent>
+          {CONTACT_REASONS.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+        </SelectContent>
+      </Select>
+      <Textarea placeholder="Your message..." value={message} onChange={e => setMessage(e.target.value)} className="bg-gray-50 min-h-[110px] resize-none" />
+      <Button type="submit" disabled={createEnquiry.isPending} className="w-full bg-secondary text-primary hover:bg-secondary/90 h-12 text-base font-semibold">
+        {createEnquiry.isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send Message'}
+      </Button>
+    </form>
+  );
+}
 
 export default function Home() {
-  const { data: content, isLoading: contentLoading } = useGetHomepageContent();
+  const { data: content } = useGetHomepageContent();
+  const { data: settings } = useGetSettings();
   const { data: properties, isLoading: propsLoading } = useListProperties({ featured: true, limit: 3 });
-  const { data: stats } = useGetDashboardStats();
+  const { data: allProperties } = useListProperties({ status: 'available', limit: 50 });
+  const { data: latestArticles } = useListArticles({ status: 'published', limit: 3 });
+
+  const locations = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const p of allProperties?.data || []) {
+      if (p.county) counts.set(p.county, (counts.get(p.county) || 0) + 1);
+    }
+    return Array.from(counts.entries())
+      .map(([county, count]) => ({ county, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [allProperties?.data]);
+
+  const testimonials = content?.testimonials?.length ? content.testimonials : [];
+  const slides: Slide[] = normalizeSlides(content?.heroSlides);
+  const whatYouGet = content?.whatYouGet?.length ? content.whatYouGet : DEFAULT_WHAT_YOU_GET;
 
   return (
     <PublicLayout>
       <Seo
         description="EWAMA Properties Ltd — Foundation of Trust. Investment-grade land in Kenya with ready title deeds, transparent pricing, and flexible payment plans."
-        image={content?.heroImage || undefined}
+        image={slides[0]?.image}
       />
-      {/* Hero Section */}
-      <section className="relative h-[85vh] min-h-[600px] flex items-center">
-        <div className="absolute inset-0 z-0">
-          <img 
-            src={content?.heroImage || "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"} 
-            alt="Beautiful Kenyan landscape" 
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-primary/80 mix-blend-multiply" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
-        </div>
 
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="max-w-3xl">
-            {contentLoading ? (
-              <div className="space-y-4">
-                <Skeleton className="h-12 w-3/4 bg-white/20" />
-                <Skeleton className="h-12 w-1/2 bg-white/20" />
-                <Skeleton className="h-24 w-full bg-white/20 mt-6" />
-              </div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-              >
-                <div className="inline-block px-4 py-1.5 mb-6 rounded-full border border-secondary/30 bg-secondary/10 backdrop-blur-sm text-secondary font-medium text-sm tracking-wide uppercase">
-                  Foundation of Trust
-                </div>
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-bold text-white leading-[1.1] mb-6 drop-shadow-sm">
-                  {content?.heroHeading || "Secure Your Future with Premium Land in Kenya"}
-                </h1>
-                <p className="text-lg md:text-xl text-white/90 leading-relaxed mb-8 max-w-2xl font-light">
-                  {content?.heroSubheading || "We make land ownership accessible, transparent, and secure for Kenyans at home and in the diaspora."}
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Link href="/properties">
-                    <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 h-14 px-8 text-base font-medium shadow-lg">
-                      Explore Properties
-                    </Button>
-                  </Link>
-                  <Link href="/book-site-visit">
-                    <Button size="lg" variant="outline" className="h-14 px-8 text-base font-medium bg-white/10 hover:bg-white/20 text-white border-white/20 backdrop-blur-sm">
-                      Book a Site Visit
-                    </Button>
-                  </Link>
-                </div>
-              </motion.div>
-            )}
-          </div>
-        </div>
-      </section>
+      <HeroSlider slides={slides} />
 
-      {/* Stats Bar */}
-      <section className="bg-white border-b border-gray-100 py-12 -mt-8 relative z-20 mx-4 md:mx-auto md:max-w-6xl rounded-xl shadow-sm">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 px-8 text-center divide-x divide-gray-100">
-          <div>
-            <p className="text-3xl md:text-4xl font-heading font-bold text-primary mb-1">
-              {content?.statsYearsInBusiness || 5}+
-            </p>
-            <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Years of Trust</p>
-          </div>
-          <div>
-            <p className="text-3xl md:text-4xl font-heading font-bold text-primary mb-1">
-              {content?.statsPropertiesSold || 1000}+
-            </p>
-            <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Plots Delivered</p>
-          </div>
-          <div>
-            <p className="text-3xl md:text-4xl font-heading font-bold text-primary mb-1">
-              {content?.statsHappyClients || 850}+
-            </p>
-            <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Happy Clients</p>
-          </div>
-          <div>
-            <p className="text-3xl md:text-4xl font-heading font-bold text-primary mb-1">
-              {content?.statsCountiesCovered || 12}
-            </p>
-            <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Counties Covered</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Properties */}
-      <section className="py-24 bg-background">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
-            <div className="max-w-2xl">
-              <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary mb-4">Investment-Grade Properties</h2>
-              <p className="text-gray-600 text-lg">Curated land parcels in high-growth areas, with ready title deeds and flexible payment plans.</p>
-            </div>
-            <Link href="/properties">
-              <Button variant="ghost" className="text-primary hover:text-secondary group">
-                View All Properties <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-          </div>
+      {/* Explore Our Properties */}
+      <section className="py-24">
+        <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-10">
+          <motion.div {...fadeUp} className="mb-14 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <h2 className="max-w-xl text-3xl md:text-4xl font-heading font-bold text-primary">Explore Our Properties</h2>
+            <p className="max-w-xl text-lg text-gray-600 lg:text-right">Prime value-added plots with title deeds guaranteed.</p>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {propsLoading ? (
               [1,2,3].map(i => (
                 <div key={i} className="rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm">
-                  <Skeleton className="w-full h-64" />
+                  <Skeleton className="w-full h-60" />
                   <div className="p-6 space-y-4">
                     <Skeleton className="h-6 w-3/4" />
                     <Skeleton className="h-4 w-1/2" />
@@ -132,150 +270,277 @@ export default function Home() {
             ) : properties?.data?.map((property) => (
               <Link key={property.id} href={`/properties/${property.slug}`}>
                 <div className="group rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full cursor-pointer">
-                  <div className="relative h-64 overflow-hidden">
-                    <img 
-                      src={property.heroImage || "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"} 
+                  <div className="relative h-60 overflow-hidden">
+                    <img
+                      src={property.heroImage || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'}
                       alt={property.name}
+                      loading="lazy"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <div className="bg-secondary text-white text-xs font-bold px-3 py-1.5 rounded shadow-sm uppercase tracking-wide">
-                        {property.status === 'available' ? 'Available' : property.status.replace('_', ' ')}
-                      </div>
+                    <div className="absolute top-4 left-4 bg-secondary text-primary text-xs font-bold px-3 py-1.5 uppercase tracking-wide">
+                      For Sale
                     </div>
                   </div>
                   <div className="p-6 flex flex-col flex-1">
-                    <div className="flex items-center gap-2 text-sm font-medium text-secondary mb-3">
-                      <MapPin className="w-4 h-4" />
-                      {property.location}, {property.county}
-                    </div>
                     <h3 className="text-xl font-heading font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors">
                       {property.name}
                     </h3>
-                    <p className="text-gray-500 text-sm line-clamp-2 mb-6 flex-1">
-                      {property.shortDescription}
+                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
+                      <MapPin className="w-4 h-4 text-secondary" />
+                      {property.location}, {property.county}
+                    </div>
+                    <p className="text-2xl font-heading font-bold text-primary mb-4">
+                      From Ksh. {property.cashPrice.toLocaleString()}
                     </p>
-                    <div className="pt-4 border-t border-gray-100 flex items-center justify-between mt-auto">
-                      <div>
-                        <p className="text-xs text-gray-500 mb-1">Cash Price from</p>
-                        <p className="text-lg font-bold text-primary">
-                          Ksh. {property.cashPrice.toLocaleString()}
-                        </p>
-                      </div>
-                      <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
-                        <ChevronRight className="w-5 h-5" />
-                      </div>
+                    <div className="pt-4 border-t border-gray-100 flex items-center justify-between mt-auto text-sm text-gray-500">
+                      {property.plotSize && (
+                        <span className="flex items-center gap-1.5"><Ruler className="w-4 h-4" /> {property.plotSize}</span>
+                      )}
+                      <span className="flex items-center gap-1 text-secondary font-semibold group-hover:gap-2 transition-all">
+                        View Details <ChevronRight className="w-4 h-4" />
+                      </span>
                     </div>
                   </div>
                 </div>
               </Link>
             ))}
           </div>
+
+          <div className="mt-12">
+            <Link href="/properties">
+              <Button size="lg" className="bg-primary text-white hover:bg-primary/90 h-12 px-8">
+                View All Properties <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* Why Choose Us */}
+      {/* Featured Locations */}
+      {locations.length > 0 && (
+        <section className="py-24 bg-white">
+          <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-10">
+            <motion.div {...fadeUp} className="mb-14 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <h2 className="max-w-xl text-3xl md:text-4xl font-heading font-bold text-primary">Featured Locations</h2>
+              <p className="max-w-xl text-lg text-gray-600 lg:text-right">Carefully selected developments in Kenya's fastest-growing regions.</p>
+            </motion.div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {locations.slice(0, 5).map((loc, idx) => (
+                <motion.div key={loc.county} {...fadeUp} transition={{ duration: 0.5, delay: idx * 0.07 }}>
+                  <Link href={`/properties?county=${encodeURIComponent(loc.county)}`}>
+                    <div className="group bg-background border border-gray-100 rounded-2xl p-8 text-center cursor-pointer hover:bg-primary hover:border-primary transition-colors duration-300">
+                      <MapPin className="w-7 h-7 mx-auto mb-4 text-secondary" />
+                      <p className="font-heading font-bold text-lg text-gray-900 group-hover:text-white transition-colors">{loc.county}</p>
+                      <p className="text-sm text-gray-500 group-hover:text-white/70 transition-colors">
+                        {loc.count} {loc.count === 1 ? 'listing' : 'listings'}
+                      </p>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* About / Our Approach */}
+      <section className="py-24">
+        <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div {...fadeUp} className="rounded-2xl overflow-hidden shadow-xl">
+              <img
+                src="/office-frontdesk.webp"
+                alt="Inside the EWAMA Properties Customer Care Centre"
+                loading="lazy"
+                className="w-full h-[420px] object-cover"
+              />
+            </motion.div>
+            <motion.div {...fadeUp}>
+              <p className="text-secondary font-semibold tracking-widest uppercase text-sm mb-3">About Us</p>
+              <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary mb-6">Our Approach</h2>
+              <p className="text-gray-600 text-lg leading-relaxed mb-8">
+                {content?.approachText || 'Finding the right piece of land is personal. We listen first, then guide you through every step — from your first site visit to the day you receive your title deed.'}
+              </p>
+              <blockquote className="border-l-4 border-secondary pl-6 mb-8">
+                <p className="font-heading text-xl md:text-2xl text-gray-800 italic leading-relaxed">
+                  "{content?.approachQuote || "We don't just sell plots. We help families find the place where their best memories will be made."}"
+                </p>
+                <footer className="text-sm text-gray-500 mt-3">— EWAMA Properties Ltd, Foundation of Trust</footer>
+              </blockquote>
+              <Link href="/contact">
+                <Button size="lg" className="bg-secondary text-primary hover:bg-secondary/90 h-12 px-8 font-semibold">
+                  Book a Consultation
+                </Button>
+              </Link>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* How We Deliver Excellence */}
+      <section className="py-24 bg-primary relative overflow-hidden">
+        <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-10 relative z-10">
+          <motion.div {...fadeUp} className="mb-14 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <h2 className="max-w-xl text-3xl md:text-4xl font-heading font-bold text-white">How We Deliver Excellence</h2>
+            <p className="max-w-xl text-lg text-white/70 lg:text-right">Growing expertise. Hundreds of happy landowners. One seamless experience.</p>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="grid grid-cols-2 gap-6">
+              {[
+                { value: `${content?.statsHappyClients || 850}+`, label: 'Satisfied Clients' },
+                { value: `${content?.statsPropertiesSold || 1000}+`, label: 'Plots Delivered' },
+                { value: `${content?.statsYearsInBusiness || 5}+`, label: 'Years of Excellence' },
+                { value: `${content?.statsCountiesCovered || 12}`, label: 'Counties Covered' },
+              ].map((stat) => (
+                <div key={stat.label} className="bg-white/5 border border-white/10 rounded-2xl p-8 text-center">
+                  <p className="text-4xl font-heading font-bold text-secondary mb-2">{stat.value}</p>
+                  <p className="text-sm text-white/70 uppercase tracking-wide">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+            <motion.div {...fadeUp} className="bg-white rounded-2xl p-10 shadow-xl">
+              <h3 className="text-2xl font-heading font-bold text-primary mb-6">What You Get</h3>
+              <ul className="space-y-4">
+                {whatYouGet.map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-secondary/10 text-secondary flex items-center justify-center shrink-0 mt-0.5">
+                      <Check className="w-4 h-4" />
+                    </div>
+                    <span className="text-gray-700">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Connect with Us Today */}
       <section className="py-24 bg-white">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary mb-6">The EWAMA Advantage</h2>
-            <p className="text-lg text-gray-600">We operate with the precision of a bank, ensuring your real estate investments are secure, transparent, and profitable.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto bg-primary/5 text-primary rounded-2xl flex items-center justify-center mb-6">
-                <Shield className="w-8 h-8" />
+        <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-10">
+          <div className="grid lg:grid-cols-[0.95fr_1.05fr] gap-12">
+            <motion.div {...fadeUp}>
+              <p className="text-secondary font-semibold tracking-widest uppercase text-sm mb-3">Get In Touch</p>
+              <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary mb-6">Connect with Us Today</h2>
+              <p className="text-gray-600 text-lg leading-relaxed mb-8">
+                Whether you're looking for your dream plot, need guidance on the buying process, or have any other
+                questions, we're here to help.
+              </p>
+              <div className="space-y-4 mb-10">
+                <a href={`tel:${(settings?.phone || '+254720769999').replace(/\s/g, '')}`} className="flex items-center gap-3 text-gray-700 hover:text-primary transition-colors">
+                  <Phone className="w-5 h-5 text-secondary" /> {settings?.phone || '+254 720 769 999'}
+                </a>
+                <p className="flex items-center gap-3 text-gray-700">
+                  <MapPin className="w-5 h-5 text-secondary" /> {settings?.officeAddress || 'Kiambu Road, Kiambu'}
+                </p>
+                <a href={`mailto:${settings?.email || 'ewamapropertiesltd@gmail.com'}`} className="flex items-center gap-3 text-gray-700 hover:text-primary transition-colors">
+                  <Mail className="w-5 h-5 text-secondary" /> {settings?.email || 'ewamapropertiesltd@gmail.com'}
+                </a>
               </div>
-              <h3 className="text-xl font-heading font-bold text-gray-900 mb-4">Secure & Verified</h3>
-              <p className="text-gray-600">Every property we sell has undergone rigorous due diligence. We guarantee genuine, ready title deeds.</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto bg-secondary/10 text-secondary rounded-2xl flex items-center justify-center mb-6">
-                <TrendingUp className="w-8 h-8" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {[
+                  { icon: MessagesSquare, title: 'Free Consultation', text: 'No-obligation property assessment' },
+                  { icon: ReceiptText, title: 'No Hidden Fees', text: 'What you see is what you pay' },
+                  { icon: LineChart, title: 'Expert Market Analysis', text: 'Current pricing and trends insights' },
+                  { icon: HeartHandshake, title: 'Personalized Approach', text: 'Tailored solutions for your needs' },
+                ].map((item) => (
+                  <div key={item.title} className="flex items-start gap-3">
+                    <div className="w-11 h-11 rounded-full bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
+                      <item.icon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="font-heading font-bold text-gray-900">{item.title}</p>
+                      <p className="text-sm text-gray-500">{item.text}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <h3 className="text-xl font-heading font-bold text-gray-900 mb-4">Investment Grade</h3>
-              <p className="text-gray-600">We select land in high-growth corridors positioned for maximum appreciation and development potential.</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto bg-primary/5 text-primary rounded-2xl flex items-center justify-center mb-6">
-                <Handshake className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-heading font-bold text-gray-900 mb-4">Transparent Process</h3>
-              <p className="text-gray-600">No hidden fees, no rushed decisions. We walk you through every step of the buying process with clarity.</p>
-            </div>
+            </motion.div>
+            <motion.div {...fadeUp}>
+              <HomeEnquiryForm />
+            </motion.div>
           </div>
         </div>
       </section>
+
+      {/* Latest News */}
+      {(latestArticles?.data?.length ?? 0) > 0 && (
+        <section className="py-24">
+          <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-10">
+            <motion.div {...fadeUp} className="flex flex-col md:flex-row justify-between md:items-end mb-12 gap-4">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary">Latest News</h2>
+                <p className="text-lg text-gray-600 mt-2">Market updates, property insights, and expert real estate advice.</p>
+              </div>
+              <Link href="/articles">
+                <Button variant="ghost" className="text-primary hover:text-secondary group">
+                  Visit Our Blog <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+            </motion.div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {latestArticles!.data!.map((article, idx) => (
+                <motion.div key={article.id} {...fadeUp} transition={{ duration: 0.5, delay: idx * 0.08 }}>
+                  <Link href={`/articles/${article.slug}`}>
+                    <div className="group bg-white rounded-2xl border border-gray-100 overflow-hidden cursor-pointer hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+                      <div className="h-48 overflow-hidden bg-gray-100">
+                        <img
+                          src={article.featuredImage || '/office-lounge.webp'}
+                          alt={article.title}
+                          loading="lazy"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        />
+                      </div>
+                      <div className="p-6 flex flex-col flex-1">
+                        {article.category && (
+                          <p className="text-secondary text-xs font-bold uppercase tracking-wide mb-2">{article.category}</p>
+                        )}
+                        <h3 className="font-heading font-bold text-lg text-gray-900 mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                          {article.title}
+                        </h3>
+                        <p className="text-gray-500 text-sm line-clamp-2 flex-1">{article.excerpt}</p>
+                        {article.publishedAt && (
+                          <p className="text-xs text-gray-400 mt-4">{formatDate(article.publishedAt)}</p>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Testimonials */}
-      {/* PLACEHOLDER CONTENT: replace these sample quotes with real, permissioned client testimonials before launch. */}
-      <section className="py-24 bg-background">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary mb-6">What Our Clients Say</h2>
-            <p className="text-lg text-gray-600">Real stories from investors who built their future with EWAMA.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                quote: 'The title deed was ready exactly as promised. From site visit to transfer, everything was clear and professional. I never felt rushed or pressured.',
-                name: 'Client, Naivasha project',
-                role: 'Plot owner since 2023',
-              },
-              {
-                quote: 'Buying land from abroad felt risky until I worked with EWAMA. They handled everything transparently and kept me updated at every step.',
-                name: 'Diaspora investor, UK',
-                role: 'Sagana Phase 1',
-              },
-              {
-                quote: 'The installment plan made ownership possible for my family. No hidden charges — the price we agreed is the price we paid.',
-                name: 'Client, Matuu project',
-                role: 'Plot owner since 2024',
-              },
-            ].map((t, idx) => (
-              <div key={idx} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 flex flex-col">
-                <div className="text-secondary font-heading text-6xl leading-none mb-4 select-none" aria-hidden="true">&ldquo;</div>
-                <p className="text-gray-700 leading-relaxed flex-1">{t.quote}</p>
-                <div className="mt-6 pt-6 border-t border-gray-100">
-                  <p className="font-heading font-semibold text-gray-900">{t.name}</p>
-                  <p className="text-sm text-gray-500">{t.role}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-24 bg-primary relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] opacity-10 mix-blend-overlay bg-cover bg-center" />
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-5xl font-heading font-bold text-white mb-6 leading-tight">
-              Ready to Secure Your Piece of Kenya?
-            </h2>
-            <p className="text-xl text-white/80 mb-10 font-light">
-              Join hundreds of smart investors who trust EWAMA Properties. Schedule a free consultation or book a site visit today.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link href="/contact">
-                <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 h-14 px-8 text-base font-medium">
-                  Contact an Advisor
-                </Button>
-              </Link>
-              <Link href="/book-site-visit">
-                <Button size="lg" variant="outline" className="h-14 px-8 text-base font-medium bg-white/10 hover:bg-white/20 text-white border-white/20">
-                  Book a Site Visit
-                </Button>
-              </Link>
+      {testimonials.length > 0 && (
+        <section className="py-24 bg-white">
+          <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-10">
+            <motion.div {...fadeUp} className="mb-14 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <h2 className="max-w-xl text-3xl md:text-4xl font-heading font-bold text-primary">What Our Clients Say</h2>
+              <p className="max-w-xl text-lg text-gray-600 lg:text-right">Real stories from investors who built their future with EWAMA.</p>
+            </motion.div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {testimonials.map((t, idx) => (
+                <motion.div
+                  key={idx}
+                  {...fadeUp}
+                  transition={{ duration: 0.6, delay: idx * 0.1 }}
+                  className="bg-background rounded-2xl border border-gray-100 shadow-sm p-8 flex flex-col"
+                >
+                  <div className="text-secondary font-heading text-6xl leading-none mb-4 select-none" aria-hidden="true">&ldquo;</div>
+                  <p className="text-gray-700 leading-relaxed flex-1">{t.quote}</p>
+                  <div className="mt-6 pt-6 border-t border-gray-100">
+                    <p className="font-heading font-semibold text-gray-900">{t.name}</p>
+                    <p className="text-sm text-gray-500">{t.role}</p>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </PublicLayout>
   );
 }
-
-// Ensure lucide arrow is available
-import { ArrowRight } from 'lucide-react';

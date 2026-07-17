@@ -1,4 +1,5 @@
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { PageHeader } from '@/components/PageHeader';
 import { Seo } from '@/components/Seo';
 
 export default function TermsOfService() {
@@ -8,14 +9,11 @@ export default function TermsOfService() {
         title="Terms of Service"
         description="The terms governing your use of the EWAMA Properties Ltd website and services."
       />
-      <div className="bg-primary pt-16 pb-20">
-        <div className="container mx-auto px-4 md:px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">Terms of Service</h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto font-light">
-            The terms that govern your use of our website and services.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        kicker="Legal"
+        title="Terms of Service"
+        subtitle="The terms that govern your use of our website and services."
+      />
 
       <div className="container mx-auto px-4 md:px-6 py-16">
         <div className="max-w-3xl mx-auto prose prose-lg text-gray-600">
@@ -68,8 +66,8 @@ export default function TermsOfService() {
           <h2 className="text-2xl font-heading font-bold text-primary">8. Contact</h2>
           <p>
             Questions about these terms? Contact us at{' '}
-            <a href="mailto:info@ewamaproperties.co.ke" className="text-secondary">info@ewamaproperties.co.ke</a>{' '}
-            or call <a href="tel:0720769999" className="text-secondary">0720 769 999</a>.
+            <a href="mailto:ewamapropertiesltd@gmail.com" className="text-secondary">ewamapropertiesltd@gmail.com</a>{' '}
+            or call <a href="tel:+254720769999" className="text-secondary">+254 720 769 999</a>.
           </p>
         </div>
       </div>

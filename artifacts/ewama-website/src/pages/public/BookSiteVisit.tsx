@@ -70,14 +70,20 @@ export default function BookSiteVisit() {
         description="Schedule a free guided site visit to any EWAMA Properties project. Pick a property, date, and time — our team will confirm your booking."
       />
       <div className="bg-gray-50 min-h-screen py-16">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="max-w-3xl mx-auto">
+        <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-6 lg:px-10">
+          <div className="grid gap-10 lg:grid-cols-[0.42fr_0.58fr] lg:items-start">
             
-            <div className="text-center mb-10">
+            <div className="mb-10 lg:mb-0 lg:pt-8">
               <h1 className="text-4xl font-heading font-bold text-gray-900 mb-4">Book a Site Visit</h1>
-              <p className="text-gray-600 text-lg">
+              <p className="text-gray-600 text-lg leading-relaxed">
                 Seeing is believing. Schedule a free, guided tour of our properties with one of our experienced real estate advisors. We offer free transport on selected days.
               </p>
+              <div className="mt-8 rounded-2xl border border-secondary/20 bg-secondary/10 p-6">
+                <p className="font-heading text-2xl font-bold text-primary">What to expect</p>
+                <p className="mt-3 text-gray-600">
+                  Clear directions, boundary guidance, project details, and a chance to ask every question before you commit.
+                </p>
+              </div>
             </div>
 
             <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">

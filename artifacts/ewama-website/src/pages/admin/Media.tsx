@@ -49,14 +49,15 @@ export default function AdminMedia() {
     const uploadable = list.filter(f => f.size <= MAX_UPLOAD_BYTES);
     setUploadingCount(uploadable.length);
     let uploaded = 0;
-    let failed = 0;
+    const failures: string[] = [];
 
     for (const file of uploadable) {
       try {
         await uploadMutation.mutateAsync({ data: { file, altText: file.name } });
         uploaded++;
-      } catch {
-        failed++;
+      } catch (err) {
+        const serverMessage = (err as { data?: { error?: string } })?.data?.error;
+        failures.push(serverMessage || `${file.name}: upload failed`);
       }
       setUploadingCount(c => Math.max(0, c - 1));
     }
@@ -65,10 +66,10 @@ export default function AdminMedia() {
     if (uploaded > 0) {
       toast({ title: uploaded === 1 ? 'File uploaded' : `${uploaded} files uploaded` });
     }
-    if (failed > 0) {
+    if (failures.length > 0) {
       toast({
-        title: 'Some uploads failed',
-        description: `${failed} file${failed === 1 ? '' : 's'} could not be uploaded. Please try again.`,
+        title: `${failures.length} upload${failures.length === 1 ? '' : 's'} failed`,
+        description: failures[0],
         variant: 'destructive',
       });
     }
@@ -141,7 +142,7 @@ export default function AdminMedia() {
             {data?.data?.map((file) => (
               <div key={file.id} className="group relative aspect-square rounded-xl border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center">
                 {file.mimeType?.startsWith('image/') ? (
-                  <img src={file.url} alt={file.altText || file.fileName} loading="lazy" className="w-full h-full object-cover" />
+                  <img src={file.thumbnailUrl || file.url} alt={file.altText || file.fileName} loading="lazy" className="w-full h-full object-cover" />
                 ) : (
                   <File className="w-12 h-12 text-gray-300" />
                 )}
