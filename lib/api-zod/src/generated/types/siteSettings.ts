@@ -29,6 +29,10 @@ export interface SiteSettings {
   /** @nullable */
   linkedin?: string | null;
   /** @nullable */
+  tiktok?: string | null;
+  /** @nullable */
+  youtube?: string | null;
+  /** @nullable */
   logoUrl?: string | null;
   /** @nullable */
   faviconUrl?: string | null;

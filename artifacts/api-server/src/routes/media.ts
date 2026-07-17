@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, type Request, type Response, type NextFunction } from "express";
 import multer from "multer";
 import crypto from "node:crypto";
 import path from "node:path";
@@ -6,8 +6,25 @@ import { db, mediaTable } from "@workspace/db";
 import { eq, ilike, sql, desc } from "drizzle-orm";
 import { requireAuth } from "../middlewares/auth.js";
 import { supabaseAdmin } from "../services/supabase.js";
+import { logger } from "../lib/logger.js";
 
 const router = Router();
+
+// sharp is a native module. On some shared hosts it can't be installed;
+// load it lazily so the API still runs (uploads just skip optimization)
+// instead of crashing on boot.
+type Sharp = (typeof import("sharp"))["default"];
+let sharpModule: Sharp | null | undefined;
+async function getSharp(): Promise<Sharp | null> {
+  if (sharpModule !== undefined) return sharpModule;
+  try {
+    sharpModule = (await import("sharp")).default;
+  } catch (err) {
+    logger.warn({ err }, "sharp unavailable — uploads will be stored without optimization");
+    sharpModule = null;
+  }
+  return sharpModule;
+}
 
 const MEDIA_BUCKET = process.env["SUPABASE_MEDIA_BUCKET"] || "media";
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10 MB
@@ -17,6 +34,28 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: MAX_UPLOAD_BYTES },
 });
+
+function runUpload(req: Request, res: Response, next: NextFunction) {
+  upload.single("file")(req, res, (err: unknown) => {
+    if (!err) {
+      next();
+      return;
+    }
+
+    if (err instanceof multer.MulterError) {
+      if (err.code === "LIMIT_FILE_SIZE") {
+        res.status(400).json({ error: "This file is too large. Please upload an image or PDF under 10 MB." });
+        return;
+      }
+      req.log.warn({ err }, "Upload rejected by multipart parser");
+      res.status(400).json({ error: "The upload could not be read. Please choose the file again and retry." });
+      return;
+    }
+
+    req.log.error({ err }, "Unexpected multipart upload failure");
+    res.status(400).json({ error: "The upload failed before the file reached storage. Please retry." });
+  });
+}
 
 let bucketReady = false;
 async function ensureBucket(): Promise<void> {
@@ -33,8 +72,8 @@ async function ensureBucket(): Promise<void> {
   bucketReady = true;
 }
 
-function storagePathFor(fileName: string): string {
-  const ext = path.extname(fileName).toLowerCase().slice(0, 10);
+function storagePathFor(fileName: string, forcedExt?: string): string {
+  const ext = forcedExt ?? path.extname(fileName).toLowerCase().slice(0, 10);
   const base = path
     .basename(fileName, path.extname(fileName))
     .toLowerCase()
@@ -42,6 +81,71 @@ function storagePathFor(fileName: string): string {
     .replace(/-+/g, "-")
     .slice(0, 60) || "file";
   return `${new Date().toISOString().slice(0, 10)}/${base}-${crypto.randomBytes(4).toString("hex")}${ext}`;
+}
+
+// Formats sharp can safely re-encode. GIFs (animation) and SVGs pass through untouched.
+const OPTIMIZABLE_MIMES = new Set(["image/jpeg", "image/png", "image/webp", "image/avif", "image/tiff", "image/heic", "image/heif"]);
+const MAX_DIMENSION = 1920; // display size cap; large camera photos shrink to this
+const THUMB_WIDTH = 480;
+
+interface ProcessedImage {
+  buffer: Buffer;
+  mimeType: string;
+  ext: string;
+  thumbnail: Buffer | null;
+}
+
+/**
+ * Re-encode uploads as WebP: auto-rotate from EXIF, strip metadata, cap the
+ * longest edge at MAX_DIMENSION, and produce a small thumbnail for grids.
+ * Falls back to the original bytes if the image can't be decoded.
+ */
+async function optimizeImage(buffer: Buffer, mimeType: string): Promise<ProcessedImage> {
+  const sharp = await getSharp();
+  if (!sharp || !OPTIMIZABLE_MIMES.has(mimeType)) {
+    return { buffer, mimeType, ext: "", thumbnail: null };
+  }
+  try {
+    const main = await sharp(buffer)
+      .rotate()
+      .resize({ width: MAX_DIMENSION, height: MAX_DIMENSION, fit: "inside", withoutEnlargement: true })
+      .webp({ quality: 82 })
+      .toBuffer();
+    const thumbnail = await sharp(buffer)
+      .rotate()
+      .resize({ width: THUMB_WIDTH, height: THUMB_WIDTH, fit: "inside", withoutEnlargement: true })
+      .webp({ quality: 70 })
+      .toBuffer();
+    // Keep whichever is smaller — tiny images can occasionally grow when re-encoded.
+    if (main.length >= buffer.length) {
+      return { buffer, mimeType, ext: "", thumbnail };
+    }
+    return { buffer: main, mimeType: "image/webp", ext: ".webp", thumbnail };
+  } catch {
+    return { buffer, mimeType, ext: "", thumbnail: null };
+  }
+}
+
+function recoverMimeFromName(file: Express.Multer.File): boolean {
+  const ext = path.extname(file.originalname).toLowerCase();
+  const mimeByExtension: Record<string, string> = {
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".webp": "image/webp",
+    ".gif": "image/gif",
+    ".avif": "image/avif",
+    ".heic": "image/heic",
+    ".heif": "image/heif",
+    ".tif": "image/tiff",
+    ".tiff": "image/tiff",
+    ".svg": "image/svg+xml",
+    ".pdf": "application/pdf",
+  };
+  const recovered = mimeByExtension[ext];
+  if (!recovered) return false;
+  file.mimetype = recovered;
+  return true;
 }
 
 function mapMedia(m: typeof mediaTable.$inferSelect) {
@@ -63,23 +167,41 @@ router.get("/", async (req, res) => {
 });
 
 // POST /media/upload — multipart file upload to Supabase Storage
-router.post("/upload", requireAuth, upload.single("file"), async (req, res) => {
+router.post("/upload", requireAuth, runUpload, async (req, res) => {
   const file = req.file;
   if (!file) {
-    res.status(400).json({ error: "A file is required (multipart field name: file)" });
+    req.log.warn({ contentType: req.headers["content-type"] }, "Upload arrived without a parsable file");
+    res.status(400).json({ error: "No file reached the server. Please try again, or try a different browser." });
     return;
   }
+  // Browsers (especially on Windows) sometimes mislabel images as
+  // application/octet-stream, so verify by sniffing the actual bytes
+  // instead of trusting the reported type. When sharp isn't available we
+  // fall back to accepting common image extensions.
   if (!ALLOWED_MIME_PREFIXES.some((p) => file.mimetype.startsWith(p))) {
-    res.status(400).json({ error: "Only images and PDF documents can be uploaded" });
-    return;
+    const sharp = await getSharp();
+    let recovered = false;
+    if (sharp) {
+      try {
+        const meta = await sharp(file.buffer).metadata();
+        if (meta.format) { file.mimetype = `image/${meta.format}`; recovered = true; }
+      } catch { /* falls through to extension check */ }
+    }
+    if (!recovered) recovered = recoverMimeFromName(file);
+    if (!recovered) {
+      req.log.warn({ reportedType: file.mimetype, fileName: file.originalname }, "Rejected upload: not an image or PDF");
+      res.status(400).json({ error: `"${file.originalname}" does not look like an image or PDF (browser reported type: ${file.mimetype}).` });
+      return;
+    }
   }
 
   await ensureBucket();
-  const storagePath = storagePathFor(file.originalname);
+  const optimized = await optimizeImage(file.buffer, file.mimetype);
+  const storagePath = storagePathFor(file.originalname, optimized.ext || undefined);
   const { error: uploadError } = await supabaseAdmin.storage
     .from(MEDIA_BUCKET)
-    .upload(storagePath, file.buffer, {
-      contentType: file.mimetype,
+    .upload(storagePath, optimized.buffer, {
+      contentType: optimized.mimeType,
       cacheControl: "31536000",
     });
   if (uploadError) {
@@ -88,14 +210,27 @@ router.post("/upload", requireAuth, upload.single("file"), async (req, res) => {
     return;
   }
 
+  let thumbnailUrl: string | null = null;
+  if (optimized.thumbnail) {
+    const thumbPath = `thumbs/${storagePath}`;
+    const { error: thumbError } = await supabaseAdmin.storage
+      .from(MEDIA_BUCKET)
+      .upload(thumbPath, optimized.thumbnail, { contentType: "image/webp", cacheControl: "31536000" });
+    if (thumbError) {
+      req.log.warn({ err: thumbError }, "Thumbnail upload failed; continuing without one");
+    } else {
+      thumbnailUrl = supabaseAdmin.storage.from(MEDIA_BUCKET).getPublicUrl(thumbPath).data.publicUrl;
+    }
+  }
+
   const { data: publicUrl } = supabaseAdmin.storage.from(MEDIA_BUCKET).getPublicUrl(storagePath);
   const altText = typeof req.body?.altText === "string" && req.body.altText ? req.body.altText : file.originalname;
   const [media] = await db.insert(mediaTable).values({
     fileName: file.originalname,
     url: publicUrl.publicUrl,
-    mimeType: file.mimetype,
-    size: file.size,
-    thumbnailUrl: null,
+    mimeType: optimized.mimeType,
+    size: optimized.buffer.length,
+    thumbnailUrl,
     altText,
   }).returning();
   res.status(201).json(mapMedia(media!));
@@ -115,13 +250,16 @@ router.delete("/:id", requireAuth, async (req, res) => {
   const id = parseInt(req.params["id"] as string, 10);
   const [media] = await db.select().from(mediaTable).where(eq(mediaTable.id, id));
   if (media) {
-    // Best-effort removal of the backing storage object for files we host.
+    // Best-effort removal of the backing storage objects for files we host.
     const marker = `/storage/v1/object/public/${MEDIA_BUCKET}/`;
-    const idx = media.url.indexOf(marker);
-    if (idx !== -1) {
-      const storagePath = decodeURIComponent(media.url.slice(idx + marker.length));
-      const { error } = await supabaseAdmin.storage.from(MEDIA_BUCKET).remove([storagePath]);
-      if (error) req.log.warn({ err: error }, "Failed to remove storage object for deleted media");
+    const toRemove: string[] = [];
+    for (const url of [media.url, media.thumbnailUrl]) {
+      const idx = url?.indexOf(marker) ?? -1;
+      if (url && idx !== -1) toRemove.push(decodeURIComponent(url.slice(idx + marker.length)));
+    }
+    if (toRemove.length > 0) {
+      const { error } = await supabaseAdmin.storage.from(MEDIA_BUCKET).remove(toRemove);
+      if (error) req.log.warn({ err: error }, "Failed to remove storage objects for deleted media");
     }
   }
   await db.delete(mediaTable).where(eq(mediaTable.id, id));

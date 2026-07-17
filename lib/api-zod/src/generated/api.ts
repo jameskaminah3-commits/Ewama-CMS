@@ -122,6 +122,15 @@ export const ListPropertiesResponse = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -166,6 +175,15 @@ export const CreatePropertyBody = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out']).default(createPropertyBodyStatusDefault),
   "featured": zod.boolean().default(createPropertyBodyFeaturedDefault),
   "seoTitle": zod.string().nullish(),
@@ -192,6 +210,15 @@ export const CreatePropertyResponse = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -228,6 +255,15 @@ export const GetPropertyResponse = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -263,6 +299,15 @@ export const UpdatePropertyBody = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']).optional(),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -289,6 +334,15 @@ export const UpdatePropertyResponse = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -335,6 +389,15 @@ export const GetPropertyBySlugResponse = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -371,6 +434,15 @@ export const DuplicatePropertyResponse = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -407,6 +479,15 @@ export const PublishPropertyResponse = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -443,6 +524,15 @@ export const ArchivePropertyResponse = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -475,6 +565,15 @@ export const GetFeaturedPropertiesResponseItem = zod.object({
   "amenities": zod.array(zod.string()).optional(),
   "investmentHighlights": zod.array(zod.string()).optional(),
   "nearbyLandmarks": zod.array(zod.string()).optional(),
+  "faqs": zod.array(zod.object({
+  "question": zod.string(),
+  "answer": zod.string()
+})).optional(),
+  "phasePricing": zod.array(zod.object({
+  "phase": zod.string(),
+  "cashPrice": zod.number(),
+  "installmentPrice": zod.number()
+})).optional(),
   "status": zod.enum(['draft', 'available', 'coming_soon', 'sold_out', 'archived']),
   "featured": zod.boolean().optional(),
   "seoTitle": zod.string().nullish(),
@@ -987,6 +1086,8 @@ export const GetSettingsResponse = zod.object({
   "facebook": zod.string().nullish(),
   "instagram": zod.string().nullish(),
   "linkedin": zod.string().nullish(),
+  "tiktok": zod.string().nullish(),
+  "youtube": zod.string().nullish(),
   "logoUrl": zod.string().nullish(),
   "faviconUrl": zod.string().nullish(),
   "footerText": zod.string().nullish(),
@@ -1008,6 +1109,8 @@ export const UpdateSettingsBody = zod.object({
   "facebook": zod.string().nullish(),
   "instagram": zod.string().nullish(),
   "linkedin": zod.string().nullish(),
+  "tiktok": zod.string().nullish(),
+  "youtube": zod.string().nullish(),
   "logoUrl": zod.string().nullish(),
   "faviconUrl": zod.string().nullish(),
   "footerText": zod.string().nullish()
@@ -1025,6 +1128,8 @@ export const UpdateSettingsResponse = zod.object({
   "facebook": zod.string().nullish(),
   "instagram": zod.string().nullish(),
   "linkedin": zod.string().nullish(),
+  "tiktok": zod.string().nullish(),
+  "youtube": zod.string().nullish(),
   "logoUrl": zod.string().nullish(),
   "faviconUrl": zod.string().nullish(),
   "footerText": zod.string().nullish(),
@@ -1050,6 +1155,33 @@ export const GetHomepageContentResponse = zod.object({
   "statsCountiesCovered": zod.number().nullish(),
   "communityImpact": zod.string().nullish(),
   "footerCta": zod.string().nullish(),
+  "heroBadge": zod.string().nullish(),
+  "ctaHeading": zod.string().nullish(),
+  "ctaSubheading": zod.string().nullish(),
+  "advantages": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})).nullish(),
+  "processSteps": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})).nullish(),
+  "testimonials": zod.array(zod.object({
+  "quote": zod.string(),
+  "name": zod.string(),
+  "role": zod.string()
+})).nullish(),
+  "heroSlides": zod.array(zod.object({
+  "kicker": zod.string(),
+  "title": zod.string(),
+  "text": zod.string(),
+  "image": zod.string(),
+  "ctaLabel": zod.string(),
+  "ctaHref": zod.string()
+})).nullish(),
+  "approachText": zod.string().nullish(),
+  "approachQuote": zod.string().nullish(),
+  "whatYouGet": zod.array(zod.string()).nullish(),
   "updatedAt": zod.coerce.date().optional()
 })
 
@@ -1070,7 +1202,34 @@ export const UpdateHomepageContentBody = zod.object({
   "statsHappyClients": zod.number().nullish(),
   "statsCountiesCovered": zod.number().nullish(),
   "communityImpact": zod.string().nullish(),
-  "footerCta": zod.string().nullish()
+  "footerCta": zod.string().nullish(),
+  "heroBadge": zod.string().nullish(),
+  "ctaHeading": zod.string().nullish(),
+  "ctaSubheading": zod.string().nullish(),
+  "advantages": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})).nullish(),
+  "processSteps": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})).nullish(),
+  "testimonials": zod.array(zod.object({
+  "quote": zod.string(),
+  "name": zod.string(),
+  "role": zod.string()
+})).nullish(),
+  "heroSlides": zod.array(zod.object({
+  "kicker": zod.string(),
+  "title": zod.string(),
+  "text": zod.string(),
+  "image": zod.string(),
+  "ctaLabel": zod.string(),
+  "ctaHref": zod.string()
+})).nullish(),
+  "approachText": zod.string().nullish(),
+  "approachQuote": zod.string().nullish(),
+  "whatYouGet": zod.array(zod.string()).nullish()
 })
 
 export const UpdateHomepageContentResponse = zod.object({
@@ -1088,6 +1247,33 @@ export const UpdateHomepageContentResponse = zod.object({
   "statsCountiesCovered": zod.number().nullish(),
   "communityImpact": zod.string().nullish(),
   "footerCta": zod.string().nullish(),
+  "heroBadge": zod.string().nullish(),
+  "ctaHeading": zod.string().nullish(),
+  "ctaSubheading": zod.string().nullish(),
+  "advantages": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})).nullish(),
+  "processSteps": zod.array(zod.object({
+  "title": zod.string(),
+  "description": zod.string()
+})).nullish(),
+  "testimonials": zod.array(zod.object({
+  "quote": zod.string(),
+  "name": zod.string(),
+  "role": zod.string()
+})).nullish(),
+  "heroSlides": zod.array(zod.object({
+  "kicker": zod.string(),
+  "title": zod.string(),
+  "text": zod.string(),
+  "image": zod.string(),
+  "ctaLabel": zod.string(),
+  "ctaHref": zod.string()
+})).nullish(),
+  "approachText": zod.string().nullish(),
+  "approachQuote": zod.string().nullish(),
+  "whatYouGet": zod.array(zod.string()).nullish(),
   "updatedAt": zod.coerce.date().optional()
 })
 

@@ -5,6 +5,9 @@
  * EWAMA Properties Ltd API
  * OpenAPI spec version: 0.1.0
  */
+import type { HeroSlide } from './heroSlide';
+import type { HomepageCard } from './homepageCard';
+import type { HomepageTestimonial } from './homepageTestimonial';
 
 export interface HomepageContentUpdate {
   /** @nullable */
@@ -33,4 +36,24 @@ export interface HomepageContentUpdate {
   communityImpact?: string | null;
   /** @nullable */
   footerCta?: string | null;
+  /** @nullable */
+  heroBadge?: string | null;
+  /** @nullable */
+  ctaHeading?: string | null;
+  /** @nullable */
+  ctaSubheading?: string | null;
+  /** @nullable */
+  advantages?: HomepageCard[] | null;
+  /** @nullable */
+  processSteps?: HomepageCard[] | null;
+  /** @nullable */
+  testimonials?: HomepageTestimonial[] | null;
+  /** @nullable */
+  heroSlides?: HeroSlide[] | null;
+  /** @nullable */
+  approachText?: string | null;
+  /** @nullable */
+  approachQuote?: string | null;
+  /** @nullable */
+  whatYouGet?: string[] | null;
 }

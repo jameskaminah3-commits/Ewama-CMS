@@ -1,6 +1,14 @@
 import { useState } from 'react';
 import { Link } from 'wouter';
-import { Facebook, Instagram, Linkedin, MapPin, Phone, Mail, Send, Loader2, CheckCircle2 } from 'lucide-react';
+import { Facebook, Instagram, Linkedin, Youtube, MapPin, Phone, Mail, Send, Loader2, CheckCircle2 } from 'lucide-react';
+
+function TikTokIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+    </svg>
+  );
+}
 import { useGetSettings, useSubscribeNewsletter } from '@workspace/api-client-react';
 
 function NewsletterForm() {
@@ -61,20 +69,16 @@ export function Footer() {
   return (
     <footer className="bg-primary text-primary-foreground pt-16 pb-8">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12 border-b border-white/10 pb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12 border-b border-white/10 pb-12">
           
           <div className="space-y-4">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-secondary flex items-center justify-center rounded-sm">
-                <span className="text-white font-heading font-bold text-xl">E</span>
-              </div>
-              <div>
-                <h2 className="font-heading font-bold text-xl tracking-tight text-white leading-tight">
-                  EWAMA
-                </h2>
-                <p className="text-[10px] uppercase tracking-widest text-white/70 leading-tight">
-                  Properties Ltd
-                </p>
+            <div className="mb-6">
+              <div className="inline-block bg-white rounded-xl px-4 py-3">
+                <img
+                  src="/logo.png"
+                  alt="EWAMA Properties Ltd — Foundation of Trust"
+                  className="h-14 w-auto"
+                />
               </div>
             </div>
             <p className="text-white/80 text-sm leading-relaxed max-w-sm">
@@ -96,7 +100,28 @@ export function Footer() {
                   <Linkedin className="w-4 h-4" />
                 </a>
               )}
+              {settings?.tiktok && (
+                <a href={settings.tiktok} target="_blank" rel="noreferrer" aria-label="EWAMA on TikTok" className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-secondary hover:text-white transition-colors">
+                  <TikTokIcon className="w-4 h-4" />
+                </a>
+              )}
+              {settings?.youtube && (
+                <a href={settings.youtube} target="_blank" rel="noreferrer" aria-label="EWAMA on YouTube" className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-secondary hover:text-white transition-colors">
+                  <Youtube className="w-4 h-4" />
+                </a>
+              )}
             </div>
+          </div>
+
+          <div>
+            <h3 className="font-heading font-semibold text-lg mb-6 text-white">Properties</h3>
+            <ul className="space-y-3">
+              <li><Link href="/properties"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">All Properties</span></Link></li>
+              <li><Link href="/properties?county=Kajiado"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Kimana – Imbirikani</span></Link></li>
+              <li><Link href="/properties?county=Kirinyaga"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Sagana</span></Link></li>
+              <li><Link href="/properties?county=Nakuru"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Naivasha</span></Link></li>
+              <li><Link href="/properties?county=Machakos"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Joska · Mananja · Matuu</span></Link></li>
+            </ul>
           </div>
 
           <div>
@@ -105,7 +130,9 @@ export function Footer() {
               <li><Link href="/"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Home</span></Link></li>
               <li><Link href="/properties"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Properties</span></Link></li>
               <li><Link href="/about"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">About Us</span></Link></li>
+              <li><Link href="/communities"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Our Impact</span></Link></li>
               <li><Link href="/articles"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Insights</span></Link></li>
+              <li><Link href="/faq"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">FAQ</span></Link></li>
               <li><Link href="/contact"><span className="text-white/80 hover:text-secondary transition-colors cursor-pointer text-sm">Contact</span></Link></li>
             </ul>
           </div>
@@ -122,22 +149,22 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-heading font-semibold text-lg mb-6 text-white">Contact Us</h3>
+            <h3 className="font-heading font-semibold text-lg mb-6 text-white">Let's Talk</h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3 text-sm text-white/80">
                 <MapPin className="w-5 h-5 text-secondary shrink-0" />
-                <span>{settings?.officeAddress || 'Nairobi, Kenya'}</span>
+                <span>{settings?.officeAddress || 'Ewama Properties Ltd, RRW6+G44, Kiambu Road, Kiambu'}</span>
               </li>
               <li className="flex items-center gap-3 text-sm text-white/80">
                 <Phone className="w-5 h-5 text-secondary shrink-0" />
-                <a href={`tel:${settings?.phone || '0720769999'}`} className="hover:text-white transition-colors">
-                  {settings?.phone || '0720 769 999'}
+                <a href={`tel:${settings?.phone || '+254720769999'}`} className="hover:text-white transition-colors">
+                  {settings?.phone || '+254 720 769 999'}
                 </a>
               </li>
               <li className="flex items-center gap-3 text-sm text-white/80">
                 <Mail className="w-5 h-5 text-secondary shrink-0" />
-                <a href={`mailto:${settings?.email || 'info@ewamaproperties.co.ke'}`} className="hover:text-white transition-colors">
-                  {settings?.email || 'info@ewamaproperties.co.ke'}
+                <a href={`mailto:${settings?.email || 'ewamapropertiesltd@gmail.com'}`} className="hover:text-white transition-colors">
+                  {settings?.email || 'ewamapropertiesltd@gmail.com'}
                 </a>
               </li>
             </ul>

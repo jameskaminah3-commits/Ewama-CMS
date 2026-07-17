@@ -1,6 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useSearch } from 'wouter';
 import { useListProperties } from '@workspace/api-client-react';
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { PageHeader } from '@/components/PageHeader';
 import { Seo } from '@/components/Seo';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -16,6 +18,17 @@ export default function Properties() {
   const [countyFilter, setCountyFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
+
+  // Allow deep links like /properties?county=Kajiado (used by the
+  // homepage Featured Locations cards).
+  const searchString = useSearch();
+  useEffect(() => {
+    const county = new URLSearchParams(searchString).get('county');
+    if (county) {
+      setCountyFilter(county);
+      setPage(1);
+    }
+  }, [searchString]);
 
   const { data: propertiesData, isLoading } = useListProperties({
     search: searchTerm || undefined,
@@ -48,19 +61,13 @@ export default function Properties() {
         title="Available Properties"
         description="Browse investment-grade land for sale across Kenya — vetted plots with ready title deeds, flexible cash and installment payment plans."
       />
-      <div className="bg-primary pt-16 pb-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] opacity-5 mix-blend-overlay bg-cover bg-center" />
-        <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">
-            Available Properties
-          </h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto font-light">
-            Discover investment-grade land in high-growth corridors. Each property is thoroughly vetted, with ready title deeds.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        kicker="Our Portfolio"
+        title="Our Properties"
+        subtitle="Prime value-added plots with title deeds guaranteed — thoroughly vetted land in Kenya's high-growth corridors."
+      />
 
-      <div className="container mx-auto px-4 md:px-6 -mt-8 relative z-20">
+      <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-6 lg:px-10 -mt-8 relative z-20">
         <div className="bg-white rounded-xl shadow-md border border-gray-100 p-4 mb-12 flex flex-col md:flex-row gap-4 items-center">
           <div className="flex-1 w-full relative">
             <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -106,7 +113,7 @@ export default function Properties() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
             {isLoading ? (
               [1,2,3,4,5,6].map(i => (
                 <div key={i} className="rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm">

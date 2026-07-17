@@ -1,4 +1,5 @@
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { PageHeader } from '@/components/PageHeader';
 import { Seo } from '@/components/Seo';
 import { useListArticles } from '@workspace/api-client-react';
 import { Link } from 'wouter';
@@ -16,21 +17,15 @@ export default function Articles() {
         title="Real Estate Insights"
         description="Expert advice, market trends, and guides for investing in Kenyan real estate — from the EWAMA Properties team."
       />
-      <div className="bg-primary pt-16 pb-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] opacity-5 mix-blend-overlay bg-cover bg-center" />
-        <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">
-            Real Estate Insights
-          </h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto font-light">
-            Expert advice, market trends, and guides to help you make informed investment decisions in Kenyan real estate.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        kicker="Latest News"
+        title="Blog & Insights"
+        subtitle="Your source for market updates, property insights, and expert real estate advice."
+      />
 
-      <div className="container mx-auto px-4 md:px-6 -mt-8 relative z-20 pb-24">
+      <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-6 lg:px-10 -mt-8 relative z-20 pb-24">
         {isLoading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8 mt-16">
             {[1,2,3,4].map(i => (
               <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <Skeleton className="h-48 w-full rounded-none" />
@@ -51,7 +46,7 @@ export default function Articles() {
             <p className="text-gray-500">Check back later for market insights and investment guides.</p>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8 mt-16">
             {articles.map((article) => (
               <Link key={article.id} href={`/articles/${article.slug}`}>
                 <article className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full cursor-pointer group">

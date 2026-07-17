@@ -1,4 +1,5 @@
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { PageHeader } from '@/components/PageHeader';
 import { Seo } from '@/components/Seo';
 
 export default function PrivacyPolicy() {
@@ -8,14 +9,11 @@ export default function PrivacyPolicy() {
         title="Privacy Policy"
         description="How EWAMA Properties Ltd collects, uses, and protects your personal information."
       />
-      <div className="bg-primary pt-16 pb-20">
-        <div className="container mx-auto px-4 md:px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">Privacy Policy</h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto font-light">
-            Your trust is our foundation. Here is how we handle your information.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        kicker="Legal"
+        title="Privacy Policy"
+        subtitle="Your trust is our foundation. Here is how we handle your information."
+      />
 
       <div className="container mx-auto px-4 md:px-6 py-16">
         <div className="max-w-3xl mx-auto prose prose-lg text-gray-600">
@@ -63,14 +61,14 @@ export default function PrivacyPolicy() {
           <p>
             Under Kenyan data protection law you have the right to access, correct, or request deletion of your
             personal data, and to object to or restrict its processing. To exercise any of these rights, contact
-            us at <a href="mailto:info@ewamaproperties.co.ke" className="text-secondary">info@ewamaproperties.co.ke</a>.
+            us at <a href="mailto:ewamapropertiesltd@gmail.com" className="text-secondary">ewamapropertiesltd@gmail.com</a>.
           </p>
 
           <h2 className="text-2xl font-heading font-bold text-primary">7. Contact</h2>
           <p>
             For any privacy questions, reach us at{' '}
-            <a href="mailto:info@ewamaproperties.co.ke" className="text-secondary">info@ewamaproperties.co.ke</a>{' '}
-            or call <a href="tel:0720769999" className="text-secondary">0720 769 999</a>.
+            <a href="mailto:ewamapropertiesltd@gmail.com" className="text-secondary">ewamapropertiesltd@gmail.com</a>{' '}
+            or call <a href="tel:+254720769999" className="text-secondary">+254 720 769 999</a>.
           </p>
         </div>
       </div>

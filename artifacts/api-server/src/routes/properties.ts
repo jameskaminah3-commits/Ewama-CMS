@@ -35,6 +35,8 @@ function mapProperty(p: typeof propertiesTable.$inferSelect) {
     amenities: (p.amenities as string[] | null) ?? [],
     investmentHighlights: (p.investmentHighlights as string[] | null) ?? [],
     nearbyLandmarks: (p.nearbyLandmarks as string[] | null) ?? [],
+    faqs: (p.faqs as { question: string; answer: string }[] | null) ?? [],
+    phasePricing: (p.phasePricing as { phase: string; cashPrice: number; installmentPrice: number }[] | null) ?? [],
     cashPrice: parseFloat(p.cashPrice),
     installmentPrice: parseFloat(p.installmentPrice),
     titleDeedFee: p.titleDeedFee ? parseFloat(p.titleDeedFee) : null,
@@ -104,6 +106,8 @@ router.post("/", requireAuth, async (req, res) => {
     amenities: rest.amenities ?? [],
     investmentHighlights: rest.investmentHighlights ?? [],
     nearbyLandmarks: rest.nearbyLandmarks ?? [],
+    faqs: rest.faqs ?? [],
+    phasePricing: rest.phasePricing ?? [],
     titleDeedFee: rest.titleDeedFee ? String(rest.titleDeedFee) : null,
   }).returning();
   await db.insert(activityLogTable).values({ type: "property", description: `New property created: ${name}`, entityId: prop!.id, entityTitle: name });
