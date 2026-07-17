@@ -207,13 +207,21 @@ const STATEMENTS: string[] = [
 ];
 
 export async function autoMigrate(): Promise<void> {
-  try {
-    for (const statement of [...BOOTSTRAP_STATEMENTS, ...STATEMENTS]) {
+  let failures = 0;
+  for (const statement of [...BOOTSTRAP_STATEMENTS, ...STATEMENTS]) {
+    try {
       await db.execute(sql.raw(statement));
+    } catch (err) {
+      // Run every statement independently so a single failure (e.g. a
+      // permissions quirk on one table) can't skip the tables that follow.
+      failures += 1;
+      logger.error({ err, statement: statement.slice(0, 80) }, "Schema auto-migration statement failed");
     }
+  }
+  if (failures === 0) {
     logger.info("Schema auto-migration complete (base tables and columns present)");
-  } catch (err) {
+  } else {
     // Don't block startup — the routes degrade gracefully if something is off.
-    logger.error({ err }, "Schema auto-migration failed; continuing anyway");
+    logger.warn({ failures }, "Schema auto-migration finished with some failed statements; continuing");
   }
 }
