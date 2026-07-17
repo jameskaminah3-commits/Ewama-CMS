@@ -6,10 +6,10 @@ import { requireAuth } from "../middlewares/auth.js";
 const router = Router();
 
 const HOMEPAGE_DEFAULTS: Partial<typeof homepageContentTable.$inferInsert> = {
-      heroHeading: "Secure Your Future Through Smart Property Investment",
-      heroSubheading: "We believe land and property ownership should be accessible, transparent, and rewarding — whether you are purchasing your first plot, building your dream home, or expanding your investment portfolio. Own Today. Prosper Tomorrow.",
-      heroButtonText: "Explore Properties",
-      heroButtonLink: "/properties",
+      heroHeading: "",
+      heroSubheading: "",
+      heroButtonText: "",
+      heroButtonLink: "",
       mission: "To transform dreams into reality by providing transparent, customer-centered, and sustainable real estate solutions that inspire trust, create wealth, and build thriving communities.",
       vision: "Building a future where every family and investor confidently owns a piece of tomorrow.",
       statsYearsInBusiness: 5,
@@ -18,7 +18,7 @@ const HOMEPAGE_DEFAULTS: Partial<typeof homepageContentTable.$inferInsert> = {
       statsCountiesCovered: 8,
       communityImpact: "Through our community-focused initiatives and commitment to social responsibility, we have helped settle more than ten families, enabling them to secure stable living environments and new opportunities for growth. Because true success is measured by the difference we make in people's lives.",
       footerCta: "Ready to invest in your future? Speak to our team today.",
-      heroBadge: "Foundation of Trust",
+      heroBadge: "",
       ctaHeading: "Ready to Invest in Your Future?",
       ctaSubheading: "Whether you're purchasing your first property, building your dream home, or expanding your investment portfolio, EWAMA is here to guide you every step of the way. Join hundreds of clients who trust EWAMA as their partner in property ownership and wealth creation.",
       advantages: [
@@ -79,16 +79,83 @@ const HOMEPAGE_DEFAULTS: Partial<typeof homepageContentTable.$inferInsert> = {
       ],
 };
 
+HOMEPAGE_DEFAULTS.heroSlides = [
+  { image: "/images/ewama-office-welcome.jpeg", kicker: "", title: "", text: "", ctaLabel: "", ctaHref: "" },
+  { image: "/images/ewama-site-visit.jpeg", kicker: "", title: "", text: "", ctaLabel: "", ctaHref: "" },
+  { image: "/images/ewama-reception.jpeg", kicker: "", title: "", text: "", ctaLabel: "", ctaHref: "" },
+];
+
 // Copy from retired releases: rows still carrying these exact strings get
 // upgraded to the current defaults; anything the admin edited is left alone.
 const STALE_TEXT: Record<string, string[]> = {
-  heroHeading: ["Own Your Piece of Kenya"],
+  heroBadge: ["Foundation of Trust"],
+  heroHeading: ["Own Your Piece of Kenya", "Secure Your Future Through Smart Property Investment"],
   heroSubheading: ["Trusted land investments across Kenya — transparent pricing, genuine title deeds, free site visits."],
+  heroButtonText: ["Explore Properties"],
   mission: ["To provide accessible, transparent and trustworthy land investment opportunities that empower Kenyans to build lasting wealth."],
   vision: ["To be the most trusted land company in Kenya — known for integrity, transparency and community impact."],
   communityImpact: ["We believe in building communities, not just selling land. Every plot we sell contributes to the growth of a vibrant, thriving Kenyan community."],
   footerCta: ["Ready to invest? Speak to our team today."],
 };
+
+const LEGACY_HERO_TITLES = new Set([
+  "Secure Your Future Through Smart Property Investment",
+  "Own Today. Prosper Tomorrow.",
+  "Karibu EWAMA Properties",
+]);
+
+const LEGACY_HERO_KICKERS = new Set([
+  "EWAMA PROPERTIES LTD",
+  "A FOUNDATION OF TRUST",
+  "Foundation of Trust",
+]);
+
+const LEGACY_HERO_CTA_LABELS = new Set([
+  "Explore Properties",
+  "Book a Site Visit",
+  "Talk to Us",
+]);
+
+const LEGACY_HERO_TEXT_SNIPPETS = [
+  "We make land ownership accessible",
+  "We make land and property ownership accessible",
+  "Prime value-added plots",
+  "Visit our Customer Care Centre on Kiambu Road",
+  "Trusted land investments across Kenya",
+];
+
+function cleanLegacyHeroSlides(current: unknown) {
+  if (!Array.isArray(current)) return { value: current, changed: false };
+
+  let changed = false;
+  const value = current.map((slide) => {
+    if (!slide || typeof slide !== "object") return slide;
+
+    const item = slide as Record<string, unknown>;
+    const title = typeof item.title === "string" ? item.title.trim() : "";
+    const text = typeof item.text === "string" ? item.text.trim() : "";
+    const kicker = typeof item.kicker === "string" ? item.kicker.trim() : "";
+    const ctaLabel = typeof item.ctaLabel === "string" ? item.ctaLabel.trim() : "";
+    const legacyTitle = LEGACY_HERO_TITLES.has(title);
+    const legacyText = LEGACY_HERO_TEXT_SNIPPETS.some((snippet) => text.includes(snippet));
+    const legacyKicker = LEGACY_HERO_KICKERS.has(kicker);
+    const legacyCta = LEGACY_HERO_CTA_LABELS.has(ctaLabel);
+
+    if (!legacyTitle && !legacyText && !legacyKicker && !legacyCta) return slide;
+    changed = true;
+
+    return {
+      ...item,
+      kicker: legacyKicker ? "" : item.kicker,
+      title: legacyTitle ? "" : item.title,
+      text: legacyText ? "" : item.text,
+      ctaLabel: legacyCta ? "" : item.ctaLabel,
+      ctaHref: legacyCta ? "" : item.ctaHref,
+    };
+  });
+
+  return { value, changed };
+}
 
 async function ensureHomepage() {
   const rows = await db.select().from(homepageContentTable);
@@ -103,8 +170,17 @@ async function ensureHomepage() {
   const updates: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(HOMEPAGE_DEFAULTS)) {
     const current = (row as Record<string, unknown>)[key];
+    if (key === "heroSlides") {
+      const cleaned = cleanLegacyHeroSlides(current);
+      if (cleaned.changed) {
+        updates[key] = cleaned.value;
+        continue;
+      }
+    }
+
     const isEmpty = current === null || current === undefined || (Array.isArray(current) && current.length === 0);
-    const isStale = typeof current === "string" && (STALE_TEXT[key] ?? []).includes(current);
+    const isLegacyHeroSubheading = key === "heroSubheading" && typeof current === "string" && current.includes("We believe land and property ownership");
+    const isStale = typeof current === "string" && ((STALE_TEXT[key] ?? []).includes(current) || isLegacyHeroSubheading);
     if (isEmpty || isStale) updates[key] = value;
   }
   if (Object.keys(updates).length > 0) {

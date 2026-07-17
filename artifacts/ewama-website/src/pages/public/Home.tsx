@@ -44,44 +44,129 @@ interface Slide {
   ctaHref: string;
 }
 
+type HomepageContentExtras = {
+  heroImage?: string | null;
+  heroBadge?: string | null;
+  heroHeading?: string | null;
+  heroSubheading?: string | null;
+  heroButtonText?: string | null;
+  heroButtonLink?: string | null;
+  heroSlides?: Partial<Slide>[] | null;
+  approachText?: string | null;
+  approachQuote?: string | null;
+  whatYouGet?: string[] | null;
+};
+
+const HERO_SLIDE_INTERVAL_MS = 12000;
+
 const DEFAULT_SLIDES: Slide[] = [
   {
     image: '/images/ewama-office-welcome.jpeg',
-    kicker: 'EWAMA PROPERTIES LTD',
-    title: 'Secure Your Future Through Smart Property Investment',
-    text: 'We make land ownership accessible, transparent, and rewarding.',
-    ctaLabel: 'Explore Properties',
-    ctaHref: '/properties',
+    kicker: '',
+    title: '',
+    text: '',
+    ctaLabel: '',
+    ctaHref: '',
   },
   {
     image: '/images/ewama-site-visit.jpeg',
-    kicker: 'EWAMA PROPERTIES LTD',
-    title: 'Own Today. Prosper Tomorrow.',
-    text: 'Prime value-added plots with title deeds guaranteed, in Kenya’s fastest-growing regions.',
-    ctaLabel: 'Book a Site Visit',
-    ctaHref: '/book-site-visit',
+    kicker: '',
+    title: '',
+    text: '',
+    ctaLabel: '',
+    ctaHref: '',
   },
   {
     image: '/images/ewama-reception.jpeg',
-    kicker: 'A FOUNDATION OF TRUST',
-    title: 'Karibu EWAMA Properties',
-    text: 'Visit our Customer Care Centre on Kiambu Road — our team is ready to walk you home.',
-    ctaLabel: 'Talk to Us',
-    ctaHref: '/contact',
+    kicker: '',
+    title: '',
+    text: '',
+    ctaLabel: '',
+    ctaHref: '',
   },
 ];
 
-function normalizeSlides(slides?: Slide[] | null): Slide[] {
-  if (!slides?.length) return DEFAULT_SLIDES;
+const LEGACY_HERO_TITLES = new Set([
+  'Secure Your Future Through Smart Property Investment',
+  'Own Today. Prosper Tomorrow.',
+  'Karibu EWAMA Properties',
+]);
+
+const LEGACY_HERO_KICKERS = new Set([
+  'EWAMA PROPERTIES LTD',
+  'A FOUNDATION OF TRUST',
+  'Foundation of Trust',
+]);
+
+const LEGACY_HERO_CTA_LABELS = new Set([
+  'Explore Properties',
+  'Book a Site Visit',
+  'Talk to Us',
+]);
+
+const LEGACY_HERO_TEXT_SNIPPETS = [
+  'We make land ownership accessible',
+  'We make land and property ownership accessible',
+  'Prime value-added plots',
+  'Visit our Customer Care Centre on Kiambu Road',
+  'Trusted land investments across Kenya',
+];
+
+function cleanLegacyCopy(value?: string | null, exact = new Set<string>(), snippets: string[] = []) {
+  const trimmed = value?.trim() ?? '';
+  if (!trimmed) return '';
+  if (exact.has(trimmed) || snippets.some(snippet => trimmed.includes(snippet))) return '';
+  return trimmed;
+}
+
+function normalizeSlides(
+  slides?: Partial<Slide>[] | null,
+  fallbackContent?: {
+    heroImage?: string | null;
+    heroBadge?: string | null;
+    heroHeading?: string | null;
+    heroSubheading?: string | null;
+    heroButtonText?: string | null;
+    heroButtonLink?: string | null;
+  } | null,
+): Slide[] {
+  if (!slides?.length) {
+    const fallbackImage = fallbackContent?.heroImage?.trim();
+    const hasFallbackCopy = Boolean(
+      cleanLegacyCopy(fallbackContent?.heroBadge, LEGACY_HERO_KICKERS) ||
+      cleanLegacyCopy(fallbackContent?.heroHeading, LEGACY_HERO_TITLES) ||
+      cleanLegacyCopy(fallbackContent?.heroSubheading, new Set(), LEGACY_HERO_TEXT_SNIPPETS) ||
+      cleanLegacyCopy(fallbackContent?.heroButtonText, LEGACY_HERO_CTA_LABELS),
+    );
+
+    if (fallbackImage || hasFallbackCopy) {
+      const ctaLabel = cleanLegacyCopy(fallbackContent?.heroButtonText, LEGACY_HERO_CTA_LABELS);
+      return [{
+        image: fallbackImage || DEFAULT_SLIDES[0]!.image,
+        kicker: cleanLegacyCopy(fallbackContent?.heroBadge, LEGACY_HERO_KICKERS),
+        title: cleanLegacyCopy(fallbackContent?.heroHeading, LEGACY_HERO_TITLES),
+        text: cleanLegacyCopy(fallbackContent?.heroSubheading, new Set(), LEGACY_HERO_TEXT_SNIPPETS),
+        ctaLabel,
+        ctaHref: ctaLabel ? fallbackContent?.heroButtonLink?.trim() || '' : '',
+      }];
+    }
+
+    return DEFAULT_SLIDES.map(slide => ({
+      ...slide,
+      text: cleanLegacyCopy(slide.text, new Set(), LEGACY_HERO_TEXT_SNIPPETS),
+    }));
+  }
+
   return slides.map((slide, index) => {
     const fallback = DEFAULT_SLIDES[index % DEFAULT_SLIDES.length]!;
+    const ctaLabel = cleanLegacyCopy(slide.ctaLabel, LEGACY_HERO_CTA_LABELS);
     return {
       image: slide.image || fallback.image,
-      kicker: slide.kicker || fallback.kicker,
-      title: slide.title || fallback.title,
-      text: slide.text || fallback.text,
-      ctaLabel: slide.ctaLabel || fallback.ctaLabel,
-      ctaHref: slide.ctaHref || fallback.ctaHref,
+      kicker: cleanLegacyCopy(slide.kicker, LEGACY_HERO_KICKERS),
+      title: cleanLegacyCopy(slide.title, LEGACY_HERO_TITLES),
+      text: cleanLegacyCopy(slide.text, new Set(), LEGACY_HERO_TEXT_SNIPPETS),
+      ctaLabel,
+      ctaHref: ctaLabel ? slide.ctaHref?.trim() || '' : '',
     };
   });
 }
@@ -111,48 +196,65 @@ function TypewriterText({ text, className, speed = 28 }: { text: string; classNa
 function HeroSlider({ slides }: { slides: Slide[] }) {
   const [index, setIndex] = useState(0);
   useEffect(() => {
-    const timer = setInterval(() => setIndex(i => (i + 1) % slides.length), 6500);
+    const timer = setInterval(() => setIndex(i => (i + 1) % slides.length), HERO_SLIDE_INTERVAL_MS);
     return () => clearInterval(timer);
   }, [slides.length]);
 
   const slide = slides[index]!;
+  const hasButton = Boolean(slide.ctaLabel && slide.ctaHref);
+  const hasOverlayContent = Boolean(slide.kicker || slide.title || slide.text || hasButton);
+
   return (
-    <section className="relative min-h-[calc(100svh-72px)] overflow-hidden lg:min-h-[calc(100svh-124px)]">
+    <section className="relative h-[58svh] min-h-[420px] max-h-[720px] overflow-hidden bg-primary shadow-[0_24px_70px_rgba(0,0,0,0.18)] md:h-[66svh] md:min-h-[520px] lg:h-[70svh]">
       <AnimatePresence mode="popLayout">
         <motion.div
           key={index}
-          initial={{ opacity: 0, scale: 1.025 }}
+          initial={{ opacity: 0, scale: 1.018 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.9, ease: 'easeOut' }}
+          transition={{ duration: 1.4, ease: 'easeOut' }}
           className="absolute inset-0"
         >
-          <img src={slide.image} alt="" className="h-full w-full object-cover object-center" />
+          <img src={slide.image} alt="" className="h-full w-full object-cover object-center saturate-[1.03] contrast-[1.02]" />
         </motion.div>
       </AnimatePresence>
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.12),rgba(0,0,0,0.03)_34%,rgba(0,0,0,0.20))]" />
+      <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-primary/30 to-transparent" />
 
-      <div className="relative z-10 mx-auto flex min-h-[calc(100svh-72px)] w-full max-w-7xl items-center px-5 py-14 sm:px-6 lg:min-h-[calc(100svh-124px)] lg:px-10">
-        <motion.div
-          key={`text-${index}`}
-          initial={{ opacity: 0, y: 26 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.15 }}
-          className="max-w-[660px]"
-        >
-          <p className="mb-5 text-sm font-semibold uppercase tracking-[0.22em] text-secondary [text-shadow:0_2px_14px_rgba(0,0,0,0.65)]">
-            {slide.kicker}
-          </p>
-          <h1 className="min-h-[2.15em] text-4xl font-heading font-bold leading-[1.06] text-white [text-shadow:0_4px_24px_rgba(0,0,0,0.78)] md:text-6xl">
-            <TypewriterText text={slide.title} />
-          </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-white [text-shadow:0_3px_18px_rgba(0,0,0,0.75)] md:text-xl">{slide.text}</p>
-          <Link href={slide.ctaHref}>
-            <Button size="lg" className="mt-8 bg-secondary text-primary hover:bg-secondary/90 h-13 px-8 text-base font-semibold">
-              {slide.ctaLabel} <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </Link>
-        </motion.div>
-      </div>
+      {hasOverlayContent && (
+        <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl items-center px-5 py-14 sm:px-6 lg:px-10">
+          <motion.div
+            key={`text-${index}`}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="max-w-[620px]"
+          >
+            {slide.kicker && (
+              <p className="mb-5 text-xs font-semibold uppercase tracking-[0.24em] text-secondary [text-shadow:0_2px_14px_rgba(0,0,0,0.65)] md:text-sm">
+                {slide.kicker}
+              </p>
+            )}
+            {slide.title && (
+              <h1 className="text-4xl font-heading font-bold leading-[1.05] text-white [text-shadow:0_4px_24px_rgba(0,0,0,0.78)] md:text-5xl lg:text-6xl">
+                <TypewriterText text={slide.title} />
+              </h1>
+            )}
+            {slide.text && (
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-white [text-shadow:0_3px_18px_rgba(0,0,0,0.75)] md:text-lg lg:text-xl">
+                {slide.text}
+              </p>
+            )}
+            {hasButton && (
+              <Link href={slide.ctaHref}>
+                <Button size="lg" className="mt-8 bg-secondary text-primary hover:bg-secondary/90 h-13 px-8 text-base font-semibold">
+                  {slide.ctaLabel} <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            )}
+          </motion.div>
+        </div>
+      )}
 
       <div className="absolute bottom-6 left-5 z-10 flex gap-2 sm:left-6 lg:left-[max(2.5rem,calc((100vw-1280px)/2+2.5rem))]">
         {slides.map((_, i) => (
@@ -219,6 +321,7 @@ function HomeEnquiryForm() {
 
 export default function Home() {
   const { data: content } = useGetHomepageContent();
+  const homepageContent = content as (HomepageContentExtras & NonNullable<typeof content>) | undefined;
   const { data: settings } = useGetSettings();
   const { data: properties, isLoading: propsLoading } = useListProperties({ featured: true, limit: 3 });
   const { data: allProperties } = useListProperties({ status: 'available', limit: 50 });
@@ -235,8 +338,8 @@ export default function Home() {
   }, [allProperties?.data]);
 
   const testimonials = content?.testimonials?.length ? content.testimonials : [];
-  const slides: Slide[] = normalizeSlides(content?.heroSlides);
-  const whatYouGet = content?.whatYouGet?.length ? content.whatYouGet : DEFAULT_WHAT_YOU_GET;
+  const slides: Slide[] = normalizeSlides(homepageContent?.heroSlides, homepageContent);
+  const whatYouGet: string[] = homepageContent?.whatYouGet?.length ? homepageContent.whatYouGet : DEFAULT_WHAT_YOU_GET;
 
   return (
     <PublicLayout>
@@ -359,11 +462,11 @@ export default function Home() {
               <p className="text-secondary font-semibold tracking-widest uppercase text-sm mb-3">About Us</p>
               <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary mb-6">Our Approach</h2>
               <p className="text-gray-600 text-lg leading-relaxed mb-8">
-                {content?.approachText || 'Finding the right piece of land is personal. We listen first, then guide you through every step — from your first site visit to the day you receive your title deed.'}
+                {homepageContent?.approachText || 'Finding the right piece of land is personal. We listen first, then guide you through every step — from your first site visit to the day you receive your title deed.'}
               </p>
               <blockquote className="border-l-4 border-secondary pl-6 mb-8">
                 <p className="font-heading text-xl md:text-2xl text-gray-800 italic leading-relaxed">
-                  "{content?.approachQuote || "We don't just sell plots. We help families find the place where their best memories will be made."}"
+                  "{homepageContent?.approachQuote || "We don't just sell plots. We help families find the place where their best memories will be made."}"
                 </p>
                 <footer className="text-sm text-gray-500 mt-3">— EWAMA Properties Ltd, Foundation of Trust</footer>
               </blockquote>

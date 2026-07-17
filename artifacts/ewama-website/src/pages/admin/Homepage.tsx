@@ -60,6 +60,7 @@ const homepageSchema = z.object({
 });
 
 type HomepageForm = z.infer<typeof homepageSchema>;
+type EditableHomepageContent = Partial<HomepageForm>;
 
 function HeroSlidesEditor({ form }: { form: UseFormReturn<HomepageForm> }) {
   const { fields, append, remove } = useFieldArray({ control: form.control, name: 'heroSlides' });
@@ -142,7 +143,7 @@ function HeroSlidesEditor({ form }: { form: UseFormReturn<HomepageForm> }) {
         type="button"
         variant="outline"
         className="gap-2"
-        onClick={() => append({ kicker: 'EWAMA PROPERTIES LTD', title: '', text: '', image: '', ctaLabel: 'Explore Properties', ctaHref: '/properties' })}
+        onClick={() => append({ kicker: '', title: '', text: '', image: '', ctaLabel: '', ctaHref: '' })}
       >
         <Plus className="w-4 h-4" /> Add Slide
       </Button>
@@ -329,27 +330,28 @@ export default function AdminHomepage() {
 
   useEffect(() => {
     if (content) {
+      const editableContent = content as EditableHomepageContent & NonNullable<typeof content>;
       form.reset({
-        heroBadge: content.heroBadge || '',
-        heroHeading: content.heroHeading || '',
-        heroSubheading: content.heroSubheading || '',
-        heroImage: content.heroImage || '',
-        mission: content.mission || '',
-        vision: content.vision || '',
-        communityImpact: content.communityImpact || '',
-        statsYearsInBusiness: content.statsYearsInBusiness || 0,
-        statsPropertiesSold: content.statsPropertiesSold || 0,
-        statsHappyClients: content.statsHappyClients || 0,
-        statsCountiesCovered: content.statsCountiesCovered || 0,
-        ctaHeading: content.ctaHeading || '',
-        ctaSubheading: content.ctaSubheading || '',
-        advantages: content.advantages || [],
-        processSteps: content.processSteps || [],
-        testimonials: content.testimonials || [],
-        heroSlides: content.heroSlides || [],
-        approachText: content.approachText || '',
-        approachQuote: content.approachQuote || '',
-        whatYouGet: content.whatYouGet || [],
+        heroBadge: editableContent.heroBadge || '',
+        heroHeading: editableContent.heroHeading || '',
+        heroSubheading: editableContent.heroSubheading || '',
+        heroImage: editableContent.heroImage || '',
+        mission: editableContent.mission || '',
+        vision: editableContent.vision || '',
+        communityImpact: editableContent.communityImpact || '',
+        statsYearsInBusiness: editableContent.statsYearsInBusiness || 0,
+        statsPropertiesSold: editableContent.statsPropertiesSold || 0,
+        statsHappyClients: editableContent.statsHappyClients || 0,
+        statsCountiesCovered: editableContent.statsCountiesCovered || 0,
+        ctaHeading: editableContent.ctaHeading || '',
+        ctaSubheading: editableContent.ctaSubheading || '',
+        advantages: editableContent.advantages || [],
+        processSteps: editableContent.processSteps || [],
+        testimonials: editableContent.testimonials || [],
+        heroSlides: editableContent.heroSlides || [],
+        approachText: editableContent.approachText || '',
+        approachQuote: editableContent.approachQuote || '',
+        whatYouGet: editableContent.whatYouGet || [],
       });
     }
   }, [content, form]);
