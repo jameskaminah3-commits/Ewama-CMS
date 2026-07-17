@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, type Request, type Response, type NextFunction } from "express";
 import multer from "multer";
 import crypto from "node:crypto";
 import path from "node:path";
@@ -34,6 +34,28 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: MAX_UPLOAD_BYTES },
 });
+
+function runUpload(req: Request, res: Response, next: NextFunction) {
+  upload.single("file")(req, res, (err: unknown) => {
+    if (!err) {
+      next();
+      return;
+    }
+
+    if (err instanceof multer.MulterError) {
+      if (err.code === "LIMIT_FILE_SIZE") {
+        res.status(400).json({ error: "This file is too large. Please upload an image or PDF under 10 MB." });
+        return;
+      }
+      req.log.warn({ err }, "Upload rejected by multipart parser");
+      res.status(400).json({ error: "The upload could not be read. Please choose the file again and retry." });
+      return;
+    }
+
+    req.log.error({ err }, "Unexpected multipart upload failure");
+    res.status(400).json({ error: "The upload failed before the file reached storage. Please retry." });
+  });
+}
 
 let bucketReady = false;
 async function ensureBucket(): Promise<void> {
@@ -104,6 +126,28 @@ async function optimizeImage(buffer: Buffer, mimeType: string): Promise<Processe
   }
 }
 
+function recoverMimeFromName(file: Express.Multer.File): boolean {
+  const ext = path.extname(file.originalname).toLowerCase();
+  const mimeByExtension: Record<string, string> = {
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".webp": "image/webp",
+    ".gif": "image/gif",
+    ".avif": "image/avif",
+    ".heic": "image/heic",
+    ".heif": "image/heif",
+    ".tif": "image/tiff",
+    ".tiff": "image/tiff",
+    ".svg": "image/svg+xml",
+    ".pdf": "application/pdf",
+  };
+  const recovered = mimeByExtension[ext];
+  if (!recovered) return false;
+  file.mimetype = recovered;
+  return true;
+}
+
 function mapMedia(m: typeof mediaTable.$inferSelect) {
   return { ...m, createdAt: m.createdAt.toISOString() };
 }
@@ -123,7 +167,7 @@ router.get("/", async (req, res) => {
 });
 
 // POST /media/upload — multipart file upload to Supabase Storage
-router.post("/upload", requireAuth, upload.single("file"), async (req, res) => {
+router.post("/upload", requireAuth, runUpload, async (req, res) => {
   const file = req.file;
   if (!file) {
     req.log.warn({ contentType: req.headers["content-type"] }, "Upload arrived without a parsable file");
@@ -143,14 +187,7 @@ router.post("/upload", requireAuth, upload.single("file"), async (req, res) => {
         if (meta.format) { file.mimetype = `image/${meta.format}`; recovered = true; }
       } catch { /* falls through to extension check */ }
     }
-    if (!recovered) {
-      const ext = path.extname(file.originalname).toLowerCase();
-      const imageExts = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif", ".heic", ".heif", ".tif", ".tiff"];
-      if (imageExts.includes(ext)) {
-        file.mimetype = ext === ".jpg" ? "image/jpeg" : `image/${ext.slice(1)}`;
-        recovered = true;
-      }
-    }
+    if (!recovered) recovered = recoverMimeFromName(file);
     if (!recovered) {
       req.log.warn({ reportedType: file.mimetype, fileName: file.originalname }, "Rejected upload: not an image or PDF");
       res.status(400).json({ error: `"${file.originalname}" does not look like an image or PDF (browser reported type: ${file.mimetype}).` });
