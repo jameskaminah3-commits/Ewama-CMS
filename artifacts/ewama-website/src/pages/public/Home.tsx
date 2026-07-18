@@ -205,7 +205,7 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
   const hasOverlayContent = Boolean(slide.kicker || slide.title || slide.text || hasButton);
 
   return (
-    <section className="relative h-[58svh] min-h-[420px] max-h-[720px] overflow-hidden bg-primary shadow-[0_24px_70px_rgba(0,0,0,0.18)] md:h-[66svh] md:min-h-[520px] lg:h-[70svh]">
+    <section className="relative h-[44svh] min-h-[320px] max-h-[520px] overflow-hidden bg-primary shadow-[0_24px_70px_rgba(0,0,0,0.18)] md:h-[54svh] md:min-h-[420px] md:max-h-[620px]">
       <AnimatePresence mode="popLayout">
         <motion.div
           key={index}
@@ -215,10 +215,13 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
           transition={{ duration: 1.4, ease: 'easeOut' }}
           className="absolute inset-0"
         >
-          <img src={slide.image} alt="" className="h-full w-full object-cover object-center saturate-[1.03] contrast-[1.02]" />
+          {/* Blurred echo fills any space the photo's aspect ratio leaves, so the
+              real image below is never cropped on any screen size. */}
+          <img src={slide.image} alt="" aria-hidden className="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl brightness-[0.65] saturate-[1.05]" />
+          <img src={slide.image} alt="" className="relative h-full w-full object-contain object-center saturate-[1.03] contrast-[1.02]" />
         </motion.div>
       </AnimatePresence>
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.12),rgba(0,0,0,0.03)_34%,rgba(0,0,0,0.20))]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.10),rgba(0,0,0,0.02)_34%,rgba(0,0,0,0.16))]" />
       <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-primary/30 to-transparent" />
 
       {hasOverlayContent && (
