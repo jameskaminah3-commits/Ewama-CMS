@@ -19,23 +19,33 @@ import TermsOfService from '@/pages/public/TermsOfService';
 import Faq from '@/pages/public/Faq';
 import Communities from '@/pages/public/Communities';
 
-// Admin Pages
-import AdminLogin from '@/pages/admin/Login';
-import AdminDashboard from '@/pages/admin/Dashboard';
-import AdminProperties from '@/pages/admin/properties/List';
-import AdminPropertyForm from '@/pages/admin/properties/Form';
-import AdminArticles from '@/pages/admin/articles/List';
-import AdminArticleForm from '@/pages/admin/articles/Form';
-import AdminEnquiries from '@/pages/admin/Enquiries';
-import AdminSiteVisits from '@/pages/admin/SiteVisits';
-import AdminSettings from '@/pages/admin/Settings';
-import AdminMedia from '@/pages/admin/Media';
-import AdminHomepage from '@/pages/admin/Homepage';
+// Admin Pages — lazy-loaded so public visitors never download the dashboard
+// code; each chunk is fetched on first visit to an /admin route.
+import { lazy, Suspense } from 'react';
+import { Loader2 } from 'lucide-react';
+const AdminLogin = lazy(() => import('@/pages/admin/Login'));
+const AdminDashboard = lazy(() => import('@/pages/admin/Dashboard'));
+const AdminProperties = lazy(() => import('@/pages/admin/properties/List'));
+const AdminPropertyForm = lazy(() => import('@/pages/admin/properties/Form'));
+const AdminArticles = lazy(() => import('@/pages/admin/articles/List'));
+const AdminArticleForm = lazy(() => import('@/pages/admin/articles/Form'));
+const AdminEnquiries = lazy(() => import('@/pages/admin/Enquiries'));
+const AdminSiteVisits = lazy(() => import('@/pages/admin/SiteVisits'));
+const AdminSettings = lazy(() => import('@/pages/admin/Settings'));
+const AdminMedia = lazy(() => import('@/pages/admin/Media'));
+const AdminHomepage = lazy(() => import('@/pages/admin/Homepage'));
 
 const queryClient = new QueryClient();
 
 function Router() {
   return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      }
+    >
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/properties" component={Properties} />
@@ -66,6 +76,7 @@ function Router() {
 
       <Route component={NotFound} />
     </Switch>
+    </Suspense>
   );
 }
 

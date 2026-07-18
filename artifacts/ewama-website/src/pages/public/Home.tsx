@@ -62,7 +62,7 @@ const HERO_SLIDE_INTERVAL_MS = 12000;
 
 const DEFAULT_SLIDES: Slide[] = [
   {
-    image: '/images/ewama-office-welcome.jpeg',
+    image: '/images/ewama-office-welcome.webp',
     mobileImage: '',
     kicker: '',
     title: '',
@@ -71,7 +71,7 @@ const DEFAULT_SLIDES: Slide[] = [
     ctaHref: '',
   },
   {
-    image: '/images/ewama-site-visit.jpeg',
+    image: '/images/ewama-site-visit.webp',
     mobileImage: '',
     kicker: '',
     title: '',
@@ -80,7 +80,7 @@ const DEFAULT_SLIDES: Slide[] = [
     ctaHref: '',
   },
   {
-    image: '/images/ewama-reception.jpeg',
+    image: '/images/ewama-reception.webp',
     mobileImage: '',
     kicker: '',
     title: '',
@@ -549,7 +549,7 @@ export default function Home() {
       <section className="py-14 md:py-20 bg-primary relative overflow-hidden">
         {/* Land photo showing faintly through the dark backdrop */}
         <img
-          src="/images/ewama-site-visit.jpeg"
+          src="/images/ewama-site-visit.webp"
           alt=""
           aria-hidden
           className="absolute inset-0 h-full w-full object-cover object-center opacity-[0.32]"
