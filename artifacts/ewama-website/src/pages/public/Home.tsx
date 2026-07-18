@@ -201,11 +201,6 @@ function TypewriterText({ text, className, speed = 28 }: { text: string; classNa
 
 function HeroSlider({ slides }: { slides: Slide[] }) {
   const [index, setIndex] = useState(0);
-  // The banner adopts the photo's own width:height ratio, so the frame always
-  // fits the picture exactly — nothing cropped, no leftover space. Phones use
-  // the slide's "phone photo" (when set) via the <picture> element below, and
-  // the ratio updates automatically when the browser swaps images.
-  const [ratio, setRatio] = useState<number | null>(null);
   useEffect(() => {
     const timer = setInterval(() => setIndex(i => (i + 1) % slides.length), HERO_SLIDE_INTERVAL_MS);
     return () => clearInterval(timer);
@@ -215,35 +210,28 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
   const hasButton = Boolean(slide.ctaLabel && slide.ctaHref);
   const hasOverlayContent = Boolean(slide.kicker || slide.title || slide.text || hasButton);
 
-  const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    const el = e.currentTarget;
-    if (el.naturalWidth && el.naturalHeight) setRatio(el.naturalWidth / el.naturalHeight);
-  };
-
+  // The photo itself defines the banner: it flows at its natural proportions
+  // (w-full h-auto), so the frame is always exactly the picture — nothing
+  // cropped, nothing left over, at every screen size. Phones swap in the
+  // slide's "phone photo" (when set) via <picture>. The aspect-[auto_...]
+  // class is only a pre-load placeholder to avoid a layout jump.
   return (
-    <section
-      className="relative w-full min-h-[220px] max-h-[85svh] overflow-hidden bg-primary shadow-[0_24px_70px_rgba(0,0,0,0.18)]"
-      style={{ aspectRatio: ratio ?? 2.4 }}
-    >
-      <AnimatePresence mode="popLayout">
+    <section className="relative w-full overflow-hidden bg-primary shadow-[0_24px_70px_rgba(0,0,0,0.18)]">
+      <AnimatePresence initial={false} mode="popLayout">
         <motion.div
           key={index}
           initial={{ opacity: 0, scale: 1.018 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1.4, ease: 'easeOut' }}
-          className="absolute inset-0"
+          className="relative w-full"
         >
-          {/* Blurred safety layer: only visible for the brief moment the frame
-              is settling to a new photo's proportions. */}
-          <img src={slide.mobileImage || slide.image} alt="" aria-hidden className="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl brightness-[0.65] saturate-[1.05]" />
           <picture>
             {slide.mobileImage && <source media="(max-width: 767px)" srcSet={slide.mobileImage} />}
             <img
               src={slide.image}
               alt=""
-              onLoad={onImageLoad}
-              className="relative h-full w-full object-cover object-center saturate-[1.03] contrast-[1.02]"
+              className="block h-auto w-full aspect-[auto_1920/700] saturate-[1.03] contrast-[1.02]"
             />
           </picture>
         </motion.div>
@@ -252,7 +240,7 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
       <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-primary/30 to-transparent" />
 
       {hasOverlayContent && (
-        <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl items-center px-5 py-14 sm:px-6 lg:px-10">
+        <div className="absolute inset-0 z-10 mx-auto flex h-full w-full max-w-7xl items-center px-5 py-14 sm:px-6 lg:px-10">
           <motion.div
             key={`text-${index}`}
             initial={{ opacity: 0, y: 24 }}
