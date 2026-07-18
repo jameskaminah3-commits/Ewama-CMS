@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useGetHomepageContent, useListProperties, useListArticles, useCreateEnquiry } from '@workspace/api-client-react';
 import { PublicLayout } from '@/components/layout/PublicLayout';
 import { Seo } from '@/components/Seo';
@@ -288,6 +288,44 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
   );
 }
 
+function CountUpStat({ value, suffix, label }: { value: number; suffix: string; label: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [display, setDisplay] = useState(0);
+  const started = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting || started.current) return;
+      started.current = true;
+      const duration = 2000;
+      const start = performance.now();
+      const tick = (now: number) => {
+        const t = Math.min((now - start) / duration, 1);
+        // Fast at first, easing to a stop — with a light scramble mid-flight
+        // so the counter feels alive rather than mechanical.
+        const eased = 1 - Math.pow(1 - t, 3);
+        const jitter = t < 0.85 ? Math.round(Math.random() * Math.max(2, value * 0.02)) : 0;
+        setDisplay(Math.min(value, Math.round(eased * value) + jitter));
+        if (t < 1) requestAnimationFrame(tick);
+        else setDisplay(value);
+      };
+      requestAnimationFrame(tick);
+      observer.disconnect();
+    }, { threshold: 0.4 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [value]);
+
+  return (
+    <div ref={ref} className="bg-white/5 border border-white/10 rounded-2xl p-8 text-center backdrop-blur-[2px]">
+      <p className="text-4xl font-heading font-bold text-secondary mb-2 tabular-nums">{display}{suffix}</p>
+      <p className="text-sm text-white/70 uppercase tracking-wide">{label}</p>
+    </div>
+  );
+}
+
 function HomeEnquiryForm() {
   const { toast } = useToast();
   const createEnquiry = useCreateEnquiry();
@@ -502,6 +540,14 @@ export default function Home() {
 
       {/* How We Deliver Excellence */}
       <section className="py-14 md:py-20 bg-primary relative overflow-hidden">
+        {/* Land photo showing faintly through the dark backdrop */}
+        <img
+          src="/images/ewama-site-visit.jpeg"
+          alt=""
+          aria-hidden
+          className="absolute inset-0 h-full w-full object-cover object-center opacity-[0.18]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/70 via-primary/35 to-primary/80" />
         <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-10 relative z-10">
           <motion.div {...fadeUp} className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <h2 className="max-w-xl text-3xl md:text-4xl font-heading font-bold text-white">How We Deliver Excellence</h2>
@@ -511,15 +557,12 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="grid grid-cols-2 gap-6">
               {[
-                { value: `${content?.statsHappyClients || 850}+`, label: 'Satisfied Clients' },
-                { value: `${content?.statsPropertiesSold || 1000}+`, label: 'Plots Delivered' },
-                { value: `${content?.statsYearsInBusiness || 5}+`, label: 'Years of Excellence' },
-                { value: `${content?.statsCountiesCovered || 12}`, label: 'Counties Covered' },
+                { value: content?.statsHappyClients || 850, suffix: '+', label: 'Satisfied Clients' },
+                { value: content?.statsPropertiesSold || 1000, suffix: '+', label: 'Plots Delivered' },
+                { value: content?.statsYearsInBusiness || 5, suffix: '+', label: 'Years of Excellence' },
+                { value: content?.statsCountiesCovered || 12, suffix: '', label: 'Counties Covered' },
               ].map((stat) => (
-                <div key={stat.label} className="bg-white/5 border border-white/10 rounded-2xl p-8 text-center">
-                  <p className="text-4xl font-heading font-bold text-secondary mb-2">{stat.value}</p>
-                  <p className="text-sm text-white/70 uppercase tracking-wide">{stat.label}</p>
-                </div>
+                <CountUpStat key={stat.label} value={stat.value} suffix={stat.suffix} label={stat.label} />
               ))}
             </div>
             <motion.div {...fadeUp} className="bg-white rounded-2xl p-10 shadow-xl">
