@@ -32,6 +32,7 @@ const heroSlideSchema = z.object({
   title: z.string().optional().default(''),
   text: z.string().optional().default(''),
   image: z.string().min(1, 'Please choose a photo for this slide'),
+  mobileImage: z.string().optional().default(''),
   ctaLabel: z.string().optional().default(''),
   ctaHref: z.string().optional().default(''),
 });
@@ -64,7 +65,7 @@ type EditableHomepageContent = Partial<HomepageForm>;
 
 function HeroSlidesEditor({ form }: { form: UseFormReturn<HomepageForm> }) {
   const { fields, append, remove } = useFieldArray({ control: form.control, name: 'heroSlides' });
-  const [pickerIndex, setPickerIndex] = useState<number | null>(null);
+  const [picker, setPicker] = useState<{ index: number; field: 'image' | 'mobileImage' } | null>(null);
 
   return (
     <div className="space-y-4">
@@ -106,19 +107,38 @@ function HeroSlidesEditor({ form }: { form: UseFormReturn<HomepageForm> }) {
             <div className="flex-1">
               <FormField control={form.control} name={`heroSlides.${index}.image`} render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Background Photo</FormLabel>
+                  <FormLabel>Background Photo (wide — for computers)</FormLabel>
                   <FormControl><Input placeholder="Pick from Media Library or paste a URL" {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
             </div>
-            <Button type="button" variant="outline" className="gap-2 shrink-0" onClick={() => setPickerIndex(index)}>
+            <Button type="button" variant="outline" className="gap-2 shrink-0" onClick={() => setPicker({ index, field: 'image' })}>
               <ImageIcon className="w-4 h-4" /> Choose
             </Button>
           </div>
           {form.watch(`heroSlides.${index}.image`) && (
             <div className="h-28 rounded-lg overflow-hidden border border-gray-200">
               <img src={form.watch(`heroSlides.${index}.image`)} alt="Slide preview" className="w-full h-full object-cover" />
+            </div>
+          )}
+          <div className="flex items-end gap-3">
+            <div className="flex-1">
+              <FormField control={form.control} name={`heroSlides.${index}.mobileImage`} render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone Photo (optional — taller crop shown on phones)</FormLabel>
+                  <FormControl><Input placeholder="e.g. a square or portrait version of the same photo" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+            </div>
+            <Button type="button" variant="outline" className="gap-2 shrink-0" onClick={() => setPicker({ index, field: 'mobileImage' })}>
+              <ImageIcon className="w-4 h-4" /> Choose
+            </Button>
+          </div>
+          {form.watch(`heroSlides.${index}.mobileImage`) && (
+            <div className="h-28 w-28 rounded-lg overflow-hidden border border-gray-200">
+              <img src={form.watch(`heroSlides.${index}.mobileImage`)} alt="Phone slide preview" className="w-full h-full object-cover" />
             </div>
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -143,17 +163,17 @@ function HeroSlidesEditor({ form }: { form: UseFormReturn<HomepageForm> }) {
         type="button"
         variant="outline"
         className="gap-2"
-        onClick={() => append({ kicker: '', title: '', text: '', image: '', ctaLabel: '', ctaHref: '' })}
+        onClick={() => append({ kicker: '', title: '', text: '', image: '', mobileImage: '', ctaLabel: '', ctaHref: '' })}
       >
         <Plus className="w-4 h-4" /> Add Slide
       </Button>
 
       <MediaPickerDialog
-        open={pickerIndex !== null}
-        onOpenChange={(open) => !open && setPickerIndex(null)}
-        title="Choose a slide photo"
+        open={picker !== null}
+        onOpenChange={(open) => !open && setPicker(null)}
+        title={picker?.field === 'mobileImage' ? 'Choose the phone version of this slide' : 'Choose a slide photo'}
         onSelect={(url) => {
-          if (pickerIndex !== null) form.setValue(`heroSlides.${pickerIndex}.image`, url);
+          if (picker !== null) form.setValue(`heroSlides.${picker.index}.${picker.field}`, url);
         }}
       />
     </div>

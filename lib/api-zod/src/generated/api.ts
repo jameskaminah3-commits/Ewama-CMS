@@ -1176,6 +1176,7 @@ export const GetHomepageContentResponse = zod.object({
   "title": zod.string(),
   "text": zod.string(),
   "image": zod.string(),
+  "mobileImage": zod.string().optional(),
   "ctaLabel": zod.string(),
   "ctaHref": zod.string()
 })).nullish(),
@@ -1224,6 +1225,7 @@ export const UpdateHomepageContentBody = zod.object({
   "title": zod.string(),
   "text": zod.string(),
   "image": zod.string(),
+  "mobileImage": zod.string().optional(),
   "ctaLabel": zod.string(),
   "ctaHref": zod.string()
 })).nullish(),
@@ -1268,6 +1270,7 @@ export const UpdateHomepageContentResponse = zod.object({
   "title": zod.string(),
   "text": zod.string(),
   "image": zod.string(),
+  "mobileImage": zod.string().optional(),
   "ctaLabel": zod.string(),
   "ctaHref": zod.string()
 })).nullish(),

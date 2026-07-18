@@ -40,6 +40,7 @@ interface Slide {
   title: string;
   text: string;
   image: string;
+  mobileImage: string;
   ctaLabel: string;
   ctaHref: string;
 }
@@ -62,6 +63,7 @@ const HERO_SLIDE_INTERVAL_MS = 12000;
 const DEFAULT_SLIDES: Slide[] = [
   {
     image: '/images/ewama-office-welcome.jpeg',
+    mobileImage: '',
     kicker: '',
     title: '',
     text: '',
@@ -70,6 +72,7 @@ const DEFAULT_SLIDES: Slide[] = [
   },
   {
     image: '/images/ewama-site-visit.jpeg',
+    mobileImage: '',
     kicker: '',
     title: '',
     text: '',
@@ -78,6 +81,7 @@ const DEFAULT_SLIDES: Slide[] = [
   },
   {
     image: '/images/ewama-reception.jpeg',
+    mobileImage: '',
     kicker: '',
     title: '',
     text: '',
@@ -143,6 +147,7 @@ function normalizeSlides(
       const ctaLabel = cleanLegacyCopy(fallbackContent?.heroButtonText, LEGACY_HERO_CTA_LABELS);
       return [{
         image: fallbackImage || DEFAULT_SLIDES[0]!.image,
+        mobileImage: '',
         kicker: cleanLegacyCopy(fallbackContent?.heroBadge, LEGACY_HERO_KICKERS),
         title: cleanLegacyCopy(fallbackContent?.heroHeading, LEGACY_HERO_TITLES),
         text: cleanLegacyCopy(fallbackContent?.heroSubheading, new Set(), LEGACY_HERO_TEXT_SNIPPETS),
@@ -162,6 +167,7 @@ function normalizeSlides(
     const ctaLabel = cleanLegacyCopy(slide.ctaLabel, LEGACY_HERO_CTA_LABELS);
     return {
       image: slide.image || fallback.image,
+      mobileImage: slide.mobileImage?.trim() || '',
       kicker: cleanLegacyCopy(slide.kicker, LEGACY_HERO_KICKERS),
       title: cleanLegacyCopy(slide.title, LEGACY_HERO_TITLES),
       text: cleanLegacyCopy(slide.text, new Set(), LEGACY_HERO_TEXT_SNIPPETS),
@@ -195,6 +201,11 @@ function TypewriterText({ text, className, speed = 28 }: { text: string; classNa
 
 function HeroSlider({ slides }: { slides: Slide[] }) {
   const [index, setIndex] = useState(0);
+  // The banner adopts the photo's own width:height ratio, so the frame always
+  // fits the picture exactly — nothing cropped, no leftover space. Phones use
+  // the slide's "phone photo" (when set) via the <picture> element below, and
+  // the ratio updates automatically when the browser swaps images.
+  const [ratio, setRatio] = useState<number | null>(null);
   useEffect(() => {
     const timer = setInterval(() => setIndex(i => (i + 1) % slides.length), HERO_SLIDE_INTERVAL_MS);
     return () => clearInterval(timer);
@@ -204,8 +215,16 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
   const hasButton = Boolean(slide.ctaLabel && slide.ctaHref);
   const hasOverlayContent = Boolean(slide.kicker || slide.title || slide.text || hasButton);
 
+  const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const el = e.currentTarget;
+    if (el.naturalWidth && el.naturalHeight) setRatio(el.naturalWidth / el.naturalHeight);
+  };
+
   return (
-    <section className="relative h-[44svh] min-h-[320px] max-h-[520px] overflow-hidden bg-primary shadow-[0_24px_70px_rgba(0,0,0,0.18)] md:h-[54svh] md:min-h-[420px] md:max-h-[620px]">
+    <section
+      className="relative w-full min-h-[220px] max-h-[85svh] overflow-hidden bg-primary shadow-[0_24px_70px_rgba(0,0,0,0.18)]"
+      style={{ aspectRatio: ratio ?? 2.4 }}
+    >
       <AnimatePresence mode="popLayout">
         <motion.div
           key={index}
@@ -215,10 +234,18 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
           transition={{ duration: 1.4, ease: 'easeOut' }}
           className="absolute inset-0"
         >
-          {/* Blurred echo fills any space the photo's aspect ratio leaves, so the
-              real image below is never cropped on any screen size. */}
-          <img src={slide.image} alt="" aria-hidden className="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl brightness-[0.65] saturate-[1.05]" />
-          <img src={slide.image} alt="" className="relative h-full w-full object-contain object-center saturate-[1.03] contrast-[1.02]" />
+          {/* Blurred safety layer: only visible for the brief moment the frame
+              is settling to a new photo's proportions. */}
+          <img src={slide.mobileImage || slide.image} alt="" aria-hidden className="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl brightness-[0.65] saturate-[1.05]" />
+          <picture>
+            {slide.mobileImage && <source media="(max-width: 767px)" srcSet={slide.mobileImage} />}
+            <img
+              src={slide.image}
+              alt=""
+              onLoad={onImageLoad}
+              className="relative h-full w-full object-cover object-center saturate-[1.03] contrast-[1.02]"
+            />
+          </picture>
         </motion.div>
       </AnimatePresence>
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.10),rgba(0,0,0,0.02)_34%,rgba(0,0,0,0.16))]" />

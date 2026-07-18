@@ -1676,6 +1676,8 @@ components:
           type: string
         image:
           type: string
+        mobileImage:
+          type: string
         ctaLabel:
           type: string
         ctaHref:

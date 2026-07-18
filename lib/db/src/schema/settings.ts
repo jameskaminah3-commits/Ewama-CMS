@@ -43,7 +43,7 @@ export const homepageContentTable = pgTable("homepage_content", {
   advantages: jsonb("advantages").$type<{ title: string; description: string }[]>(),
   processSteps: jsonb("process_steps").$type<{ title: string; description: string }[]>(),
   testimonials: jsonb("testimonials").$type<{ quote: string; name: string; role: string }[]>(),
-  heroSlides: jsonb("hero_slides").$type<{ kicker: string; title: string; text: string; image: string; ctaLabel: string; ctaHref: string }[]>(),
+  heroSlides: jsonb("hero_slides").$type<{ kicker: string; title: string; text: string; image: string; mobileImage?: string; ctaLabel: string; ctaHref: string }[]>(),
   approachText: text("approach_text"),
   approachQuote: text("approach_quote"),
   whatYouGet: jsonb("what_you_get").$type<string[]>(),
