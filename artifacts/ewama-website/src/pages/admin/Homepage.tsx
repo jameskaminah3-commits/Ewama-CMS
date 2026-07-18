@@ -72,6 +72,14 @@ function HeroSlidesEditor({ form }: { form: UseFormReturn<HomepageForm> }) {
       <p className="text-sm text-gray-500">
         These are the rotating banners at the top of the homepage. <strong>Only the photo is required.</strong> Leave the label, headline, text, and button empty for a clean picture-only slide, or fill them in to show text over the photo.
       </p>
+      <div className="rounded-lg border border-secondary/30 bg-secondary/10 p-4 text-sm text-gray-700">
+        <p className="font-semibold">📐 Recommended photo sizes (the banner always shows the photo exactly as uploaded — no cropping):</p>
+        <ul className="mt-2 list-disc space-y-1 pl-5">
+          <li><strong>Background Photo (computers):</strong> 1920 × 700 pixels — a wide, cinematic banner.</li>
+          <li><strong>Phone Photo:</strong> 1080 × 1080 pixels (square) — a comfortable medium height on phones.</li>
+          <li>Use the <strong>same sizes for every slide</strong> so the banner doesn't jump between slides.</li>
+        </ul>
+      </div>
       {fields.map((item, index) => (
         <div key={item.id} className="border border-gray-200 rounded-lg p-4 space-y-3">
           <div className="flex items-center justify-between">
