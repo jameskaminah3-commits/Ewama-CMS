@@ -38,7 +38,16 @@ router.get("/health", async (_req, res) => {
     currentDatabase = (row?.["db"] as string) ?? null;
     homepageContentTable = (row?.["homepage_content"] as string | null) ?? null;
   } catch (err) {
-    dbStatus = err instanceof Error ? `error: ${err.message}` : "error";
+    // Unwrap the cause chain: drizzle's "Failed query" wrapper hides the real
+    // Postgres error (relation missing, connection refused, auth) in .cause.
+    const parts: string[] = [];
+    let cur: unknown = err;
+    while (cur instanceof Error) {
+      const code = (cur as { code?: unknown }).code;
+      parts.push(code !== undefined ? `[${String(code)}] ${cur.message}` : cur.message);
+      cur = cur.cause;
+    }
+    dbStatus = `error: ${parts.join(" <- ") || "unknown"}`;
   }
 
   res.json({

@@ -33,8 +33,19 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
 
+// Drizzle wraps the real Postgres error ("relation does not exist",
+// ECONNREFUSED, auth failure, ...) in err.cause; log the whole chain.
+function describeError(err: unknown): unknown {
+  if (!(err instanceof Error)) return err;
+  const out: Record<string, unknown> = { message: err.message, stack: err.stack };
+  const code = (err as { code?: unknown }).code;
+  if (code !== undefined) out["code"] = code;
+  if (err.cause !== undefined) out["cause"] = describeError(err.cause);
+  return out;
+}
+
 app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
-  const error = err instanceof Error ? { message: err.message, stack: err.stack } : err;
+  const error = describeError(err);
   logger.error({ err: error, method: req.method, url: req.originalUrl }, "Unhandled API request error");
 
   const entry = `[${new Date().toISOString()}] ${req.method} ${req.originalUrl}\n${JSON.stringify(error)}\n\n`;
