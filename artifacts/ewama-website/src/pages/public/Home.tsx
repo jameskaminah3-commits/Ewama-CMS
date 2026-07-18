@@ -369,9 +369,9 @@ export default function Home() {
       <HeroSlider slides={slides} />
 
       {/* Explore Our Properties */}
-      <section className="py-24">
+      <section className="py-14 md:py-20">
         <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-10">
-          <motion.div {...fadeUp} className="mb-14 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <motion.div {...fadeUp} className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <h2 className="max-w-xl text-3xl md:text-4xl font-heading font-bold text-primary">Explore Our Properties</h2>
             <p className="max-w-xl text-lg text-gray-600 lg:text-right">Prime value-added plots with title deeds guaranteed.</p>
           </motion.div>
@@ -427,7 +427,7 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="mt-12">
+          <div className="mt-10">
             <Link href="/properties">
               <Button size="lg" className="bg-primary text-white hover:bg-primary/90 h-12 px-8">
                 View All Properties <ArrowRight className="w-4 h-4 ml-2" />
@@ -439,9 +439,9 @@ export default function Home() {
 
       {/* Featured Locations */}
       {locations.length > 0 && (
-        <section className="py-24 bg-white">
+        <section className="py-14 md:py-20 bg-white">
           <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-10">
-            <motion.div {...fadeUp} className="mb-14 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <motion.div {...fadeUp} className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <h2 className="max-w-xl text-3xl md:text-4xl font-heading font-bold text-primary">Featured Locations</h2>
               <p className="max-w-xl text-lg text-gray-600 lg:text-right">Carefully selected developments in Kenya's fastest-growing regions.</p>
             </motion.div>
@@ -465,7 +465,7 @@ export default function Home() {
       )}
 
       {/* About / Our Approach */}
-      <section className="py-24">
+      <section className="py-14 md:py-20">
         <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div {...fadeUp} className="rounded-2xl overflow-hidden shadow-xl">
@@ -499,9 +499,9 @@ export default function Home() {
       </section>
 
       {/* How We Deliver Excellence */}
-      <section className="py-24 bg-primary relative overflow-hidden">
+      <section className="py-14 md:py-20 bg-primary relative overflow-hidden">
         <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-10 relative z-10">
-          <motion.div {...fadeUp} className="mb-14 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <motion.div {...fadeUp} className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <h2 className="max-w-xl text-3xl md:text-4xl font-heading font-bold text-white">How We Deliver Excellence</h2>
             <p className="max-w-xl text-lg text-white/70 lg:text-right">Growing expertise. Hundreds of happy landowners. One seamless experience.</p>
           </motion.div>
@@ -538,7 +538,7 @@ export default function Home() {
       </section>
 
       {/* Connect with Us Today */}
-      <section className="py-24 bg-white">
+      <section className="py-14 md:py-20 bg-white">
         <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-10">
           <div className="grid lg:grid-cols-[0.95fr_1.05fr] gap-12">
             <motion.div {...fadeUp}>
@@ -587,9 +587,9 @@ export default function Home() {
 
       {/* Latest News */}
       {(latestArticles?.data?.length ?? 0) > 0 && (
-        <section className="py-24">
+        <section className="py-14 md:py-20">
           <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-10">
-            <motion.div {...fadeUp} className="flex flex-col md:flex-row justify-between md:items-end mb-12 gap-4">
+            <motion.div {...fadeUp} className="flex flex-col md:flex-row justify-between md:items-end mb-10 gap-4">
               <div>
                 <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary">Latest News</h2>
                 <p className="text-lg text-gray-600 mt-2">Market updates, property insights, and expert real estate advice.</p>
@@ -636,9 +636,9 @@ export default function Home() {
 
       {/* Testimonials */}
       {testimonials.length > 0 && (
-        <section className="py-24 bg-white">
+        <section className="py-14 md:py-20 bg-white">
           <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-10">
-            <motion.div {...fadeUp} className="mb-14 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <motion.div {...fadeUp} className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <h2 className="max-w-xl text-3xl md:text-4xl font-heading font-bold text-primary">What Our Clients Say</h2>
               <p className="max-w-xl text-lg text-gray-600 lg:text-right">Real stories from investors who built their future with EWAMA.</p>
             </motion.div>
