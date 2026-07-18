@@ -411,7 +411,7 @@ export default function Home() {
         image={slides[0]?.image}
       />
 
-      <div className="mx-auto w-full max-w-[1400px] px-4 pt-4 sm:px-6 md:pt-6 lg:px-10">
+      <div className="mx-auto w-full max-w-[1200px] px-4 pt-4 sm:px-6 md:pt-6 lg:px-10">
         <HeroSlider slides={slides} />
       </div>
 
