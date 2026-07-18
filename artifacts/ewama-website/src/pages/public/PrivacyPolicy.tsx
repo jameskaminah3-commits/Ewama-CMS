@@ -61,13 +61,13 @@ export default function PrivacyPolicy() {
           <p>
             Under Kenyan data protection law you have the right to access, correct, or request deletion of your
             personal data, and to object to or restrict its processing. To exercise any of these rights, contact
-            us at <a href="mailto:ewamapropertiesltd@gmail.com" className="text-secondary">ewamapropertiesltd@gmail.com</a>.
+            us at <a href="mailto:info@ewamaproperties.com" className="text-secondary">info@ewamaproperties.com</a>.
           </p>
 
           <h2 className="text-2xl font-heading font-bold text-primary">7. Contact</h2>
           <p>
             For any privacy questions, reach us at{' '}
-            <a href="mailto:ewamapropertiesltd@gmail.com" className="text-secondary">ewamapropertiesltd@gmail.com</a>{' '}
+            <a href="mailto:info@ewamaproperties.com" className="text-secondary">info@ewamaproperties.com</a>{' '}
             or call <a href="tel:+254720769999" className="text-secondary">+254 720 769 999</a>.
           </p>
         </div>

@@ -120,8 +120,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-bold text-gray-900 mb-1">Email Address</h3>
-                    <a href={`mailto:${settings?.email || 'ewamapropertiesltd@gmail.com'}`} className="text-gray-600 hover:text-primary transition-colors">
-                      {settings?.email || 'ewamapropertiesltd@gmail.com'}
+                    <a href={`mailto:${settings?.email || 'info@ewamaproperties.com'}`} className="text-gray-600 hover:text-primary transition-colors">
+                      {settings?.email || 'info@ewamaproperties.com'}
                     </a>
                   </div>
                 </div>

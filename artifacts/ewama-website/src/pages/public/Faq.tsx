@@ -103,7 +103,7 @@ const buildFaqSections = (locationAnswer: string): { section: string; items: { q
       },
       {
         q: 'How can I contact EWAMA?',
-        a: 'Phone: +254 720 769 999. Email: ewamapropertiesltd@gmail.com. You can also visit our Contact page to send an enquiry or request a callback.',
+        a: 'Phone: +254 720 769 999. Email: info@ewamaproperties.com. You can also visit our Contact page to send an enquiry or request a callback.',
       },
     ],
   },

@@ -607,8 +607,8 @@ export default function Home() {
                 <p className="flex items-center gap-3 text-gray-700">
                   <MapPin className="w-5 h-5 text-secondary" /> {settings?.officeAddress || 'Kiambu Road, Kiambu'}
                 </p>
-                <a href={`mailto:${settings?.email || 'ewamapropertiesltd@gmail.com'}`} className="flex items-center gap-3 text-gray-700 hover:text-primary transition-colors">
-                  <Mail className="w-5 h-5 text-secondary" /> {settings?.email || 'ewamapropertiesltd@gmail.com'}
+                <a href={`mailto:${settings?.email || 'info@ewamaproperties.com'}`} className="flex items-center gap-3 text-gray-700 hover:text-primary transition-colors">
+                  <Mail className="w-5 h-5 text-secondary" /> {settings?.email || 'info@ewamaproperties.com'}
                 </a>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

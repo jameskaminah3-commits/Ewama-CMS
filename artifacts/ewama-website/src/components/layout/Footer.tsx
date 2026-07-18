@@ -163,8 +163,8 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-3 text-sm text-white/80">
                 <Mail className="w-5 h-5 text-secondary shrink-0" />
-                <a href={`mailto:${settings?.email || 'ewamapropertiesltd@gmail.com'}`} className="hover:text-white transition-colors">
-                  {settings?.email || 'ewamapropertiesltd@gmail.com'}
+                <a href={`mailto:${settings?.email || 'info@ewamaproperties.com'}`} className="hover:text-white transition-colors">
+                  {settings?.email || 'info@ewamaproperties.com'}
                 </a>
               </li>
             </ul>

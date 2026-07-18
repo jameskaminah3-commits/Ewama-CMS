@@ -119,7 +119,7 @@ export default function AdminSettings() {
                     <FormItem>
                       <FormLabel>Public Email Address</FormLabel>
                       <FormControl>
-                        <Input placeholder="ewamapropertiesltd@gmail.com" {...field} value={field.value || ''} />
+                        <Input placeholder="info@ewamaproperties.com" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

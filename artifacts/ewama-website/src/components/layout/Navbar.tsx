@@ -21,7 +21,7 @@ export function Navbar() {
   const { data: settings } = useGetSettings();
 
   const phone = settings?.phone || '+254 720 769 999';
-  const email = settings?.email || 'ewamapropertiesltd@gmail.com';
+  const email = settings?.email || 'info@ewamaproperties.com';
 
   return (
     <header className="fixed top-0 w-full z-50 bg-white shadow-sm">
