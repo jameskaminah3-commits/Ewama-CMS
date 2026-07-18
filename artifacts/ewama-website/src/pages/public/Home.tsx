@@ -291,14 +291,19 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
 function CountUpStat({ value, suffix, label }: { value: number; suffix: string; label: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [display, setDisplay] = useState(0);
-  const started = useRef(false);
+  const frame = useRef(0);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    // Replays every time the section scrolls into view: count up, ease to a
+    // stop, reset quietly when it scrolls away so the next pass counts again.
     const observer = new IntersectionObserver(([entry]) => {
-      if (!entry?.isIntersecting || started.current) return;
-      started.current = true;
+      cancelAnimationFrame(frame.current);
+      if (!entry?.isIntersecting) {
+        setDisplay(0);
+        return;
+      }
       const duration = 2000;
       const start = performance.now();
       const tick = (now: number) => {
@@ -308,14 +313,16 @@ function CountUpStat({ value, suffix, label }: { value: number; suffix: string; 
         const eased = 1 - Math.pow(1 - t, 3);
         const jitter = t < 0.85 ? Math.round(Math.random() * Math.max(2, value * 0.02)) : 0;
         setDisplay(Math.min(value, Math.round(eased * value) + jitter));
-        if (t < 1) requestAnimationFrame(tick);
+        if (t < 1) frame.current = requestAnimationFrame(tick);
         else setDisplay(value);
       };
-      requestAnimationFrame(tick);
-      observer.disconnect();
-    }, { threshold: 0.4 });
+      frame.current = requestAnimationFrame(tick);
+    }, { threshold: 0.35 });
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      cancelAnimationFrame(frame.current);
+      observer.disconnect();
+    };
   }, [value]);
 
   return (
@@ -545,9 +552,9 @@ export default function Home() {
           src="/images/ewama-site-visit.jpeg"
           alt=""
           aria-hidden
-          className="absolute inset-0 h-full w-full object-cover object-center opacity-[0.18]"
+          className="absolute inset-0 h-full w-full object-cover object-center opacity-[0.32]"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/70 via-primary/35 to-primary/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/60 via-primary/20 to-primary/70" />
         <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-10 relative z-10">
           <motion.div {...fadeUp} className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <h2 className="max-w-xl text-3xl md:text-4xl font-heading font-bold text-white">How We Deliver Excellence</h2>
