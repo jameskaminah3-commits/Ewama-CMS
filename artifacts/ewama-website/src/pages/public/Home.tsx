@@ -216,7 +216,7 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
   // slide's "phone photo" (when set) via <picture>. The aspect-[auto_...]
   // class is only a pre-load placeholder to avoid a layout jump.
   return (
-    <section className="relative w-full overflow-hidden bg-primary shadow-[0_24px_70px_rgba(0,0,0,0.18)]">
+    <section className="relative w-full overflow-hidden rounded-2xl bg-primary shadow-[0_24px_70px_rgba(0,0,0,0.18)] md:rounded-3xl">
       <AnimatePresence initial={false} mode="popLayout">
         <motion.div
           key={index}
@@ -366,7 +366,9 @@ export default function Home() {
         image={slides[0]?.image}
       />
 
-      <HeroSlider slides={slides} />
+      <div className="mx-auto w-full max-w-[1400px] px-4 pt-4 sm:px-6 md:pt-6 lg:px-10">
+        <HeroSlider slides={slides} />
+      </div>
 
       {/* Explore Our Properties */}
       <section className="py-14 md:py-20">
