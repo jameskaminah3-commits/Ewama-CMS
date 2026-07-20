@@ -226,14 +226,25 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
           transition={{ duration: 1.4, ease: 'easeOut' }}
           className="relative w-full"
         >
-          <picture>
-            {slide.mobileImage && <source media="(max-width: 767px)" srcSet={slide.mobileImage} />}
-            <img
-              src={slide.image}
-              alt=""
-              className="block h-auto w-full aspect-[auto_1920/700] saturate-[1.03] contrast-[1.02]"
-            />
-          </picture>
+          {/* Phones only: when a wide photo would render short, hold a medium
+              banner height and fill the gap with a blurred echo — the photo
+              itself stays complete and uncropped, centered in the frame. */}
+          <img
+            src={slide.mobileImage || slide.image}
+            alt=""
+            aria-hidden
+            className="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl brightness-[0.6] saturate-[1.05] md:hidden"
+          />
+          <div className="relative flex min-h-[300px] items-center md:min-h-0">
+            <picture className="w-full">
+              {slide.mobileImage && <source media="(max-width: 767px)" srcSet={slide.mobileImage} />}
+              <img
+                src={slide.image}
+                alt=""
+                className="block h-auto w-full aspect-[auto_1920/700] saturate-[1.03] contrast-[1.02]"
+              />
+            </picture>
+          </div>
         </motion.div>
       </AnimatePresence>
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.10),rgba(0,0,0,0.02)_34%,rgba(0,0,0,0.16))]" />
