@@ -37,7 +37,10 @@ router.post("/login", async (req, res) => {
     });
   } catch (err) {
     req.log.error({ err }, "Supabase user is not allowed to access CMS");
-    res.status(403).json({ error: "Access denied" });
+    // Surface the real reason so admin sign-in problems are diagnosable from
+    // the browser Network tab instead of a bare "Access denied".
+    const detail = err instanceof Error ? err.message : "Access denied";
+    res.status(403).json({ error: "Access denied", detail });
   }
 });
 
@@ -64,7 +67,10 @@ router.get("/me", async (req, res) => {
     res.json(mapAdminUser(adminUser));
   } catch (err) {
     req.log.error({ err }, "Supabase user is not allowed to access CMS");
-    res.status(403).json({ error: "Access denied" });
+    // Surface the real reason so admin sign-in problems are diagnosable from
+    // the browser Network tab instead of a bare "Access denied".
+    const detail = err instanceof Error ? err.message : "Access denied";
+    res.status(403).json({ error: "Access denied", detail });
   }
 });
 
