@@ -14,7 +14,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatDate } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useGetSettings } from '@workspace/api-client-react';
 
 const fadeUp = {
@@ -58,7 +58,7 @@ type HomepageContentExtras = {
   whatYouGet?: string[] | null;
 };
 
-const HERO_SLIDE_INTERVAL_MS = 12000;
+const HERO_SLIDE_INTERVAL_MS = 5000;
 
 const DEFAULT_SLIDES: Slide[] = [
   {
@@ -227,31 +227,26 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
   // class is only a pre-load placeholder to avoid a layout jump.
   return (
     <section className="relative w-full overflow-hidden rounded-2xl bg-primary shadow-[0_24px_70px_rgba(0,0,0,0.18)] md:rounded-3xl">
-      <AnimatePresence initial={false} mode="popLayout">
-        <motion.div
-          key={index}
-          initial={{ opacity: 0, scale: 1.018 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.4, ease: 'easeOut' }}
-          className="relative w-full"
-        >
-          {/* The photo alone defines the banner: it flows at its own natural
-              proportions, so the frame is always exactly the picture — 100%
-              filled, never cropped, never any empty/coloured space, on every
-              screen. Phones swap in the slide's optional "phone photo". */}
-          <picture>
-            {slide.mobileImage && <source media="(max-width: 767px)" srcSet={slide.mobileImage} />}
-            <img
-              src={slide.image}
-              alt=""
-              decoding="async"
-              fetchPriority="high"
-              className="block h-auto w-full saturate-[1.03] contrast-[1.02]"
-            />
-          </picture>
-        </motion.div>
-      </AnimatePresence>
+      {/* A single image is always in normal flow, so the section height is
+          exactly the current photo — no overlap, no collapsed height, no
+          empty/coloured space. The keyed fade gives a gentle crossfade
+          without pulling anything out of flow. */}
+      <motion.picture
+        key={index}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+        className="block w-full"
+      >
+        {slide.mobileImage && <source media="(max-width: 767px)" srcSet={slide.mobileImage} />}
+        <img
+          src={slide.image}
+          alt=""
+          decoding="async"
+          fetchPriority="high"
+          className="block h-auto w-full saturate-[1.03] contrast-[1.02]"
+        />
+      </motion.picture>
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.10),rgba(0,0,0,0.02)_34%,rgba(0,0,0,0.16))]" />
       <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-primary/30 to-transparent" />
 
