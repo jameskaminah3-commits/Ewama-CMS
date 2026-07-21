@@ -12,7 +12,9 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
 const loginSchema = z.object({
-  email: z.string().email('Please enter a valid email'),
+  // trim + lowercase so a stray space or capital from autofill/phone keyboards
+  // can't fail validation or cause a false "invalid credentials" on the server.
+  email: z.string().trim().toLowerCase().email('Please enter a valid email'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -73,7 +75,7 @@ export default function AdminLogin() {
                 <FormItem>
                   <FormLabel>Email Address</FormLabel>
                   <FormControl>
-                    <Input placeholder="admin@ewamaproperties.co.ke" {...field} />
+                    <Input placeholder="admin@ewamaproperties.com" type="email" autoCapitalize="none" autoCorrect="off" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
