@@ -206,6 +206,16 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
     return () => clearInterval(timer);
   }, [slides.length]);
 
+  // Warm every slide (desktop + phone versions) into the browser cache up
+  // front, so rotating to a slide shows it instantly instead of fetching it
+  // on the spot and "ragging" in.
+  useEffect(() => {
+    slides.forEach((s) => {
+      if (s.image) { const img = new Image(); img.src = s.image; }
+      if (s.mobileImage) { const img = new Image(); img.src = s.mobileImage; }
+    });
+  }, [slides]);
+
   const slide = slides[index]!;
   const hasButton = Boolean(slide.ctaLabel && slide.ctaHref);
   const hasOverlayContent = Boolean(slide.kicker || slide.title || slide.text || hasButton);
@@ -235,6 +245,8 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
             <img
               src={slide.image}
               alt=""
+              decoding="async"
+              fetchPriority="high"
               className="block h-auto w-full saturate-[1.03] contrast-[1.02]"
             />
           </picture>
