@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { supabaseAdmin } from "../services/supabase.js";
 import { ensureAdminProfile } from "../services/adminUsers.js";
+import { verifyAdminToken } from "../services/adminToken.js";
 
 export interface AuthRequest extends Request {
   userId?: number;
@@ -17,6 +18,18 @@ export async function requireAuth(req: AuthRequest, res: Response, next: NextFun
   }
 
   const token = authHeader.slice(7);
+
+  // 1) Self-contained admin token — verified locally, no Supabase call.
+  const payload = verifyAdminToken(token);
+  if (payload) {
+    req.userId = payload.sub;
+    req.userEmail = payload.email;
+    req.userRole = payload.role;
+    next();
+    return;
+  }
+
+  // 2) Fallback: Supabase access token.
   try {
     const { data, error } = await supabaseAdmin.auth.getUser(token);
     if (error || !data.user) {

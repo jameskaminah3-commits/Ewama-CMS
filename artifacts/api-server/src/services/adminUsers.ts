@@ -9,7 +9,10 @@ export function mapAdminUser(user: AdminUser) {
     name: user.name,
     role: user.role,
     avatarUrl: user.avatarUrl ?? null,
-    createdAt: user.createdAt.toISOString(),
+    // createdAt may arrive as a Date or (depending on the driver) a string —
+    // handle both so this can never throw mid-login.
+    createdAt:
+      user.createdAt instanceof Date ? user.createdAt.toISOString() : String(user.createdAt),
   };
 }
 

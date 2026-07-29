@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { z } from "zod";
+import { db, adminUsersTable } from "@workspace/db";
+import { eq } from "drizzle-orm";
 import { supabaseAdmin } from "../services/supabase.js";
 import { ensureAdminProfile, mapAdminUser } from "../services/adminUsers.js";
+import { verifyLocalAdmin } from "../services/adminAuth.js";
+import { signAdminToken, verifyAdminToken } from "../services/adminToken.js";
 
 const router = Router();
 
@@ -17,7 +21,24 @@ router.post("/login", async (req, res) => {
     return;
   }
 
-  const { email, password } = body.data;
+  const email = body.data.email.trim().toLowerCase();
+  const password = body.data.password;
+
+  // 1) Self-contained admin login — env master admin or a stored password
+  //    hash. No Supabase Auth involved, so this always works once ADMIN_EMAIL
+  //    and ADMIN_PASSWORD are set on the server.
+  try {
+    const localUser = await verifyLocalAdmin(email, password);
+    if (localUser) {
+      const token = signAdminToken({ sub: localUser.id, email: localUser.email, role: localUser.role });
+      res.json({ user: mapAdminUser(localUser), token });
+      return;
+    }
+  } catch (err) {
+    req.log.error({ err }, "Local admin login failed");
+  }
+
+  // 2) Fallback: Supabase Auth (kept for existing Supabase-managed users).
   const { data, error } = await supabaseAdmin.auth.signInWithPassword({
     email,
     password,
@@ -37,8 +58,6 @@ router.post("/login", async (req, res) => {
     });
   } catch (err) {
     req.log.error({ err }, "Supabase user is not allowed to access CMS");
-    // Surface the real reason so admin sign-in problems are diagnosable from
-    // the browser Network tab instead of a bare "Access denied".
     const detail = err instanceof Error ? err.message : "Access denied";
     res.status(403).json({ error: "Access denied", detail });
   }
@@ -56,6 +75,27 @@ router.get("/me", async (req, res) => {
   }
 
   const token = authHeader.slice(7);
+
+  // 1) Self-contained admin token
+  const payload = verifyAdminToken(token);
+  if (payload) {
+    const [row] = await db.select().from(adminUsersTable).where(eq(adminUsersTable.id, payload.sub));
+    if (row) {
+      res.json(mapAdminUser(row));
+      return;
+    }
+    res.json({
+      id: payload.sub,
+      email: payload.email,
+      name: payload.email.split("@")[0] ?? "EWAMA Admin",
+      role: payload.role,
+      avatarUrl: null,
+      createdAt: new Date().toISOString(),
+    });
+    return;
+  }
+
+  // 2) Fallback: Supabase token
   const { data, error } = await supabaseAdmin.auth.getUser(token);
   if (error || !data.user) {
     res.status(401).json({ error: "Invalid token" });
@@ -67,8 +107,6 @@ router.get("/me", async (req, res) => {
     res.json(mapAdminUser(adminUser));
   } catch (err) {
     req.log.error({ err }, "Supabase user is not allowed to access CMS");
-    // Surface the real reason so admin sign-in problems are diagnosable from
-    // the browser Network tab instead of a bare "Access denied".
     const detail = err instanceof Error ? err.message : "Access denied";
     res.status(403).json({ error: "Access denied", detail });
   }
