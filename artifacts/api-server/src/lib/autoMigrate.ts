@@ -204,6 +204,14 @@ const STATEMENTS: string[] = [
   `ALTER TABLE properties ADD COLUMN IF NOT EXISTS phase_pricing jsonb DEFAULT '[]'::jsonb`,
   // media — optimised thumbnail URL
   `ALTER TABLE media ADD COLUMN IF NOT EXISTS thumbnail_url text`,
+  // admin_users — self-heal any columns missing on tables created by an older
+  // schema, so admin login (which reads/writes this table) can't 500.
+  `ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS supabase_user_id text`,
+  `ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS password_hash text`,
+  `ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS name text`,
+  `ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS role text DEFAULT 'admin'`,
+  `ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS avatar_url text`,
+  `ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS created_at timestamp DEFAULT now()`,
 ];
 
 export async function autoMigrate(): Promise<void> {

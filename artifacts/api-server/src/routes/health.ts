@@ -50,6 +50,25 @@ router.get("/health", async (_req, res) => {
     dbStatus = `error: ${parts.join(" <- ") || "unknown"}`;
   }
 
+  // Probe admin_users exactly as the login code reads it, so a missing column
+  // (the usual cause of a 403 on sign-in) is named right here in the response.
+  let adminUsersStatus = "ok";
+  try {
+    await db.execute(sql`
+      SELECT id, supabase_user_id, email, password_hash, name, role, avatar_url, created_at
+      FROM admin_users LIMIT 1
+    `);
+  } catch (err) {
+    const parts: string[] = [];
+    let cur: unknown = err;
+    while (cur instanceof Error) {
+      const code = (cur as { code?: unknown }).code;
+      parts.push(code !== undefined ? `[${String(code)}] ${cur.message}` : cur.message);
+      cur = cur.cause;
+    }
+    adminUsersStatus = `error: ${parts.join(" <- ") || "unknown"}`;
+  }
+
   res.json({
     status: "ok",
     build,
@@ -58,6 +77,8 @@ router.get("/health", async (_req, res) => {
     dbStatus,
     currentDatabase,
     homepageContentTable,
+    adminUsersStatus,
+    adminEnvConfigured: Boolean(process.env["ADMIN_EMAIL"] && process.env["ADMIN_PASSWORD"]),
   });
 });
 
