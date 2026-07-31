@@ -33,6 +33,7 @@ const propertySchema = z.object({
   featured: z.boolean().default(false),
   heroImage: z.string().optional().nullable(),
   gallery: z.array(z.string()).default([]),
+  videos: z.array(z.string()).default([]),
   googleMapsLink: z.string().optional().nullable(),
   amenities: z.array(z.string()).default([]),
   investmentHighlights: z.array(z.string()).default([]),
@@ -58,6 +59,7 @@ export default function AdminPropertyForm() {
   
   const [amenityInput, setAmenityInput] = useState('');
   const [highlightInput, setHighlightInput] = useState('');
+  const [videoInput, setVideoInput] = useState('');
   const [pickerTarget, setPickerTarget] = useState<'hero' | 'gallery' | null>(null);
 
   const { data: property, isLoading } = useGetProperty(propertyId, { 
@@ -82,6 +84,7 @@ export default function AdminPropertyForm() {
       featured: false,
       heroImage: '',
       gallery: [],
+      videos: [],
       googleMapsLink: '',
       amenities: [],
       investmentHighlights: [],
@@ -109,6 +112,7 @@ export default function AdminPropertyForm() {
         featured: property.featured || false,
         heroImage: property.heroImage || '',
         gallery: property.gallery || [],
+        videos: property.videos || [],
         googleMapsLink: property.googleMapsLink || '',
         amenities: property.amenities || [],
         investmentHighlights: property.investmentHighlights || [],
@@ -666,6 +670,54 @@ export default function AdminPropertyForm() {
                   >
                     <Plus className="w-4 h-4" /> Add Photo from Media Library
                   </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-sm border-gray-100">
+                <CardHeader>
+                  <CardTitle>Videos</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-gray-500 -mt-2">
+                    Paste a video link — YouTube, Vimeo, or a direct <code>.mp4</code> URL. Add as many as you like; they appear on the property page.
+                  </p>
+                  <div className="flex gap-2">
+                    <Input
+                      value={videoInput}
+                      onChange={(e) => setVideoInput(e.target.value)}
+                      placeholder="https://youtu.be/... or https://.../clip.mp4"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          if (!videoInput.trim()) return;
+                          form.setValue('videos', [...form.getValues('videos'), videoInput.trim()]);
+                          setVideoInput('');
+                        }
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => {
+                        if (!videoInput.trim()) return;
+                        form.setValue('videos', [...form.getValues('videos'), videoInput.trim()]);
+                        setVideoInput('');
+                      }}
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <ul className="space-y-2">
+                    {form.watch('videos').map((url, idx) => (
+                      <li key={idx} className="flex items-center justify-between gap-2 bg-gray-50 px-3 py-2 rounded-md text-sm border border-gray-100">
+                        <span className="truncate">{url}</span>
+                        <Button type="button" variant="ghost" size="sm" className="h-6 w-6 p-0 shrink-0 text-red-500 hover:text-red-700"
+                          onClick={() => form.setValue('videos', form.getValues('videos').filter((_, i) => i !== idx))}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </li>
+                    ))}
+                  </ul>
                 </CardContent>
               </Card>
 

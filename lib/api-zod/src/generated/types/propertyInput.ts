@@ -23,6 +23,7 @@ export interface PropertyInput {
   /** @nullable */
   heroImage?: string | null;
   gallery?: string[];
+  videos?: string[];
   /** @nullable */
   shortDescription?: string | null;
   /** @nullable */

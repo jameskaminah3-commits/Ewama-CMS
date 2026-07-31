@@ -19,6 +19,48 @@ import { useToast } from '@/hooks/use-toast';
 import { formatCurrency } from '@/lib/utils';
 import NotFound from '../not-found';
 
+// Turn a pasted link into an embeddable player: YouTube/Vimeo become responsive
+// iframes; anything else is treated as a direct video file.
+function toEmbed(url: string): { type: 'iframe' | 'file'; src: string } {
+  const u = url.trim();
+  const yt = u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/);
+  if (yt) return { type: 'iframe', src: `https://www.youtube.com/embed/${yt[1]}` };
+  const vimeo = u.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (vimeo) return { type: 'iframe', src: `https://player.vimeo.com/video/${vimeo[1]}` };
+  return { type: 'file', src: u };
+}
+
+function PropertyVideos({ videos, title }: { videos: string[]; title: string }) {
+  if (!videos.length) return null;
+  return (
+    <div className="mb-12">
+      <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">Videos</h2>
+      <div className="grid grid-cols-1 gap-6">
+        {videos.map((url, idx) => {
+          const embed = toEmbed(url);
+          return (
+            <div key={idx} className="rounded-2xl overflow-hidden bg-black aspect-video">
+              {embed.type === 'iframe' ? (
+                <iframe
+                  src={embed.src}
+                  title={`${title} video ${idx + 1}`}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <video src={embed.src} controls preload="metadata" className="w-full h-full object-contain">
+                  Your browser does not support embedded videos.
+                </video>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 const enquirySchema = z.object({
   name: z.string().min(2, 'Name is required'),
   email: z.string().email('Valid email is required'),
@@ -167,6 +209,8 @@ export default function PropertyDetail() {
               openIndex={lightboxIndex}
               onOpenChange={setLightboxIndex}
             />
+
+            <PropertyVideos videos={property.videos || []} title={property.name} />
 
             <div className="mb-12">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6">

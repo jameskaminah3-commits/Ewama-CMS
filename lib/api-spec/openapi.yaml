@@ -962,6 +962,10 @@ components:
           type: array
           items:
             type: string
+        videos:
+          type: array
+          items:
+            type: string
         shortDescription:
           type: ["string", "null"]
         fullDescription:
@@ -1057,6 +1061,10 @@ components:
           type: array
           items:
             type: string
+        videos:
+          type: array
+          items:
+            type: string
         shortDescription:
           type: ["string", "null"]
         fullDescription:
@@ -1125,6 +1133,10 @@ components:
         heroImage:
           type: ["string", "null"]
         gallery:
+          type: array
+          items:
+            type: string
+        videos:
           type: array
           items:
             type: string

@@ -202,6 +202,7 @@ const STATEMENTS: string[] = [
   // properties — per-project FAQs and phase pricing
   `ALTER TABLE properties ADD COLUMN IF NOT EXISTS faqs jsonb DEFAULT '[]'::jsonb`,
   `ALTER TABLE properties ADD COLUMN IF NOT EXISTS phase_pricing jsonb DEFAULT '[]'::jsonb`,
+  `ALTER TABLE properties ADD COLUMN IF NOT EXISTS videos jsonb DEFAULT '[]'::jsonb`,
   // media — optimised thumbnail URL
   `ALTER TABLE media ADD COLUMN IF NOT EXISTS thumbnail_url text`,
   // admin_users — self-heal any columns missing on tables created by an older

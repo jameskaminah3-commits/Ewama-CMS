@@ -20,6 +20,7 @@ export const propertiesTable = pgTable("properties", {
   coordinates: text("coordinates"),
   heroImage: text("hero_image"),
   gallery: jsonb("gallery").$type<string[]>().default([]),
+  videos: jsonb("videos").$type<string[]>().default([]),
   shortDescription: text("short_description"),
   fullDescription: text("full_description"),
   plotSize: text("plot_size"),

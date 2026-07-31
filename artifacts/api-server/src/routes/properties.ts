@@ -31,6 +31,7 @@ function mapProperty(p: typeof propertiesTable.$inferSelect) {
   return {
     ...p,
     gallery: (p.gallery as string[] | null) ?? [],
+    videos: (p.videos as string[] | null) ?? [],
     availablePhases: (p.availablePhases as string[] | null) ?? [],
     amenities: (p.amenities as string[] | null) ?? [],
     investmentHighlights: (p.investmentHighlights as string[] | null) ?? [],
@@ -102,6 +103,7 @@ router.post("/", requireAuth, async (req, res) => {
     installmentPrice: String(rest.installmentPrice ?? 0),
     ...rest,
     gallery: rest.gallery ?? [],
+    videos: rest.videos ?? [],
     availablePhases: rest.availablePhases ?? [],
     amenities: rest.amenities ?? [],
     investmentHighlights: rest.investmentHighlights ?? [],

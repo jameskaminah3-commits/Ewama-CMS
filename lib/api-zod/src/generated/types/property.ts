@@ -22,6 +22,7 @@ export interface Property {
   /** @nullable */
   heroImage?: string | null;
   gallery?: string[];
+  videos?: string[];
   /** @nullable */
   shortDescription?: string | null;
   /** @nullable */

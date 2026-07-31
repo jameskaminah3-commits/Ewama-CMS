@@ -95,6 +95,7 @@ export interface Property {
   /** @nullable */
   heroImage?: string | null;
   gallery?: string[];
+  videos?: string[];
   /** @nullable */
   shortDescription?: string | null;
   /** @nullable */
@@ -145,6 +146,7 @@ export interface PropertyInput {
   /** @nullable */
   heroImage?: string | null;
   gallery?: string[];
+  videos?: string[];
   /** @nullable */
   shortDescription?: string | null;
   /** @nullable */
@@ -195,6 +197,7 @@ export interface PropertyUpdate {
   /** @nullable */
   heroImage?: string | null;
   gallery?: string[];
+  videos?: string[];
   /** @nullable */
   shortDescription?: string | null;
   /** @nullable */
