@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Play, Expand } from 'lucide-react';
 import { ImageLightbox } from '@/components/ImageLightbox';
 
@@ -60,15 +60,45 @@ export function PropertyGallery({
     setActive(i);
   };
 
+  // Arrow-key navigation on desktop (ignored while typing or when a video is
+  // playing so it doesn't fight the player's own controls).
+  useEffect(() => {
+    if (items.length <= 1) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (playing || lightboxIndex !== null) return;
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      if (e.key === 'ArrowLeft') go(-1);
+      if (e.key === 'ArrowRight') go(1);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [items.length, playing, lightboxIndex]);
+
+  // Swipe left/right on touch devices.
+  const touchStartX = useRef<number | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0]?.clientX ?? null; };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const dx = (e.changedTouches[0]?.clientX ?? 0) - touchStartX.current;
+    if (Math.abs(dx) > 45) go(dx < 0 ? 1 : -1);
+    touchStartX.current = null;
+  };
+
   return (
     <div className="mb-8">
       {/* Stage */}
-      <div className="group/stage relative h-[360px] md:h-[560px] rounded-2xl overflow-hidden bg-black">
+      <div
+        className="group/stage relative h-[360px] md:h-[560px] rounded-2xl overflow-hidden bg-black"
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
         {current.type === 'image' ? (
           <img
+            key={active}
             src={current.src}
             alt={alt}
-            className="h-full w-full object-cover cursor-zoom-in"
+            className="h-full w-full object-cover cursor-zoom-in animate-in fade-in duration-500"
             onClick={() => setLightboxIndex(active)}
           />
         ) : playing ? (
