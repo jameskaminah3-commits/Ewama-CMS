@@ -1,10 +1,10 @@
 import { useGetPropertyBySlug, useCreateEnquiry } from '@workspace/api-client-react';
 import { PublicLayout } from '@/components/layout/PublicLayout';
 import { Seo } from '@/components/Seo';
-import { ImageLightbox } from '@/components/ImageLightbox';
+import { PropertyGallery } from '@/components/PropertyGallery';
 import { useState } from 'react';
 import { useParams, Link } from 'wouter';
-import { MapPin, Check, FileText, ChevronRight, Phone, Calendar, ArrowLeft, Loader2, Expand } from 'lucide-react';
+import { MapPin, Check, FileText, ChevronRight, Phone, Calendar, ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
@@ -19,50 +19,6 @@ import { useToast } from '@/hooks/use-toast';
 import { formatCurrency } from '@/lib/utils';
 import NotFound from '../not-found';
 
-// Turn a pasted link into an embeddable player: YouTube/Vimeo become responsive
-// iframes; anything else is treated as a direct video file.
-function toEmbed(url: string): { type: 'iframe' | 'file'; src: string } {
-  const u = url.trim();
-  const yt = u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/);
-  // rel=0 keeps end-screen suggestions to the video's own channel (so, EWAMA's
-  // uploads) rather than random unrelated videos; modestbranding trims chrome.
-  if (yt) return { type: 'iframe', src: `https://www.youtube.com/embed/${yt[1]}?rel=0&modestbranding=1` };
-  const vimeo = u.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-  if (vimeo) return { type: 'iframe', src: `https://player.vimeo.com/video/${vimeo[1]}` };
-  return { type: 'file', src: u };
-}
-
-function PropertyVideos({ videos, title }: { videos: string[]; title: string }) {
-  if (!videos.length) return null;
-  return (
-    <div className="mb-12">
-      <h2 className="text-2xl font-heading font-bold text-gray-900 mb-4">Videos</h2>
-      <div className="grid grid-cols-1 gap-6">
-        {videos.map((url, idx) => {
-          const embed = toEmbed(url);
-          return (
-            <div key={idx} className="rounded-2xl overflow-hidden bg-black aspect-video">
-              {embed.type === 'iframe' ? (
-                <iframe
-                  src={embed.src}
-                  title={`${title} video ${idx + 1}`}
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              ) : (
-                <video src={embed.src} controls preload="metadata" className="w-full h-full object-contain">
-                  Your browser does not support embedded videos.
-                </video>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 const enquirySchema = z.object({
   name: z.string().min(2, 'Name is required'),
   email: z.string().email('Valid email is required'),
@@ -74,8 +30,6 @@ export default function PropertyDetail() {
   const { slug } = useParams();
   const { data: property, isLoading, error } = useGetPropertyBySlug(slug || '');
   const { toast } = useToast();
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  
   const createEnquiry = useCreateEnquiry();
 
   const form = useForm<z.infer<typeof enquirySchema>>({
@@ -170,49 +124,12 @@ export default function PropertyDetail() {
           
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <div
-              className="group/hero rounded-2xl overflow-hidden bg-gray-100 h-[400px] md:h-[600px] mb-8 relative cursor-zoom-in"
-              onClick={() => setLightboxIndex(0)}
-            >
-              <img
-                src={heroImage}
-                alt={property.name}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute top-4 left-4 flex gap-2">
-                <div className="bg-secondary text-white text-sm font-bold px-4 py-2 rounded-md shadow-md uppercase tracking-wide">
-                  {property.status === 'available' ? 'Available' : property.status.replace('_', ' ')}
-                </div>
-              </div>
-              <div className="absolute bottom-4 right-4 flex items-center gap-2 bg-black/50 text-white text-sm px-3 py-2 rounded-md backdrop-blur-sm opacity-0 group-hover/hero:opacity-100 transition-opacity">
-                <Expand className="w-4 h-4" />
-                View photos{allImages.length > 1 ? ` (${allImages.length})` : ''}
-              </div>
-            </div>
-
-            {allImages.length > 1 && (
-              <div className="flex gap-4 mb-8 overflow-x-auto pb-4 snap-x">
-                {allImages.map((img, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setLightboxIndex(idx)}
-                    className="w-32 h-24 rounded-lg overflow-hidden shrink-0 snap-start bg-gray-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-secondary"
-                    aria-label={`View photo ${idx + 1}`}
-                  >
-                    <img src={img} alt={`${property.name} photo ${idx+1}`} loading="lazy" className="w-full h-full object-cover hover:opacity-80 transition-opacity" />
-                  </button>
-                ))}
-              </div>
-            )}
-
-            <ImageLightbox
+            <PropertyGallery
               images={allImages}
+              videos={property.videos || []}
               alt={property.name}
-              openIndex={lightboxIndex}
-              onOpenChange={setLightboxIndex}
+              statusLabel={property.status === 'available' ? 'Available' : property.status.replace('_', ' ')}
             />
-
-            <PropertyVideos videos={property.videos || []} title={property.name} />
 
             <div className="mb-12">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6">
