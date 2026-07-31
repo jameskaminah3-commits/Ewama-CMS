@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useGetHomepageContent, useListProperties, useListArticles, useCreateEnquiry } from '@workspace/api-client-react';
 import { PublicLayout } from '@/components/layout/PublicLayout';
+import { PropertyCardMedia } from '@/components/PropertyCardMedia';
 import { Seo } from '@/components/Seo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -449,17 +450,11 @@ export default function Home() {
             ) : properties?.data?.map((property) => (
               <Link key={property.id} href={`/properties/${property.slug}`}>
                 <div className="group rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full cursor-pointer">
-                  <div className="relative h-60 overflow-hidden">
-                    <img
-                      src={property.heroImage || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'}
-                      alt={property.name}
-                      loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute top-4 left-4 bg-secondary text-primary text-xs font-bold px-3 py-1.5 uppercase tracking-wide">
+                  <PropertyCardMedia property={property} heightClass="h-60" intervalMs={4500}>
+                    <div className="absolute top-4 left-4 z-20 bg-secondary text-primary text-xs font-bold px-3 py-1.5 uppercase tracking-wide">
                       For Sale
                     </div>
-                  </div>
+                  </PropertyCardMedia>
                   <div className="p-6 flex flex-col flex-1">
                     <h3 className="text-xl font-heading font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors">
                       {property.name}
