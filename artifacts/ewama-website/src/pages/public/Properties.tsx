@@ -9,7 +9,67 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
-import { MapPin, Search, ChevronRight, ChevronLeft, SlidersHorizontal } from 'lucide-react';
+import { MapPin, Search, ChevronRight, ChevronLeft, SlidersHorizontal, Play } from 'lucide-react';
+
+const CARD_FALLBACK_IMAGE = "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+
+// Lively card media: gently crossfades through the property's photos, shows a
+// "Video" badge when the project has any, and dots for the image count. Each
+// card starts on a different image so the grid doesn't pulse in unison.
+function PropertyCardMedia({ property }: { property: { heroImage?: string | null; gallery?: string[] | null; videos?: string[] | null; name: string; id: number; status?: string; featured?: boolean } }) {
+  const images = useMemo(() => {
+    const hero = property.heroImage?.trim() || CARD_FALLBACK_IMAGE;
+    const rest = (property.gallery || []).filter((g) => g && g !== hero);
+    return [hero, ...rest];
+  }, [property.heroImage, property.gallery]);
+
+  const hasVideo = (property.videos || []).length > 0;
+  const [idx, setIdx] = useState(property.id % Math.max(images.length, 1));
+
+  useEffect(() => {
+    if (images.length <= 1) return;
+    const t = setInterval(() => setIdx((i) => (i + 1) % images.length), 3500);
+    return () => clearInterval(t);
+  }, [images.length]);
+
+  return (
+    <div className="relative h-64 overflow-hidden bg-gray-100">
+      <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105">
+        {images.map((src, i) => (
+          <img
+            key={i}
+            src={src}
+            alt={property.name}
+            loading="lazy"
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${i === idx ? 'opacity-100' : 'opacity-0'}`}
+          />
+        ))}
+      </div>
+      <div className="absolute top-4 left-4 flex gap-2 z-10">
+        <div className="bg-secondary text-white text-xs font-bold px-3 py-1.5 rounded shadow-sm uppercase tracking-wide">
+          {property.status === 'available' ? 'Available' : (property.status || '').replace('_', ' ')}
+        </div>
+        {property.featured && (
+          <div className="bg-primary text-white text-xs font-bold px-3 py-1.5 rounded shadow-sm uppercase tracking-wide">
+            Featured
+          </div>
+        )}
+      </div>
+      {hasVideo && (
+        <div className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 bg-black/60 text-white text-xs font-semibold px-2.5 py-1.5 rounded-full backdrop-blur-sm">
+          <Play className="w-3 h-3 fill-current" /> Video
+        </div>
+      )}
+      {images.length > 1 && (
+        <div className="absolute bottom-3 left-3 z-10 flex gap-1.5">
+          {images.map((_, i) => (
+            <span key={i} className={`h-1.5 rounded-full transition-all ${i === idx ? 'w-4 bg-white' : 'w-1.5 bg-white/60'}`} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 const PAGE_SIZE = 12;
 
@@ -135,23 +195,7 @@ export default function Properties() {
               properties.map((property) => (
                 <Link key={property.id} href={`/properties/${property.slug}`}>
                   <div className="group rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full cursor-pointer">
-                    <div className="relative h-64 overflow-hidden bg-gray-100">
-                      <img 
-                        src={property.heroImage || "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"} 
-                        alt={property.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
-                      <div className="absolute top-4 left-4 flex gap-2">
-                        <div className="bg-secondary text-white text-xs font-bold px-3 py-1.5 rounded shadow-sm uppercase tracking-wide">
-                          {property.status === 'available' ? 'Available' : property.status.replace('_', ' ')}
-                        </div>
-                        {property.featured && (
-                          <div className="bg-primary text-white text-xs font-bold px-3 py-1.5 rounded shadow-sm uppercase tracking-wide">
-                            Featured
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                    <PropertyCardMedia property={property} />
                     <div className="p-6 flex flex-col flex-1">
                       <div className="flex items-center gap-2 text-sm font-medium text-secondary mb-3">
                         <MapPin className="w-4 h-4" />

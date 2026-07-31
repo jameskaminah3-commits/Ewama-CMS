@@ -24,7 +24,9 @@ import NotFound from '../not-found';
 function toEmbed(url: string): { type: 'iframe' | 'file'; src: string } {
   const u = url.trim();
   const yt = u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/);
-  if (yt) return { type: 'iframe', src: `https://www.youtube.com/embed/${yt[1]}` };
+  // rel=0 keeps end-screen suggestions to the video's own channel (so, EWAMA's
+  // uploads) rather than random unrelated videos; modestbranding trims chrome.
+  if (yt) return { type: 'iframe', src: `https://www.youtube.com/embed/${yt[1]}?rel=0&modestbranding=1` };
   const vimeo = u.match(/vimeo\.com\/(?:video\/)?(\d+)/);
   if (vimeo) return { type: 'iframe', src: `https://player.vimeo.com/video/${vimeo[1]}` };
   return { type: 'file', src: u };
