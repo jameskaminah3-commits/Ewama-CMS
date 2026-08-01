@@ -226,35 +226,29 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
   const hasButton = Boolean(slide.ctaLabel && slide.ctaHref);
   const hasOverlayContent = Boolean(slide.kicker || slide.title || slide.text || hasButton);
 
-  // The photo itself defines the banner: it flows at its natural proportions
-  // (w-full h-auto), so the frame is always exactly the picture — nothing
-  // cropped, nothing left over, at every screen size. Phones swap in the
-  // slide's "phone photo" (when set) via <picture>. The aspect-[auto_...]
-  // class is only a pre-load placeholder to avoid a layout jump.
+  // Fixed cinematic frame: every slide fills the same box (square on phones,
+  // a 1920×700 band on desktop), and slides crossfade by opacity — so the
+  // hero never changes size or jumps between slides. Upload photos at the
+  // recommended sizes (admin shows them) and nothing important is cropped.
   return (
-    <section className="relative w-full overflow-hidden rounded-2xl bg-primary shadow-[0_24px_70px_rgba(0,0,0,0.18)] md:rounded-3xl">
-      {/* A single image is always in normal flow, so the section height is
-          exactly the current photo — no overlap, no collapsed height, no
-          empty/coloured space. The keyed fade gives a gentle crossfade
-          without pulling anything out of flow. */}
-      <motion.picture
-        key={index}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.7, ease: 'easeOut' }}
-        className="block w-full"
-      >
-        {slide.mobileImage && <source media="(max-width: 767px)" srcSet={slide.mobileImage} />}
-        <img
-          src={slide.image}
-          alt=""
-          decoding="async"
-          fetchPriority="high"
-          className="block h-auto w-full saturate-[1.03] contrast-[1.02]"
-        />
-      </motion.picture>
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.10),rgba(0,0,0,0.02)_34%,rgba(0,0,0,0.16))]" />
-      <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-primary/30 to-transparent" />
+    <section className="relative aspect-square w-full overflow-hidden rounded-2xl bg-primary shadow-[0_24px_70px_rgba(0,0,0,0.18)] md:aspect-[1920/700] md:rounded-3xl">
+      {slides.map((s, i) => (
+        <picture
+          key={i}
+          className={`absolute inset-0 transition-opacity duration-[1200ms] ease-out ${i === index ? 'opacity-100' : 'opacity-0'}`}
+        >
+          {s.mobileImage && <source media="(max-width: 767px)" srcSet={s.mobileImage} />}
+          <img
+            src={s.image}
+            alt=""
+            decoding="async"
+            fetchPriority={i === 0 ? 'high' : 'auto'}
+            className="h-full w-full object-cover object-center saturate-[1.03] contrast-[1.02]"
+          />
+        </picture>
+      ))}
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.14),rgba(0,0,0,0.04)_34%,rgba(0,0,0,0.30))]" />
+      <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-primary/40 to-transparent" />
 
       {hasOverlayContent && (
         <div className="absolute inset-0 z-10 mx-auto flex h-full w-full max-w-7xl items-center px-5 py-14 sm:px-6 lg:px-10">
@@ -291,7 +285,7 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
         </div>
       )}
 
-      <div className="absolute bottom-6 left-5 z-10 flex gap-2 sm:left-6 lg:left-[max(2.5rem,calc((100vw-1280px)/2+2.5rem))]">
+      <div className="absolute bottom-5 left-5 z-10 flex gap-2 sm:left-6 lg:bottom-6 lg:left-8">
         {slides.map((_, i) => (
           <button
             key={i}
@@ -595,41 +589,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* About / Our Approach */}
-      <section className="py-14 md:py-20">
-        <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div {...fadeUp} className="rounded-2xl overflow-hidden shadow-xl">
-              <img
-                src="/office-frontdesk.webp"
-                alt="Inside the EWAMA Properties Customer Care Centre"
-                loading="lazy"
-                className="w-full h-[420px] object-cover"
-              />
-            </motion.div>
-            <motion.div {...fadeUp}>
-              <p className="text-secondary font-semibold tracking-widest uppercase text-sm mb-3">About Us</p>
-              <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary mb-6">Our Approach</h2>
-              <p className="text-gray-600 text-lg leading-relaxed mb-8">
-                {homepageContent?.approachText || 'Finding the right piece of land is personal. We listen first, then guide you through every step — from your first site visit to the day you receive your title deed.'}
-              </p>
-              <blockquote className="border-l-4 border-secondary pl-6 mb-8">
-                <p className="font-heading text-xl md:text-2xl text-gray-800 italic leading-relaxed">
-                  "{homepageContent?.approachQuote || "We don't just sell plots. We help families find the place where their best memories will be made."}"
-                </p>
-                <footer className="text-sm text-gray-500 mt-3">— EWAMA Properties Ltd, Foundation of Trust</footer>
-              </blockquote>
-              <Link href="/contact">
-                <Button size="lg" className="bg-secondary text-primary hover:bg-secondary/90 h-12 px-8 font-semibold">
-                  Book a Consultation
-                </Button>
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* A Message from Our CEO */}
+      {/* A Message from Our CEO (replaces the old "Our Approach" section) */}
       <CeoMessage content={homepageContent ?? {}} />
 
       {/* How We Deliver Excellence */}
