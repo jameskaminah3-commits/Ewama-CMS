@@ -1,4 +1,4 @@
-const MAX_DIMENSION = 1920; // cap the longest edge for web display
+const MAX_DIMENSION = 1600; // cap the longest edge; plenty sharp for web, much smaller
 
 /**
  * Shrink a large photo in the browser before upload: cap the longest edge at
@@ -24,7 +24,7 @@ export async function compressImage(file: File): Promise<File> {
     bitmap.close?.();
 
     const blob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, 'image/webp', 0.82),
+      canvas.toBlob(resolve, 'image/webp', 0.8),
     );
     if (!blob || blob.size >= file.size) return file; // never upload something bigger
 
