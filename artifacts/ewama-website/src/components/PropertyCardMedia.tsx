@@ -51,8 +51,19 @@ export function PropertyCardMedia({
 
   useEffect(() => {
     if (slides.length <= 1) return;
-    const t = setInterval(() => setIdx((i) => (i + 1) % slides.length), intervalMs);
-    return () => clearInterval(t);
+    // Give each card its own random rhythm and a random head-start, so the
+    // grid never flips all at once — the photos change independently.
+    const period = intervalMs + Math.random() * 2200 - 400; // ~±1.1s jitter
+    const startDelay = Math.random() * period;
+    let interval: ReturnType<typeof setInterval>;
+    const startTimer = setTimeout(() => {
+      setIdx((i) => (i + 1) % slides.length);
+      interval = setInterval(() => setIdx((i) => (i + 1) % slides.length), period);
+    }, startDelay);
+    return () => {
+      clearTimeout(startTimer);
+      clearInterval(interval);
+    };
   }, [slides.length, intervalMs]);
 
   return (
