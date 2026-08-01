@@ -35,9 +35,21 @@ export default function About() {
         description="Learn about EWAMA Properties Ltd — a Kenyan real estate company bringing banking-level professionalism, transparency, and trust to land investment."
       />
       <PageHeader
-        kicker="About Us"
-        title="About EWAMA Properties"
-        subtitle="Building Trust. Creating Wealth. Transforming Communities."
+        kicker="Who We Are"
+        title="The EWAMA Properties Story"
+        backgroundImage="/images/ewama-serviced-plot.webp"
+        marquee={[
+          'Building Trust',
+          'Creating Wealth',
+          'Transforming Communities',
+          'Genuine Title Deeds',
+          'Transparent Pricing',
+          'Land You Can Believe In',
+          'Flexible Payment Plans',
+          'A Foundation of Trust',
+          'Prime Locations Across Kenya',
+          'Your Journey to Ownership',
+        ]}
       />
 
       <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-6 lg:px-10 py-20">
