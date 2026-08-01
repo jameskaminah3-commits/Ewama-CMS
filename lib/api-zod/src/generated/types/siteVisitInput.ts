@@ -12,6 +12,8 @@ export interface SiteVisitInput {
   phone: string;
   /** @nullable */
   propertyId?: number | null;
+  /** @nullable */
+  propertyName?: string | null;
   preferredDate: Date;
   /** @nullable */
   preferredTime?: string | null;

@@ -40,10 +40,13 @@ export default function BookSiteVisit() {
   });
 
   const onSubmit = (data: z.infer<typeof siteVisitSchema>) => {
+    const chosenId = data.propertyId !== 'any' ? Number(data.propertyId) : undefined;
+    const chosen = chosenId ? propertiesData?.data?.find((p) => p.id === chosenId) : undefined;
     createVisit.mutate({
       data: {
         ...data,
-        propertyId: data.propertyId !== 'any' ? Number(data.propertyId) : undefined,
+        propertyId: chosenId,
+        propertyName: chosen ? `${chosen.name} — ${chosen.location}` : 'General Tour',
       }
     }, {
       onSuccess: () => {
@@ -158,7 +161,7 @@ export default function BookSiteVisit() {
                           render={({ field }) => (
                             <FormItem className="md:col-span-2">
                               <FormLabel>Property of Interest</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <Select onValueChange={field.onChange} value={field.value}>
                                 <FormControl>
                                   <SelectTrigger className="h-12 bg-gray-50">
                                     <SelectValue placeholder="Select a property" />
@@ -199,7 +202,7 @@ export default function BookSiteVisit() {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Preferred Time</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <Select onValueChange={field.onChange} value={field.value}>
                                 <FormControl>
                                   <div className="relative">
                                     <Clock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10" />

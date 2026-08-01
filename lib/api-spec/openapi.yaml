@@ -1426,6 +1426,8 @@ components:
           type: string
         propertyId:
           type: ["integer", "null"]
+        propertyName:
+          type: ["string", "null"]
         preferredDate:
           type: string
           format: date

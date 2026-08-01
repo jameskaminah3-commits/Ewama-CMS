@@ -2,6 +2,7 @@ import { Router } from "express";
 import { db, siteVisitsTable, activityLogTable } from "@workspace/db";
 import { eq, sql, desc, and } from "drizzle-orm";
 import { requireAuth } from "../middlewares/auth.js";
+import { sendAdminNotification } from "../services/mailer.js";
 
 const router = Router();
 
@@ -36,6 +37,20 @@ router.post("/", async (req, res) => {
     preferredTime: preferredTime ?? null, status: "pending",
   }).returning();
   await db.insert(activityLogTable).values({ type: "site_visit", description: `Site visit requested by ${name}`, entityId: visit!.id, entityTitle: name });
+  void sendAdminNotification(
+    `New site visit booking — ${name}`,
+    [
+      `A new site visit has been booked on ewamaproperties.com:`,
+      ``,
+      `Name:      ${name}`,
+      `Email:     ${email}`,
+      `Phone:     ${phone}`,
+      `Property:  ${propertyName ?? "General Tour"}`,
+      `Date:      ${preferredDate}${preferredTime ? ` (${preferredTime})` : ""}`,
+      ``,
+      `Log in to the admin dashboard to confirm the booking.`,
+    ].join("\n"),
+  );
   res.status(201).json(mapVisit(visit!));
 });
 

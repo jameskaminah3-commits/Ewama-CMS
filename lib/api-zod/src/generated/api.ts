@@ -927,6 +927,7 @@ export const CreateSiteVisitBody = zod.object({
   "email": zod.string(),
   "phone": zod.string(),
   "propertyId": zod.number().nullish(),
+  "propertyName": zod.string().nullish(),
   "preferredDate": zod.coerce.date(),
   "preferredTime": zod.string().nullish()
 })

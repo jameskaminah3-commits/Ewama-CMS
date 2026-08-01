@@ -428,6 +428,8 @@ export interface SiteVisitInput {
   phone: string;
   /** @nullable */
   propertyId?: number | null;
+  /** @nullable */
+  propertyName?: string | null;
   preferredDate: string;
   /** @nullable */
   preferredTime?: string | null;

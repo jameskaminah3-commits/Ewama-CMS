@@ -2,6 +2,7 @@ import { Router } from "express";
 import { db, enquiriesTable, activityLogTable } from "@workspace/db";
 import { eq, ilike, sql, desc, and } from "drizzle-orm";
 import { requireAuth } from "../middlewares/auth.js";
+import { sendAdminNotification } from "../services/mailer.js";
 
 const router = Router();
 
@@ -43,6 +44,20 @@ router.post("/", async (req, res) => {
   if (!name || !email || !message) { res.status(400).json({ error: "name, email, message are required" }); return; }
   const [enq] = await db.insert(enquiriesTable).values({ name, email, phone: phone ?? null, message, propertyId: propertyId ?? null, propertyName: propertyName ?? null, status: "unread" }).returning();
   await db.insert(activityLogTable).values({ type: "enquiry", description: `New enquiry from ${name}`, entityId: enq!.id, entityTitle: name });
+  void sendAdminNotification(
+    `New enquiry — ${name}`,
+    [
+      `A new enquiry was submitted on ewamaproperties.com:`,
+      ``,
+      `Name:      ${name}`,
+      `Email:     ${email}`,
+      `Phone:     ${phone ?? "—"}`,
+      `Property:  ${propertyName ?? "—"}`,
+      ``,
+      `Message:`,
+      `${message}`,
+    ].join("\n"),
+  );
   res.status(201).json(mapEnquiry(enq!));
 });
 
