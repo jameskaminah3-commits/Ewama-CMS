@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useQueryClient } from '@tanstack/react-query';
 import { formatBytes } from '@/lib/utils';
 import { cn } from '@/lib/utils';
+import { compressImage } from '@/lib/compressImage';
 
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // Keep in sync with the API limit
 
@@ -34,8 +35,11 @@ export default function AdminMedia() {
   };
 
   const uploadFiles = async (files: FileList | File[]) => {
-    const list = Array.from(files);
-    if (list.length === 0) return;
+    const original = Array.from(files);
+    if (original.length === 0) return;
+    // Shrink big photos in the browser first so large originals both fit the
+    // size limit and load fast on the site.
+    const list = await Promise.all(original.map(compressImage));
 
     const tooBig = list.filter(f => f.size > MAX_UPLOAD_BYTES);
     if (tooBig.length > 0) {

@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Image as ImageIcon, Search, Upload, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { compressImage } from '@/lib/compressImage';
 
 interface MediaPickerDialogProps {
   open: boolean;
@@ -31,8 +32,9 @@ export function MediaPickerDialog({ open, onOpenChange, onSelect, title = 'Choos
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const original = e.target.files?.[0];
+    if (!original) return;
+    const file = await compressImage(original);
     try {
       const uploaded = await uploadMutation.mutateAsync({ data: { file, altText: file.name } });
       queryClient.invalidateQueries({ queryKey: getListMediaQueryKey() });
