@@ -7,13 +7,17 @@ interface PageHeaderProps {
   subtitle?: string;
   /** Endless-scrolling short phrases shown beneath the title. */
   marquee?: string[];
+  /** Scroll the marquee left-to-right instead of right-to-left. */
+  marqueeReverse?: boolean;
+  /** Seconds for one full marquee loop (lower = faster). */
+  marqueeDuration?: number;
   /** Faint land photo behind the dark banner (like the homepage stats band). */
   backgroundImage?: string;
   children?: ReactNode;
 }
 
-function Marquee({ items }: { items: string[] }) {
-  const track = [...items, ...items]; // duplicated so -50% loops seamlessly
+function Marquee({ items, reverse = false, duration = 30 }: { items: string[]; reverse?: boolean; duration?: number }) {
+  const track = [...items, ...items]; // duplicated so the loop is seamless
   return (
     <div
       className="relative mt-6 overflow-hidden"
@@ -21,8 +25,8 @@ function Marquee({ items }: { items: string[] }) {
     >
       <motion.div
         className="flex w-max items-center whitespace-nowrap"
-        animate={{ x: ['0%', '-50%'] }}
-        transition={{ duration: 30, ease: 'linear', repeat: Infinity }}
+        animate={{ x: reverse ? ['-50%', '0%'] : ['0%', '-50%'] }}
+        transition={{ duration, ease: 'linear', repeat: Infinity }}
       >
         {track.map((phrase, i) => (
           <span key={i} className="flex items-center text-lg font-light tracking-wide text-white/85 md:text-xl">
@@ -40,7 +44,7 @@ function Marquee({ items }: { items: string[] }) {
  * faint land photo showing through), a gold kicker, a serif title, and either
  * a static subtitle or an endless-scrolling marquee of short phrases.
  */
-export function PageHeader({ kicker, title, subtitle, marquee, backgroundImage, children }: PageHeaderProps) {
+export function PageHeader({ kicker, title, subtitle, marquee, marqueeReverse, marqueeDuration, backgroundImage, children }: PageHeaderProps) {
   return (
     <div className="relative overflow-hidden bg-primary py-14 md:py-16">
       {backgroundImage && (
@@ -62,7 +66,7 @@ export function PageHeader({ kicker, title, subtitle, marquee, backgroundImage, 
         {marquee && marquee.length > 0 ? (
           <>
             <h1 className="max-w-3xl font-heading text-4xl font-bold text-white md:text-5xl">{title}</h1>
-            <Marquee items={marquee} />
+            <Marquee items={marquee} reverse={marqueeReverse} duration={marqueeDuration} />
           </>
         ) : (
           <div className="grid gap-5 lg:grid-cols-[0.42fr_0.58fr] lg:items-end">

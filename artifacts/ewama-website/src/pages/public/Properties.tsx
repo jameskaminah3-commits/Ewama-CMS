@@ -56,6 +56,22 @@ export default function Properties() {
     return Array.from(uniqueCounties).sort();
   }, [allForCounties?.data]);
 
+  // Header marquee: live project names woven together with brand phrases, so
+  // the banner advertises the actual portfolio and refreshes as you add plots.
+  const headerMarquee = useMemo(() => {
+    const projects = (allForCounties?.data || [])
+      .filter(p => p.status !== 'draft' && p.status !== 'archived')
+      .map(p => `${p.name} — ${p.location}`);
+    const phrases = ['Title Deeds Guaranteed', 'Value-Added Plots', 'Flexible Payment Plans'];
+    const woven: string[] = [];
+    const max = Math.max(projects.length, phrases.length);
+    for (let i = 0; i < max; i++) {
+      if (projects[i]) woven.push(projects[i]!);
+      if (phrases[i % phrases.length] && (i % 2 === 1 || projects.length === 0)) woven.push(phrases[i % phrases.length]!);
+    }
+    return woven.length ? woven : ['Title Deeds Guaranteed', 'Prime Locations Across Kenya', 'Value-Added Plots', 'Flexible Payment Plans'];
+  }, [allForCounties?.data]);
+
   return (
     <PublicLayout>
       <Seo
@@ -65,7 +81,10 @@ export default function Properties() {
       <PageHeader
         kicker="Our Portfolio"
         title="Our Properties"
-        subtitle="Prime value-added plots with title deeds guaranteed — thoroughly vetted land in Kenya's high-growth corridors."
+        backgroundImage="/images/ewama-site-visit.webp"
+        marquee={headerMarquee}
+        marqueeReverse
+        marqueeDuration={38}
       />
 
       <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-6 lg:px-10 -mt-8 relative z-20">
