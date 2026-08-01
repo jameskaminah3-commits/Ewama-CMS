@@ -22,7 +22,7 @@ function Marquee({ items, reverse = false, duration = 30, uppercase = false }: {
   const track = [...items, ...items]; // duplicated so the loop is seamless
   return (
     <div
-      className="relative mt-6 overflow-hidden"
+      className="relative mt-4 overflow-hidden"
       style={{ maskImage: 'linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent)', WebkitMaskImage: 'linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent)' }}
     >
       <motion.div
@@ -55,7 +55,7 @@ function Marquee({ items, reverse = false, duration = 30, uppercase = false }: {
  */
 export function PageHeader({ kicker, title, subtitle, marquee, marqueeReverse, marqueeDuration, marqueeUppercase, backgroundImage, children }: PageHeaderProps) {
   return (
-    <div className="relative overflow-hidden bg-primary py-14 md:py-16">
+    <div className="relative overflow-hidden bg-primary py-9 md:py-11">
       {backgroundImage && (
         <>
           <img
@@ -70,11 +70,11 @@ export function PageHeader({ kicker, title, subtitle, marquee, marqueeReverse, m
       <div className="absolute inset-x-0 bottom-0 h-1 bg-secondary" aria-hidden="true" />
       <div className="relative z-10 mx-auto w-full max-w-[1600px] px-5 text-left sm:px-6 lg:px-10">
         {kicker && (
-          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-secondary">{kicker}</p>
+          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-secondary">{kicker}</p>
         )}
         {marquee && marquee.length > 0 ? (
           <>
-            <h1 className="max-w-3xl font-heading text-4xl font-bold text-white md:text-5xl">{title}</h1>
+            <h1 className="max-w-3xl font-heading text-3xl font-bold text-white md:text-4xl">{title}</h1>
             <Marquee items={marquee} reverse={marqueeReverse} duration={marqueeDuration} uppercase={marqueeUppercase} />
           </>
         ) : (
