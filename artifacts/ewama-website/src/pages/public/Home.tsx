@@ -247,7 +247,9 @@ function HeroSlider({ slides }: { slides: Slide[] }) {
           />
         </picture>
       ))}
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.14),rgba(0,0,0,0.04)_34%,rgba(0,0,0,0.30))]" />
+      {/* Readability overlay: ~30–40% black tint so white type stays crisp
+          over bright skies and sunny plots. */}
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.42),rgba(0,0,0,0.30)_45%,rgba(0,0,0,0.44))]" />
       <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-primary/40 to-transparent" />
 
       {hasOverlayContent && (
