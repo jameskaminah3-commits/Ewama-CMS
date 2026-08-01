@@ -57,6 +57,11 @@ type HomepageContentExtras = {
   approachText?: string | null;
   approachQuote?: string | null;
   whatYouGet?: string[] | null;
+  ceoName?: string | null;
+  ceoTitle?: string | null;
+  ceoMessage?: string | null;
+  ceoVideoUrl?: string | null;
+  ceoImageUrl?: string | null;
 };
 
 const HERO_SLIDE_INTERVAL_MS = 5000;
@@ -345,6 +350,79 @@ function CountUpStat({ value, suffix, label }: { value: number; suffix: string; 
   );
 }
 
+const DEFAULT_CEO_MESSAGE =
+  "When we started EWAMA Properties, our promise was simple: make land ownership honest, accessible, and dignified for every Kenyan. Behind every plot we sell is a family's dream — a home, a harvest, a legacy. That is a responsibility we carry with pride. Karibu. Let us walk this journey together.";
+
+function ceoYouTubeId(url?: string | null): string | null {
+  if (!url) return null;
+  const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/);
+  return m ? m[1]! : null;
+}
+
+function CeoMessage({ content }: { content: HomepageContentExtras }) {
+  const [playing, setPlaying] = useState(false);
+  const name = content.ceoName?.trim() || 'The Founder';
+  const title = content.ceoTitle?.trim() || 'Chief Executive Officer, EWAMA Properties Ltd';
+  const message = content.ceoMessage?.trim() || DEFAULT_CEO_MESSAGE;
+  const ytId = ceoYouTubeId(content.ceoVideoUrl);
+  const poster = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : content.ceoImageUrl?.trim() || '/office-lounge.webp';
+
+  return (
+    <section className="py-14 md:py-20 bg-gray-50">
+      <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-10">
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+          {/* Media: video (play inline) or image fallback */}
+          <motion.div {...fadeUp} className="relative overflow-hidden rounded-2xl bg-black shadow-2xl aspect-[4/3]">
+            {ytId && playing ? (
+              <iframe
+                src={`https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1&autoplay=1`}
+                title={`${name} — message`}
+                className="absolute inset-0 h-full w-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            ) : (
+              <>
+                <img src={poster} alt={name} className="absolute inset-0 h-full w-full object-cover" />
+                {ytId && (
+                  <button
+                    type="button"
+                    onClick={() => setPlaying(true)}
+                    aria-label="Play the CEO's message"
+                    className="group absolute inset-0 flex items-center justify-center bg-black/25 transition-colors hover:bg-black/35"
+                  >
+                    <span className="flex h-20 w-20 items-center justify-center rounded-full bg-white/90 text-primary shadow-xl transition-transform group-hover:scale-105">
+                      <svg viewBox="0 0 24 24" className="ml-1 h-9 w-9 fill-current"><path d="M8 5v14l11-7z" /></svg>
+                    </span>
+                  </button>
+                )}
+                <div className="absolute bottom-4 left-4 rounded-full bg-black/55 px-4 py-1.5 text-sm font-semibold text-white backdrop-blur-sm">
+                  {name}
+                </div>
+              </>
+            )}
+          </motion.div>
+
+          {/* Message */}
+          <motion.div {...fadeUp}>
+            <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-secondary">Leadership</p>
+            <h2 className="mb-6 font-heading text-3xl font-bold text-primary md:text-4xl">A Message from Our CEO</h2>
+            <div className="mb-8 border-l-4 border-secondary pl-6">
+              <p className="whitespace-pre-line text-lg italic leading-relaxed text-gray-700">
+                {message}
+              </p>
+            </div>
+            <div>
+              <p className="font-heading text-xl font-bold text-primary">{name}</p>
+              <p className="text-sm text-gray-500">{title}</p>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function HomeEnquiryForm() {
   const { toast } = useToast();
   const createEnquiry = useCreateEnquiry();
@@ -550,6 +628,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* A Message from Our CEO */}
+      <CeoMessage content={homepageContent ?? {}} />
 
       {/* How We Deliver Excellence */}
       <section className="py-14 md:py-20 bg-primary relative overflow-hidden">

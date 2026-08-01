@@ -56,4 +56,14 @@ export interface HomepageContentUpdate {
   approachQuote?: string | null;
   /** @nullable */
   whatYouGet?: string[] | null;
+  /** @nullable */
+  ceoName?: string | null;
+  /** @nullable */
+  ceoTitle?: string | null;
+  /** @nullable */
+  ceoMessage?: string | null;
+  /** @nullable */
+  ceoVideoUrl?: string | null;
+  /** @nullable */
+  ceoImageUrl?: string | null;
 }

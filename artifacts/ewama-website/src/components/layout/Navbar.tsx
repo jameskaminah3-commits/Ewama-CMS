@@ -3,6 +3,7 @@ import { Link, useLocation } from 'wouter';
 import { Phone, Mail, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { SocialLinks } from '@/components/SocialIcons';
 import { useGetSettings } from '@workspace/api-client-react';
 
 const NAV_LINKS = [
@@ -88,8 +89,9 @@ export function Navbar() {
               </span>
             </Link>
           ))}
+          <SocialLinks settings={settings} variant="strip" className="ml-auto pl-4" />
           <Link href="/book-site-visit">
-            <span className="ml-auto inline-block px-5 py-3.5 text-sm font-semibold bg-primary text-secondary hover:bg-primary/85 transition-colors cursor-pointer">
+            <span className="ml-4 inline-block px-5 py-3.5 text-sm font-semibold bg-primary text-secondary hover:bg-primary/85 transition-colors cursor-pointer">
               Book a Site Visit
             </span>
           </Link>
@@ -119,6 +121,9 @@ export function Navbar() {
                 Book a Site Visit
               </Button>
             </Link>
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <SocialLinks settings={settings} variant="header" />
+            </div>
           </div>
         </div>
       )}

@@ -196,6 +196,11 @@ const STATEMENTS: string[] = [
   `ALTER TABLE homepage_content ADD COLUMN IF NOT EXISTS approach_text text`,
   `ALTER TABLE homepage_content ADD COLUMN IF NOT EXISTS approach_quote text`,
   `ALTER TABLE homepage_content ADD COLUMN IF NOT EXISTS what_you_get jsonb`,
+  `ALTER TABLE homepage_content ADD COLUMN IF NOT EXISTS ceo_name text`,
+  `ALTER TABLE homepage_content ADD COLUMN IF NOT EXISTS ceo_title text`,
+  `ALTER TABLE homepage_content ADD COLUMN IF NOT EXISTS ceo_message text`,
+  `ALTER TABLE homepage_content ADD COLUMN IF NOT EXISTS ceo_video_url text`,
+  `ALTER TABLE homepage_content ADD COLUMN IF NOT EXISTS ceo_image_url text`,
   // site_settings — extra socials
   `ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS tiktok text`,
   `ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS youtube text`,

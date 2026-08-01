@@ -47,6 +47,11 @@ export const homepageContentTable = pgTable("homepage_content", {
   approachText: text("approach_text"),
   approachQuote: text("approach_quote"),
   whatYouGet: jsonb("what_you_get").$type<string[]>(),
+  ceoName: text("ceo_name"),
+  ceoTitle: text("ceo_title"),
+  ceoMessage: text("ceo_message"),
+  ceoVideoUrl: text("ceo_video_url"),
+  ceoImageUrl: text("ceo_image_url"),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 

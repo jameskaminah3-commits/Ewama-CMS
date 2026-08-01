@@ -1194,6 +1194,11 @@ export const GetHomepageContentResponse = zod.object({
   "approachText": zod.string().nullish(),
   "approachQuote": zod.string().nullish(),
   "whatYouGet": zod.array(zod.string()).nullish(),
+  "ceoName": zod.string().nullish(),
+  "ceoTitle": zod.string().nullish(),
+  "ceoMessage": zod.string().nullish(),
+  "ceoVideoUrl": zod.string().nullish(),
+  "ceoImageUrl": zod.string().nullish(),
   "updatedAt": zod.coerce.date().optional()
 })
 
@@ -1242,7 +1247,12 @@ export const UpdateHomepageContentBody = zod.object({
 })).nullish(),
   "approachText": zod.string().nullish(),
   "approachQuote": zod.string().nullish(),
-  "whatYouGet": zod.array(zod.string()).nullish()
+  "whatYouGet": zod.array(zod.string()).nullish(),
+  "ceoName": zod.string().nullish(),
+  "ceoTitle": zod.string().nullish(),
+  "ceoMessage": zod.string().nullish(),
+  "ceoVideoUrl": zod.string().nullish(),
+  "ceoImageUrl": zod.string().nullish()
 })
 
 export const UpdateHomepageContentResponse = zod.object({
@@ -1288,6 +1298,11 @@ export const UpdateHomepageContentResponse = zod.object({
   "approachText": zod.string().nullish(),
   "approachQuote": zod.string().nullish(),
   "whatYouGet": zod.array(zod.string()).nullish(),
+  "ceoName": zod.string().nullish(),
+  "ceoTitle": zod.string().nullish(),
+  "ceoMessage": zod.string().nullish(),
+  "ceoVideoUrl": zod.string().nullish(),
+  "ceoImageUrl": zod.string().nullish(),
   "updatedAt": zod.coerce.date().optional()
 })
 

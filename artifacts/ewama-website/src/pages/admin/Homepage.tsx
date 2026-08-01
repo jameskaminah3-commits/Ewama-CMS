@@ -58,6 +58,11 @@ const homepageSchema = z.object({
   approachText: z.string().optional().nullable(),
   approachQuote: z.string().optional().nullable(),
   whatYouGet: z.array(z.string()),
+  ceoName: z.string().optional().nullable(),
+  ceoTitle: z.string().optional().nullable(),
+  ceoMessage: z.string().optional().nullable(),
+  ceoVideoUrl: z.string().optional().nullable(),
+  ceoImageUrl: z.string().optional().nullable(),
 });
 
 type HomepageForm = z.infer<typeof homepageSchema>;
@@ -329,6 +334,7 @@ export default function AdminHomepage() {
   const updateMutation = useUpdateHomepageContent();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [ceoImagePickerOpen, setCeoImagePickerOpen] = useState(false);
 
   const form = useForm<HomepageForm>({
     resolver: zodResolver(homepageSchema),
@@ -353,6 +359,11 @@ export default function AdminHomepage() {
       approachText: '',
       approachQuote: '',
       whatYouGet: [],
+      ceoName: '',
+      ceoTitle: '',
+      ceoMessage: '',
+      ceoVideoUrl: '',
+      ceoImageUrl: '',
     },
   });
 
@@ -380,6 +391,11 @@ export default function AdminHomepage() {
         approachText: editableContent.approachText || '',
         approachQuote: editableContent.approachQuote || '',
         whatYouGet: editableContent.whatYouGet || [],
+        ceoName: editableContent.ceoName || '',
+        ceoTitle: editableContent.ceoTitle || '',
+        ceoMessage: editableContent.ceoMessage || '',
+        ceoVideoUrl: editableContent.ceoVideoUrl || '',
+        ceoImageUrl: editableContent.ceoImageUrl || '',
       });
     }
   }, [content, form]);
@@ -623,6 +639,72 @@ export default function AdminHomepage() {
                     <FormMessage />
                   </FormItem>
                 )}
+              />
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-sm border-gray-100">
+            <CardHeader>
+              <CardTitle>Message from Our CEO</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <p className="text-sm text-gray-500 -mt-2">
+                Shown as a premium section on the homepage. Paste a <strong>YouTube link</strong> for the CEO's video message; if there's no video, the <strong>photo</strong> below is shown instead.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField control={form.control} name="ceoName" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>CEO Name</FormLabel>
+                    <FormControl><Input placeholder="e.g. Jane Wanjiku" {...field} value={field.value || ''} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="ceoTitle" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>CEO Title</FormLabel>
+                    <FormControl><Input placeholder="Chief Executive Officer, EWAMA Properties Ltd" {...field} value={field.value || ''} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+              </div>
+              <FormField control={form.control} name="ceoMessage" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Message</FormLabel>
+                  <FormControl><Textarea className="min-h-[140px]" placeholder="A short, warm message from the CEO..." {...field} value={field.value || ''} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="ceoVideoUrl" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>CEO Video (YouTube link — optional)</FormLabel>
+                  <FormControl><Input placeholder="https://youtu.be/..." {...field} value={field.value || ''} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <div className="flex items-end gap-3">
+                <div className="flex-1">
+                  <FormField control={form.control} name="ceoImageUrl" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>CEO Photo (fallback if no video)</FormLabel>
+                      <FormControl><Input placeholder="Pick from Media Library or paste a URL" {...field} value={field.value || ''} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </div>
+                <Button type="button" variant="outline" className="gap-2 shrink-0" onClick={() => setCeoImagePickerOpen(true)}>
+                  <ImageIcon className="w-4 h-4" /> Choose
+                </Button>
+              </div>
+              {form.watch('ceoImageUrl') && (
+                <div className="h-40 w-40 rounded-lg overflow-hidden border border-gray-200">
+                  <img src={form.watch('ceoImageUrl') || ''} alt="CEO preview" className="w-full h-full object-cover" />
+                </div>
+              )}
+              <MediaPickerDialog
+                open={ceoImagePickerOpen}
+                onOpenChange={setCeoImagePickerOpen}
+                title="Choose the CEO photo"
+                onSelect={(url) => form.setValue('ceoImageUrl', url)}
               />
             </CardContent>
           </Card>

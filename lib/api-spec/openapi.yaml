@@ -1652,6 +1652,16 @@ components:
           type: ["array", "null"]
           items:
             type: string
+        ceoName:
+          type: ["string", "null"]
+        ceoTitle:
+          type: ["string", "null"]
+        ceoMessage:
+          type: ["string", "null"]
+        ceoVideoUrl:
+          type: ["string", "null"]
+        ceoImageUrl:
+          type: ["string", "null"]
         updatedAt:
           type: string
           format: date-time
@@ -1754,6 +1764,16 @@ components:
           type: ["array", "null"]
           items:
             type: string
+        ceoName:
+          type: ["string", "null"]
+        ceoTitle:
+          type: ["string", "null"]
+        ceoMessage:
+          type: ["string", "null"]
+        ceoVideoUrl:
+          type: ["string", "null"]
+        ceoImageUrl:
+          type: ["string", "null"]
 
     # ─── NEWSLETTER ────────────────────────────────────────
     NewsletterInput:
