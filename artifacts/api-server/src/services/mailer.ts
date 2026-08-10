@@ -1,62 +1,68 @@
 import { logger } from "../lib/logger.js";
 
 /**
- * Optional admin email notifications. Fully gated on SMTP env vars, and the
- * nodemailer module is loaded lazily — if it isn't installed or SMTP isn't
- * configured, this quietly no-ops so the API always runs.
+ * Email via Resend's HTTPS API (https://resend.com). Chosen over SMTP because
+ * it needs only outbound HTTPS — no mail ports, no native modules — which suits
+ * shared hosting. Fully gated on env vars; if unset, every send quietly no-ops
+ * so the app runs fine without email.
  *
  * To enable, set on the server:
- *   SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS
+ *   RESEND_API_KEY        e.g. re_xxxxxxxx
+ *   RESEND_FROM           e.g. "EWAMA Properties <info@ewamaproperties.com>"
  * Optional:
- *   SMTP_FROM            (defaults to SMTP_USER)
- *   ADMIN_NOTIFY_EMAIL   (recipient; defaults to SMTP_USER)
- * ...then run "npm install" on the app so nodemailer is available.
+ *   ADMIN_NOTIFY_EMAIL    who receives booking/enquiry alerts (defaults to RESEND_FROM address)
  */
 
-// `any` avoids a hard type dependency on nodemailer (it's an optional module).
-let transporter: any | null | undefined;
-
-async function getTransporter(): Promise<any | null> {
-  if (transporter !== undefined) return transporter;
-
-  const host = process.env["SMTP_HOST"];
-  const port = process.env["SMTP_PORT"];
-  const user = process.env["SMTP_USER"];
-  const pass = process.env["SMTP_PASS"];
-  if (!host || !port || !user || !pass) {
-    transporter = null; // SMTP not configured — notifications disabled
-    return null;
-  }
-
-  try {
-    const nodemailer = (await import("nodemailer")).default;
-    const portNum = Number(port);
-    transporter = nodemailer.createTransport({
-      host,
-      port: portNum,
-      secure: portNum === 465, // 465 = implicit TLS; 587 = STARTTLS
-      auth: { user, pass },
-    });
-  } catch (err) {
-    logger.warn({ err }, "nodemailer unavailable — email notifications disabled");
-    transporter = null;
-  }
-  return transporter;
+function fromAddress(): string | null {
+  return process.env["RESEND_FROM"] || null;
 }
 
-/**
- * Send a plain-text notification to the admin inbox. Never throws — failures
- * are logged and swallowed so they can't break the request that triggered them.
- */
-export async function sendAdminNotification(subject: string, text: string): Promise<void> {
-  const tx = await getTransporter();
-  if (!tx) return;
-  const from = process.env["SMTP_FROM"] || process.env["SMTP_USER"]!;
-  const to = process.env["ADMIN_NOTIFY_EMAIL"] || process.env["SMTP_USER"]!;
+function bareEmail(addr: string): string {
+  const m = addr.match(/<([^>]+)>/);
+  return m ? m[1]! : addr.trim();
+}
+
+/** Low-level send. Returns true on success, never throws. */
+export async function sendEmail(to: string, subject: string, text: string): Promise<boolean> {
+  const apiKey = process.env["RESEND_API_KEY"];
+  const from = fromAddress();
+  if (!apiKey || !from) return false; // email not configured — no-op
   try {
-    await tx.sendMail({ from, to, subject, text });
-    logger.info({ subject }, "Admin notification email sent");
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from, to, subject, text }),
+    });
+    if (!res.ok) {
+      const detail = await res.text().catch(() => "");
+      logger.error({ status: res.status, detail: detail.slice(0, 300) }, "Resend email failed");
+      return false;
+    }
+    logger.info({ subject }, "Email sent via Resend");
+    return true;
   } catch (err) {
-    logger.error({ err, subject }, "Failed to send admin notification email");
+    logger.error({ err }, "Resend email request threw");
+    return false;
   }
+}
+
+/** Alert the admin inbox (bookings, enquiries). */
+export async function sendAdminNotification(subject: string, text: string): Promise<void> {
+  const from = fromAddress();
+  const to = process.env["ADMIN_NOTIFY_EMAIL"] || (from ? bareEmail(from) : "");
+  if (!to) return;
+  await sendEmail(to, subject, text);
+}
+
+/** Send a password-reset verification code to a specific admin. */
+export async function sendVerificationCode(to: string, code: string): Promise<boolean> {
+  const text = [
+    `Your EWAMA Properties admin verification code is:`,
+    ``,
+    `    ${code}`,
+    ``,
+    `Enter this code to set a new password. It expires in 15 minutes.`,
+    `If you didn't request this, you can safely ignore this email.`,
+  ].join("\n");
+  return sendEmail(to, `Your EWAMA admin verification code: ${code}`, text);
 }

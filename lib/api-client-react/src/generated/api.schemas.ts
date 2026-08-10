@@ -29,6 +29,25 @@ export interface AuthResponse {
   token: string;
 }
 
+export interface SuccessResponse {
+  success: boolean;
+}
+
+export interface ChangePasswordInput {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface RequestResetInput {
+  email: string;
+}
+
+export interface ConfirmResetInput {
+  email: string;
+  code: string;
+  newPassword: string;
+}
+
 export interface DashboardStats {
   totalProperties: number;
   publishedArticles: number;

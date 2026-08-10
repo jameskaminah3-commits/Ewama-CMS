@@ -218,6 +218,8 @@ const STATEMENTS: string[] = [
   `ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS role text DEFAULT 'admin'`,
   `ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS avatar_url text`,
   `ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS created_at timestamp DEFAULT now()`,
+  `ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS reset_code_hash text`,
+  `ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS reset_expires_at timestamp`,
 ];
 
 export async function autoMigrate(): Promise<void> {

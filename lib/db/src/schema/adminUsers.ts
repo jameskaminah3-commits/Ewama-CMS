@@ -10,6 +10,8 @@ export const adminUsersTable = pgTable("admin_users", {
   name: text("name").notNull(),
   role: text("role").notNull().default("admin"),
   avatarUrl: text("avatar_url"),
+  resetCodeHash: text("reset_code_hash"),
+  resetExpiresAt: timestamp("reset_expires_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

@@ -57,6 +57,45 @@ export const GetMeResponse = zod.object({
 
 
 /**
+ * @summary Change the signed-in admin's password
+ */
+export const ChangePasswordBody = zod.object({
+  "currentPassword": zod.string(),
+  "newPassword": zod.string()
+})
+
+export const ChangePasswordResponse = zod.object({
+  "success": zod.boolean()
+})
+
+
+/**
+ * @summary Email a password-reset verification code
+ */
+export const RequestPasswordResetBody = zod.object({
+  "email": zod.string()
+})
+
+export const RequestPasswordResetResponse = zod.object({
+  "success": zod.boolean()
+})
+
+
+/**
+ * @summary Verify the code and set a new password
+ */
+export const ConfirmPasswordResetBody = zod.object({
+  "email": zod.string(),
+  "code": zod.string(),
+  "newPassword": zod.string()
+})
+
+export const ConfirmPasswordResetResponse = zod.object({
+  "success": zod.boolean()
+})
+
+
+/**
  * @summary Dashboard summary statistics
  */
 export const GetDashboardStatsResponse = zod.object({

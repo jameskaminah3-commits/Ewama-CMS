@@ -89,6 +89,63 @@ paths:
         "401":
           description: Not authenticated
 
+  /auth/change-password:
+    post:
+      operationId: changePassword
+      tags: [auth]
+      summary: Change the signed-in admin's password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordInput"
+      responses:
+        "200":
+          description: Password changed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /auth/request-reset:
+    post:
+      operationId: requestPasswordReset
+      tags: [auth]
+      summary: Email a password-reset verification code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestResetInput"
+      responses:
+        "200":
+          description: If the email is a registered admin, a code was sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /auth/confirm-reset:
+    post:
+      operationId: confirmPasswordReset
+      tags: [auth]
+      summary: Verify the code and set a new password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConfirmResetInput"
+      responses:
+        "200":
+          description: Password reset
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
   # ─── DASHBOARD ──────────────────────────────────────────
   /dashboard/stats:
     get:
@@ -880,6 +937,40 @@ components:
         user:
           $ref: "#/components/schemas/AdminUser"
         token:
+          type: string
+
+    SuccessResponse:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+
+    ChangePasswordInput:
+      type: object
+      required: [currentPassword, newPassword]
+      properties:
+        currentPassword:
+          type: string
+        newPassword:
+          type: string
+
+    RequestResetInput:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+
+    ConfirmResetInput:
+      type: object
+      required: [email, code, newPassword]
+      properties:
+        email:
+          type: string
+        code:
+          type: string
+        newPassword:
           type: string
 
     AdminUser:

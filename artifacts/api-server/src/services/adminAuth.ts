@@ -63,17 +63,61 @@ export async function upsertAdminByEmail(email: string, name?: string): Promise<
  * row that has a scrypt password hash. Returns the admin row on success.
  */
 export async function verifyLocalAdmin(email: string, password: string): Promise<AdminUser | null> {
-  const envEmail = process.env["ADMIN_EMAIL"]?.trim().toLowerCase();
-  const envPassword = process.env["ADMIN_PASSWORD"];
-
-  if (envEmail && envPassword && email === envEmail && constantTimeEqual(password, envPassword)) {
-    return upsertAdminByEmail(email);
-  }
-
+  // A self-managed password stored in the database takes precedence, so once an
+  // admin sets their own password it is used. The env master admin remains as a
+  // developer-set bootstrap / emergency login.
   const [row] = await db.select().from(adminUsersTable).where(eq(adminUsersTable.email, email));
   if (row?.passwordHash && verifyPassword(password, row.passwordHash)) {
     return row;
   }
 
+  const envEmail = process.env["ADMIN_EMAIL"]?.trim().toLowerCase();
+  const envPassword = process.env["ADMIN_PASSWORD"];
+  if (envEmail && envPassword && email === envEmail && constantTimeEqual(password, envPassword)) {
+    return upsertAdminByEmail(email);
+  }
+
   return null;
+}
+
+/** Set (or replace) an admin's self-managed password. Creates the row if needed. */
+export async function setAdminPassword(email: string, newPassword: string): Promise<void> {
+  await upsertAdminByEmail(email);
+  await db
+    .update(adminUsersTable)
+    .set({ passwordHash: hashPassword(newPassword), resetCodeHash: null, resetExpiresAt: null })
+    .where(eq(adminUsersTable.email, email));
+}
+
+function isAllowedResetEmail(email: string): boolean {
+  const envEmail = process.env["ADMIN_EMAIL"]?.trim().toLowerCase();
+  const allowlist = process.env["ADMIN_EMAIL_ALLOWLIST"]?.split(",").map((e) => e.trim().toLowerCase()).filter(Boolean);
+  if (envEmail && email === envEmail) return true;
+  if (allowlist?.length) return allowlist.includes(email);
+  return true; // no allowlist configured — any known admin may reset
+}
+
+/**
+ * Generate a 6-digit code for the admin, store its hash + 15-minute expiry, and
+ * return the plain code to email. Returns null if the email isn't an allowed
+ * admin (caller should still respond success so existence isn't leaked).
+ */
+export async function createResetCode(email: string): Promise<string | null> {
+  if (!isAllowedResetEmail(email)) return null;
+  await upsertAdminByEmail(email); // ensure a row exists for env/first-time admins
+  const code = String(crypto.randomInt(0, 1_000_000)).padStart(6, "0");
+  const expires = new Date(Date.now() + 15 * 60 * 1000);
+  await db
+    .update(adminUsersTable)
+    .set({ resetCodeHash: hashPassword(code), resetExpiresAt: expires })
+    .where(eq(adminUsersTable.email, email));
+  return code;
+}
+
+/** Verify a reset code is correct and unexpired. */
+export async function verifyResetCode(email: string, code: string): Promise<boolean> {
+  const [row] = await db.select().from(adminUsersTable).where(eq(adminUsersTable.email, email));
+  if (!row?.resetCodeHash || !row.resetExpiresAt) return false;
+  if (new Date(row.resetExpiresAt).getTime() < Date.now()) return false;
+  return verifyPassword(code, row.resetCodeHash);
 }

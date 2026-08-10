@@ -1,5 +1,6 @@
 import { AdminLayout } from '@/components/admin/AdminLayout';
-import { useGetSettings, useUpdateSettings } from '@workspace/api-client-react';
+import { useGetSettings, useUpdateSettings, useChangePassword } from '@workspace/api-client-react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -26,6 +27,51 @@ const settingsSchema = z.object({
   tiktok: z.string().url().optional().nullable().or(z.literal('')),
   youtube: z.string().url().optional().nullable().or(z.literal('')),
 });
+
+function ChangePasswordCard() {
+  const { toast } = useToast();
+  const changePassword = useChangePassword();
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+
+  const submit = () => {
+    if (newPassword.length < 8) { toast({ title: 'New password must be at least 8 characters', variant: 'destructive' }); return; }
+    if (newPassword !== confirm) { toast({ title: 'New passwords do not match', variant: 'destructive' }); return; }
+    changePassword.mutate({ data: { currentPassword, newPassword } }, {
+      onSuccess: () => {
+        toast({ title: 'Password updated' });
+        setCurrentPassword(''); setNewPassword(''); setConfirm('');
+      },
+      onError: () => toast({ title: 'Could not change password', description: 'Check that your current password is correct.', variant: 'destructive' }),
+    });
+  };
+
+  return (
+    <Card className="shadow-sm border-gray-100 mt-8">
+      <CardHeader><CardTitle>Change Your Password</CardTitle></CardHeader>
+      <CardContent className="space-y-4 max-w-md">
+        <p className="text-sm text-gray-500 -mt-2">Update the password you use to sign in to this dashboard.</p>
+        <div>
+          <label className="text-sm font-medium text-gray-700">Current password</label>
+          <Input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} className="mt-1" />
+        </div>
+        <div>
+          <label className="text-sm font-medium text-gray-700">New password</label>
+          <Input type="password" placeholder="At least 8 characters" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="mt-1" />
+        </div>
+        <div>
+          <label className="text-sm font-medium text-gray-700">Confirm new password</label>
+          <Input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} className="mt-1" />
+        </div>
+        <Button type="button" onClick={submit} disabled={changePassword.isPending || !currentPassword || !newPassword} className="bg-primary hover:bg-primary/90 text-white h-11 px-6">
+          {changePassword.isPending ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : null}
+          Update Password
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function AdminSettings() {
   const { data: settings, isLoading } = useGetSettings();
@@ -270,6 +316,8 @@ export default function AdminSettings() {
           </div>
         </form>
       </Form>
+
+      <ChangePasswordCard />
     </AdminLayout>
   );
 }
