@@ -30,7 +30,13 @@ export async function sendEmail(to: string, subject: string, text: string): Prom
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        // Resend's API requires a User-Agent header; without it the request
+        // is rejected with a 403.
+        "User-Agent": "EWAMA-Properties-Mailer/1.0",
+      },
       body: JSON.stringify({ from, to, subject, text }),
     });
     if (!res.ok) {
