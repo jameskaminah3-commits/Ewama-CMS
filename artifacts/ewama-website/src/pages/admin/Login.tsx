@@ -15,6 +15,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { apiErrorMessage } from '@/lib/apiErrorMessage';
 
 const loginSchema = z.object({
   email: z.string().trim().toLowerCase().email('Please enter a valid email'),
@@ -57,8 +58,8 @@ export default function AdminLogin() {
         await queryClient.refetchQueries({ queryKey: getGetMeQueryKey() });
         setLocation('/admin');
       },
-      onError: () => {
-        toast({ title: 'Login failed', description: 'Please check your credentials', variant: 'destructive' });
+      onError: (err) => {
+        toast({ title: 'Login failed', description: apiErrorMessage(err, 'Incorrect email or password'), variant: 'destructive' });
       },
     });
   };
@@ -74,7 +75,7 @@ export default function AdminLogin() {
         toast({ title: 'Check your email', description: 'If that address is an admin, a 6-digit code is on its way.' });
         setMode('confirm');
       },
-      onError: () => toast({ title: 'Something went wrong', description: 'Please try again.', variant: 'destructive' }),
+      onError: (err) => toast({ title: 'Something went wrong', description: apiErrorMessage(err, 'Please try again.'), variant: 'destructive' }),
     });
   };
 
@@ -85,7 +86,7 @@ export default function AdminLogin() {
         form.setValue('email', data.email);
         setMode('login');
       },
-      onError: () => toast({ title: 'Could not reset password', description: 'The code may be invalid or expired.', variant: 'destructive' }),
+      onError: (err) => toast({ title: 'Could not reset password', description: apiErrorMessage(err, 'The code may be invalid or expired.'), variant: 'destructive' }),
     });
   };
 

@@ -1,8 +1,10 @@
 import type { User } from "@supabase/supabase-js";
 import { db, adminUsersTable, type AdminUser } from "@workspace/db";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
-export function mapAdminUser(user: AdminUser) {
+export function mapAdminUser(
+  user: Pick<AdminUser, "id" | "email" | "name" | "role" | "avatarUrl"> & { createdAt: Date | string },
+) {
   return {
     id: user.id,
     email: user.email,
@@ -62,7 +64,7 @@ export async function ensureAdminProfile(user: User) {
   const [byEmail] = await db
     .select()
     .from(adminUsersTable)
-    .where(eq(adminUsersTable.email, user.email));
+    .where(sql`lower(${adminUsersTable.email}) = ${user.email.toLowerCase()}`);
 
   if (byEmail) {
     const [updated] = await db

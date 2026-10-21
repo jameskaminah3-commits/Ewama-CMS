@@ -4,7 +4,14 @@ import { db, adminUsersTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { supabaseAdmin } from "../services/supabase.js";
 import { ensureAdminProfile, mapAdminUser } from "../services/adminUsers.js";
-import { verifyLocalAdmin, setAdminPassword, createResetCode, verifyResetCode } from "../services/adminAuth.js";
+import {
+  verifyLocalAdmin,
+  verifySupabasePassword,
+  setAdminPassword,
+  createResetCode,
+  verifyResetCode,
+  normalizeEmail,
+} from "../services/adminAuth.js";
 import { signAdminToken, verifyAdminToken } from "../services/adminToken.js";
 import { sendVerificationCode } from "../services/mailer.js";
 import { requireAuth, type AuthRequest } from "../middlewares/auth.js";
@@ -23,7 +30,7 @@ router.post("/login", async (req, res) => {
     return;
   }
 
-  const email = body.data.email.trim().toLowerCase();
+  const email = normalizeEmail(body.data.email);
   const password = body.data.password;
 
   // 1) Self-contained admin login — env master admin or a stored password
@@ -41,13 +48,16 @@ router.post("/login", async (req, res) => {
   }
 
   // 2) Fallback: Supabase Auth (kept for existing Supabase-managed users).
-  const { data, error } = await supabaseAdmin.auth.signInWithPassword({
-    email,
-    password,
-  });
+  let data: Awaited<ReturnType<typeof supabaseAdmin.auth.signInWithPassword>>["data"] | null = null;
+  try {
+    const result = await supabaseAdmin.auth.signInWithPassword({ email, password });
+    if (!result.error) data = result.data;
+  } catch (err) {
+    req.log.warn({ err }, "Supabase sign-in fallback unavailable");
+  }
 
-  if (error || !data.session || !data.user) {
-    res.status(401).json({ error: "Invalid credentials" });
+  if (!data?.session || !data.user) {
+    res.status(401).json({ error: "Incorrect email or password" });
     return;
   }
 
@@ -81,10 +91,14 @@ router.get("/me", async (req, res) => {
   // 1) Self-contained admin token
   const payload = verifyAdminToken(token);
   if (payload) {
-    const [row] = await db.select().from(adminUsersTable).where(eq(adminUsersTable.id, payload.sub));
-    if (row) {
-      res.json(mapAdminUser(row));
-      return;
+    try {
+      const [row] = await db.select().from(adminUsersTable).where(eq(adminUsersTable.id, payload.sub));
+      if (row) {
+        res.json(mapAdminUser(row));
+        return;
+      }
+    } catch (err) {
+      req.log.error({ err }, "Admin profile lookup failed; answering from token");
     }
     res.json({
       id: payload.sub,
@@ -128,20 +142,30 @@ router.post("/change-password", requireAuth, async (req: AuthRequest, res) => {
     res.status(400).json({ error: body.error.issues[0]?.message ?? "Invalid request" });
     return;
   }
-  const email = req.userEmail?.trim().toLowerCase();
+  const email = req.userEmail ? normalizeEmail(req.userEmail) : "";
   if (!email) { res.status(401).json({ error: "Not authenticated" }); return; }
 
-  const ok = await verifyLocalAdmin(email, body.data.currentPassword);
+  // The current password may be a self-set one, the env master password, or
+  // (for older accounts) a Supabase Auth password.
+  const ok =
+    (await verifyLocalAdmin(email, body.data.currentPassword)) !== null ||
+    (await verifySupabasePassword(email, body.data.currentPassword));
   if (!ok) { res.status(400).json({ error: "Your current password is incorrect" }); return; }
 
-  await setAdminPassword(email, body.data.newPassword);
+  try {
+    await setAdminPassword(email, body.data.newPassword);
+  } catch (err) {
+    req.log.error({ err }, "Failed to save new admin password");
+    res.status(500).json({ error: "Could not save the new password. Please try again." });
+    return;
+  }
   res.json({ success: true });
 });
 
 // Step 1 of reset: email a verification code. Always responds success so it
 // never reveals whether an email is registered.
 router.post("/request-reset", async (req, res) => {
-  const email = String(req.body?.email ?? "").trim().toLowerCase();
+  const email = normalizeEmail(String(req.body?.email ?? ""));
   if (email) {
     try {
       const code = await createResetCode(email);
@@ -169,11 +193,16 @@ router.post("/confirm-reset", async (req, res) => {
     res.status(400).json({ error: body.error.issues[0]?.message ?? "Invalid request" });
     return;
   }
-  const email = body.data.email.trim().toLowerCase();
-  const valid = await verifyResetCode(email, body.data.code.trim());
-  if (!valid) { res.status(400).json({ error: "That code is invalid or has expired" }); return; }
-
-  await setAdminPassword(email, body.data.newPassword);
+  const email = normalizeEmail(body.data.email);
+  try {
+    const valid = await verifyResetCode(email, body.data.code.trim());
+    if (!valid) { res.status(400).json({ error: "That code is invalid or has expired" }); return; }
+    await setAdminPassword(email, body.data.newPassword);
+  } catch (err) {
+    req.log.error({ err }, "Password reset failed");
+    res.status(500).json({ error: "Could not reset the password. Please try again." });
+    return;
+  }
   res.json({ success: true });
 });
 

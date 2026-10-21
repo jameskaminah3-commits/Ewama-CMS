@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { apiErrorMessage } from '@/lib/apiErrorMessage';
 import { Loader2, Save } from 'lucide-react';
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -43,7 +44,7 @@ function ChangePasswordCard() {
         toast({ title: 'Password updated' });
         setCurrentPassword(''); setNewPassword(''); setConfirm('');
       },
-      onError: () => toast({ title: 'Could not change password', description: 'Check that your current password is correct.', variant: 'destructive' }),
+      onError: (err) => toast({ title: 'Could not change password', description: apiErrorMessage(err, 'Check that your current password is correct.'), variant: 'destructive' }),
     });
   };
 
