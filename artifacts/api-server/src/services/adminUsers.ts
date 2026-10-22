@@ -40,8 +40,16 @@ function assertAllowedAdminEmail(email: string) {
     .map((entry) => entry.trim().toLowerCase())
     .filter(Boolean);
 
-  if (allowlist?.length && !allowlist.includes(email.toLowerCase())) {
-    throw new Error("This Supabase user is not allowed to access the CMS.");
+  const normalized = email.trim().toLowerCase();
+  // The env master admin email is always allowed, even if it was left out of
+  // the allowlist.
+  const masterEmail = process.env["ADMIN_EMAIL"]?.trim().toLowerCase();
+  if (masterEmail && normalized === masterEmail) return;
+
+  if (allowlist?.length && !allowlist.includes(normalized)) {
+    throw new Error(
+      "This email is not an EWAMA admin. Sign in with the admin email and password set on the server.",
+    );
   }
 }
 
