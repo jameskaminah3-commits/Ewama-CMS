@@ -1,5 +1,4 @@
-import { db } from "@workspace/db";
-import { sql } from "drizzle-orm";
+import { executeStatements } from "@workspace/db";
 import { logger } from "./logger.js";
 
 /**
@@ -223,16 +222,20 @@ const STATEMENTS: string[] = [
 ];
 
 export async function autoMigrate(): Promise<void> {
+  const statements = [...BOOTSTRAP_STATEMENTS, ...STATEMENTS];
   let failures = 0;
-  for (const statement of [...BOOTSTRAP_STATEMENTS, ...STATEMENTS]) {
-    try {
-      await db.execute(sql.raw(statement));
-    } catch (err) {
-      // Run every statement independently so a single failure (e.g. a
-      // permissions quirk on one table) can't skip the tables that follow.
+  try {
+    // Each statement runs independently so a single failure (e.g. a
+    // permissions quirk on one table) can't skip the tables that follow.
+    const errors = await executeStatements(statements);
+    errors.forEach((error, i) => {
+      if (!error) return;
       failures += 1;
-      logger.error({ err, statement: statement.slice(0, 80) }, "Schema auto-migration statement failed");
-    }
+      logger.error({ error, statement: statements[i]!.slice(0, 80) }, "Schema auto-migration statement failed");
+    });
+  } catch (err) {
+    failures = statements.length;
+    logger.error({ err }, "Schema auto-migration could not reach the database");
   }
   if (failures === 0) {
     logger.info("Schema auto-migration complete (base tables and columns present)");

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { db, adminUsersTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { supabaseAdmin } from "../services/supabase.js";
-import { ensureAdminProfile, mapAdminUser } from "../services/adminUsers.js";
+import { ensureAdminProfile, mapAdminUser, assertAllowedAdminEmail } from "../services/adminUsers.js";
 import {
   verifyLocalAdmin,
   verifySupabasePassword,
@@ -11,6 +11,8 @@ import {
   createResetCode,
   verifyResetCode,
   normalizeEmail,
+  isEnvAdminEmail,
+  adminProfileOrFallback,
 } from "../services/adminAuth.js";
 import { signAdminToken, verifyAdminToken } from "../services/adminToken.js";
 import { sendVerificationCode } from "../services/mailer.js";
@@ -57,22 +59,34 @@ router.post("/login", async (req, res) => {
   }
 
   if (!data?.session || !data.user) {
-    res.status(401).json({ error: "Incorrect email or password" });
+    // Say which part is wrong so the admin isn't left guessing. Only the
+    // admin's own (public) email gets the password hint.
+    const detail = isEnvAdminEmail(email)
+      ? "This is the admin email, but the password doesn't match the one set on the server."
+      : "This email is not set up as an EWAMA admin.";
+    res.status(401).json({ error: "Incorrect email or password", detail });
     return;
   }
 
   try {
-    const adminUser = await ensureAdminProfile(data.user);
-
-    res.json({
-      user: mapAdminUser(adminUser),
-      token: data.session.access_token,
-    });
+    assertAllowedAdminEmail(data.user.email ?? email);
   } catch (err) {
-    req.log.error({ err }, "Supabase user is not allowed to access CMS");
     const detail = err instanceof Error ? err.message : "Access denied";
     res.status(403).json({ error: "Access denied", detail });
+    return;
   }
+
+  // Issue our own session token so the rest of the dashboard works the same
+  // way for every admin, even if the profile table can't be reached.
+  let profile;
+  try {
+    profile = await ensureAdminProfile(data.user);
+  } catch (err) {
+    req.log.error({ err }, "Admin profile unavailable; continuing with a minimal profile");
+    profile = await adminProfileOrFallback(normalizeEmail(data.user.email ?? email));
+  }
+  const token = signAdminToken({ sub: profile.id, email: profile.email, role: profile.role });
+  res.json({ user: mapAdminUser(profile), token });
 });
 
 router.post("/logout", (_req, res) => {

@@ -1,6 +1,7 @@
 import type { User } from "@supabase/supabase-js";
 import { db, adminUsersTable, type AdminUser } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
+import { isEnvAdminEmail } from "./adminAuth.js";
 
 export function mapAdminUser(
   user: Pick<AdminUser, "id" | "email" | "name" | "role" | "avatarUrl"> & { createdAt: Date | string },
@@ -34,17 +35,16 @@ function avatarFor(user: User) {
   return typeof avatarUrl === "string" ? avatarUrl : null;
 }
 
-function assertAllowedAdminEmail(email: string) {
+export function assertAllowedAdminEmail(email: string) {
   const allowlist = process.env["ADMIN_EMAIL_ALLOWLIST"]
     ?.split(",")
     .map((entry) => entry.trim().toLowerCase())
     .filter(Boolean);
 
   const normalized = email.trim().toLowerCase();
-  // The env master admin email is always allowed, even if it was left out of
+  // The env master admin email(s) are always allowed, even if left out of
   // the allowlist.
-  const masterEmail = process.env["ADMIN_EMAIL"]?.trim().toLowerCase();
-  if (masterEmail && normalized === masterEmail) return;
+  if (isEnvAdminEmail(normalized)) return;
 
   if (allowlist?.length && !allowlist.includes(normalized)) {
     throw new Error(

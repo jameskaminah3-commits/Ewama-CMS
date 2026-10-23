@@ -70,12 +70,54 @@ function constantTimeEqual(a: string, b: string): boolean {
   return crypto.timingSafeEqual(ab, bb);
 }
 
-function envAdmin(): { email: string; password: string } | null {
-  const email = process.env["ADMIN_EMAIL"]?.trim().toLowerCase();
-  // Trim stray whitespace/newlines that easily sneak in when pasting the
-  // value into cPanel's environment-variable box.
-  const password = process.env["ADMIN_PASSWORD"]?.trim();
-  return email && password ? { email, password } : null;
+/** Clean a value pasted into cPanel: stray whitespace/newlines and wrapping quotes. */
+function cleanEnvValue(raw: string | undefined): string {
+  let v = (raw ?? "").trim();
+  if (v.length >= 2 && (v[0] === '"' || v[0] === "'") && v[v.length - 1] === v[0]) v = v.slice(1, -1).trim();
+  return v;
+}
+
+/**
+ * The env master admin(s). ADMIN_EMAIL and ADMIN_PASSWORD may each hold one
+ * value or a comma-separated list (e.g. two admins, or two passwords). The
+ * full ADMIN_PASSWORD value is always accepted too, so a single password
+ * that happens to contain a comma still works.
+ */
+function envAdmin(): { emails: string[]; passwords: string[] } | null {
+  const emails = cleanEnvValue(process.env["ADMIN_EMAIL"])
+    .split(",")
+    .map((e) => cleanEnvValue(e).toLowerCase())
+    .filter(Boolean);
+  const full = cleanEnvValue(process.env["ADMIN_PASSWORD"]);
+  if (!emails.length || !full) return null;
+  const parts = full.split(",").map((p) => cleanEnvValue(p)).filter(Boolean);
+  return { emails, passwords: Array.from(new Set([full, ...parts])) };
+}
+
+export function isEnvAdminEmail(email: string): boolean {
+  return envAdmin()?.emails.includes(normalizeEmail(email)) ?? false;
+}
+
+/** Safe summary for /api/health — never reveals the password itself. */
+export function envAdminSummary() {
+  const env = envAdmin();
+  if (!env) return { configured: false };
+  const mask = (e: string) => {
+    const [user = "", domain = ""] = e.split("@");
+    return `${user.slice(0, 2)}***@${domain}`;
+  };
+  return {
+    configured: true,
+    emails: env.emails.map(mask),
+    passwordCount: cleanEnvValue(process.env["ADMIN_PASSWORD"]).split(",").filter((p) => p.trim()).length,
+  };
+}
+
+function matchesEnvAdmin(email: string, password: string): boolean {
+  const env = envAdmin();
+  if (!env || !env.emails.includes(email)) return false;
+  const candidates = [password, password.trim()];
+  return env.passwords.some((p) => candidates.some((c) => constantTimeEqual(c, p)));
 }
 
 export async function findAdminByEmail(email: string): Promise<CoreAdmin | null> {
@@ -105,36 +147,36 @@ export async function upsertAdminByEmail(email: string, name?: string): Promise<
 }
 
 /**
- * Verify credentials: a password the admin set themselves (stored hash) first,
- * then the env master admin. Returns the admin on success.
+ * Verify credentials: the env master admin first (needs no database, exactly
+ * like the original login), then a password the admin set themselves.
  */
 export async function verifyLocalAdmin(email: string, password: string): Promise<CoreAdmin | null> {
   const normalized = normalizeEmail(email);
 
-  // A database hiccup must never lock out the env master admin, so the lookup
-  // is isolated.
-  let row: CoreAdmin | null = null;
+  if (matchesEnvAdmin(normalized, password)) {
+    return adminProfileOrFallback(normalized);
+  }
+
+  // A database hiccup must never break sign-in, so the lookup is isolated.
   try {
-    row = await findAdminByEmail(normalized);
+    const row = await findAdminByEmail(normalized);
+    if (row?.passwordHash && verifyPassword(password, row.passwordHash)) return row;
   } catch (err) {
     logger.error({ err }, "Admin lookup failed during sign-in");
   }
-  if (row?.passwordHash && verifyPassword(password, row.passwordHash)) {
-    return row;
-  }
-
-  const env = envAdmin();
-  if (env && normalized === env.email && (constantTimeEqual(password, env.password) || constantTimeEqual(password.trim(), env.password))) {
-    if (row) return row;
-    try {
-      return await upsertAdminByEmail(normalized);
-    } catch (err) {
-      logger.error({ err }, "Could not create admin profile; signing in from env only");
-      return { id: 0, email: normalized, passwordHash: null, name: "EWAMA Admin", role: "admin", avatarUrl: null, createdAt: new Date() };
-    }
-  }
 
   return null;
+}
+
+/** The admin's profile row, or — if the database can't be reached — a minimal
+ *  profile so a verified admin can still sign in. */
+export async function adminProfileOrFallback(email: string): Promise<CoreAdmin> {
+  try {
+    return await upsertAdminByEmail(email);
+  } catch (err) {
+    logger.error({ err }, "Could not load admin profile; signing in without it");
+    return { id: 0, email, passwordHash: null, name: "EWAMA Admin", role: "admin", avatarUrl: null, createdAt: new Date() };
+  }
 }
 
 /** For admins who still sign in through Supabase Auth: check their password there. */
@@ -168,9 +210,8 @@ export async function setAdminPassword(email: string, newPassword: string): Prom
 }
 
 function isAllowedResetEmail(email: string): boolean {
-  const env = envAdmin();
   const allowlist = process.env["ADMIN_EMAIL_ALLOWLIST"]?.split(",").map((e) => e.trim().toLowerCase()).filter(Boolean);
-  if (env && email === env.email) return true;
+  if (isEnvAdminEmail(email)) return true;
   if (allowlist?.length) return allowlist.includes(email);
   return false;
 }

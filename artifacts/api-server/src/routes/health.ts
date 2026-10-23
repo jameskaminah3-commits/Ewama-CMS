@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { HealthCheckResponse } from "@workspace/api-zod";
-import { db } from "@workspace/db";
+import { db, getDbTransport } from "@workspace/db";
+import { envAdminSummary } from "../services/adminAuth.js";
 import { sql } from "drizzle-orm";
 
 declare const __BUILD_TIME__: string | undefined;
@@ -78,7 +79,10 @@ router.get("/health", async (_req, res) => {
     currentDatabase,
     homepageContentTable,
     adminUsersStatus,
+    dbTransport: getDbTransport().transport,
+    dbTransportNote: getDbTransport().note,
     adminEnvConfigured: Boolean(process.env["ADMIN_EMAIL"] && process.env["ADMIN_PASSWORD"]),
+    adminLogin: envAdminSummary(),
   });
 });
 
