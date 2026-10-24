@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, ArrowLeft } from 'lucide-react';
+import { Loader2, ArrowLeft, Compass } from 'lucide-react';
 import {
   useAdminLogin,
   useRequestPasswordReset,
@@ -91,7 +91,7 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg border border-gray-100 p-8">
         <div className="text-center mb-8">
           <img src="/logo.png" alt="EWAMA Properties Ltd" className="h-16 w-auto mx-auto mb-4" />
@@ -184,6 +184,12 @@ export default function AdminLogin() {
           </div>
         )}
       </div>
+      <p className="mt-6 text-xs text-gray-400 inline-flex items-center gap-1.5">
+        <Compass className="w-3.5 h-3.5 text-secondary" aria-hidden="true" />
+        Crafted by <span className="font-semibold tracking-wider text-gray-500">TBM</span>
+        <span className="text-gray-300">·</span>
+        <span className="italic">Tembea Bila Matata</span>
+      </p>
     </div>
   );
 }

@@ -14,4 +14,11 @@ if (apiBase) {
   setBaseUrl(apiBase.replace(/\/+$/, ''));
 }
 
+// A small signature for the curious who open the browser console.
+console.log(
+  '%c🧭 Crafted by TBM %c Tembea Bila Matata — travel without worries',
+  'background:#F5B800;color:#fff;padding:4px 8px;border-radius:4px 0 0 4px;font-weight:600',
+  'background:#1f2937;color:#fff;padding:4px 8px;border-radius:0 4px 4px 0;font-style:italic',
+);
+
 createRoot(document.getElementById('root')!).render(<App />);

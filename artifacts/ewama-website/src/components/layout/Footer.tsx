@@ -10,6 +10,7 @@ function TikTokIcon({ className }: { className?: string }) {
   );
 }
 import { useGetSettings, useSubscribeNewsletter } from '@workspace/api-client-react';
+import { TbmCredit } from '@/components/TbmCredit';
 
 function NewsletterForm() {
   const [email, setEmail] = useState('');
@@ -67,7 +68,7 @@ export function Footer() {
   const { data: settings } = useGetSettings();
 
   return (
-    <footer className="bg-primary text-primary-foreground pt-16 pb-8">
+    <footer className="bg-primary text-primary-foreground pt-16 pb-24 md:pb-8">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12 border-b border-white/10 pb-12">
           
@@ -190,6 +191,10 @@ export function Footer() {
             <Link href="/privacy-policy"><span className="hover:text-white cursor-pointer transition-colors">Privacy Policy</span></Link>
             <Link href="/terms-of-service"><span className="hover:text-white cursor-pointer transition-colors">Terms of Service</span></Link>
           </div>
+        </div>
+
+        <div className="mt-6 pt-5 border-t border-white/5 flex justify-center text-[11px]">
+          <TbmCredit />
         </div>
       </div>
     </footer>
